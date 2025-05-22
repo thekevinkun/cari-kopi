@@ -1,13 +1,9 @@
-import AuthForm from "./AuthForm";
-import Map from "./Map";
-import Navbar from "./Navbar";
-import SearchBar from "./SearchBar";
-import ShopMarker from "./ShopMarker";
+import AuthForm from "./AuthForm/AuthForm";
+import Navbar from "./Navbar/Navbar";
+import ShopMarker from "./ShopMarker/ShopMarker";
 
 export {
     AuthForm,
-    Map,
     Navbar,
-    SearchBar,
     ShopMarker
 }
