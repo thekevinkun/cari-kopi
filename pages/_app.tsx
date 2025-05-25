@@ -9,7 +9,7 @@ const App = ({ Component, pageProps }: AppProps) => {
   return (
     <>
      <Head>
-        <title>Coffee Shop Finder</title>
+        <title>Carikopi</title>
         <meta name="description" content="Find the best coffee shops nearby." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
