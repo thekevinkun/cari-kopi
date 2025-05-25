@@ -7,7 +7,7 @@ const Navbar = () => {
     <StyledAppBar position="static">
       <StyledToolbar>
         <Typography variant="h5">
-          CoffeShopFinder
+          CoffeeShopFinder
         </Typography>
 
         <Box display="flex">

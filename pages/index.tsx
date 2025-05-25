@@ -33,9 +33,24 @@ const ShopDetail = dynamic(() => import("@/components/ShopDetail/ShopDetail"), {
 
 const Home = () => {
   const [location, setLocation] = useState<Coordinates | null>(null);
+  const [address, setAddress] = useState<string | null>(null);
   const [shops, setShops] = useState<Shop[]>([]);
 
-  // Get user location by device
+  const getAddress = async (lat: number, lng: number) => {
+    try {
+      const res = await fetch(`/api/geocode?lat=${lat}&lng=${lng}`);
+      const data = await res.json();
+
+      if (data.fullAddress) {
+        return data;
+      }
+    } catch (err) {
+      console.error("Failed to get address:", err);
+    }
+    return null;
+  };
+
+  // Get user location by device  
   useEffect(() => {
     if (!navigator.geolocation) {
       console.error("Geolocation is not supported");
@@ -47,6 +62,16 @@ const Home = () => {
         const { latitude, longitude } = position.coords;
         const userLocation = {lat: latitude, lng: longitude };
         setLocation(userLocation);
+
+        // Get address as in city/street/etc
+        const addressString = await getAddress(latitude, longitude);
+        setAddress(addressString.fullAddress);
+
+        // If success find user location, find coffe shop nearby
+        const res = await fetch(`/api/nearby?lat=${latitude}&lng=${longitude}&shortAddress=${addressString.shortAddress}`);
+        const data = await res.json();
+      
+        setShops(data.results || []);
       },
       (error) => {
         console.error("Geolocation error:", error);
@@ -61,7 +86,7 @@ const Home = () => {
       </Grid>
       <Grid size={{ xs: 12, md: 4 }}>
         <Box display="flex" flexDirection="column">
-          <ActionForm userLocation={location} />
+          <ActionForm address={address} />
           <ShopDetail />
         </Box>
       </Grid>

@@ -1,4 +1,8 @@
-import { styled, alpha, InputBase } from "@mui/material";
+import { styled, alpha, InputBase, Typography } from "@mui/material";
+
+export const StyledAddress = styled(Typography)(({ theme }) => ({
+  fontSize: "1rem",
+}));
 
 export const Search = styled("div")(({ theme }) => ({
   position: "relative",

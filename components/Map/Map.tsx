@@ -1,10 +1,66 @@
 "use client"
 
+import { MouseEvent, MouseEventHandler } from "react";
+import ReactDOMServer from "react-dom/server";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-import type { Map } from "@/types";
+import { getStarsSVG } from "@/utils/helpers";
+import type { Map, Shop } from "@/types";
+
+function createCustomIcon(shop: Shop) {
+  const html = ReactDOMServer.renderToString(
+    <div 
+      title={shop.name}
+      style={{
+        background: "white",
+        padding: "10px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        width: "100px",
+        boxShadow: "0 2px 10px rgba(0,0,0,0.2)",
+        borderRadius: "8px",
+        lineHeight: "1.2",
+      }}
+    >
+      <strong 
+        style={{ 
+          marginTop: 10,
+          marginBottom: 15,
+          fontSize: "0.685rem",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          display: "-webkit-box",
+          WebkitLineClamp: "2",
+          WebkitBoxOrient: "vertical"
+        }}
+      >
+        {shop.name}
+      </strong>
+
+      <img
+        src={shop.thumbnail || "/no-coffee-image.jpg"}
+        alt={shop.name}
+        style={{
+          width: "100%",
+          height: 72,
+          objectFit: "cover",
+          marginBottom: 10,
+        }}
+      />
+
+      <span dangerouslySetInnerHTML={{ __html: getStarsSVG(shop.rating) }}></span>
+    </div>
+  );
+
+  return L.divIcon({
+    html,
+    className: "", // remove default leaflet styles
+    iconAnchor: [60, 90], // position anchor (optional, tweak as needed)
+  });
+}
 
 // Set up default marker icons
 delete (L.Icon.Default as any).prototype._getIconUrl;
@@ -24,6 +80,11 @@ const Map = ({ userLocation, shops }: Map) => {
   
   const mapZoom = userLocation ? 15 : 2;
 
+  const handleClickShop = (shop: Shop) => {
+    console.log("Clicked shop:", shop.placeId);
+    // Do something like opening a modal or focusing the map, etc.
+  };
+
   return (
     <MapContainer
       center={mapCenter}
@@ -42,6 +103,21 @@ const Map = ({ userLocation, shops }: Map) => {
           <Popup>You are here</Popup>
         </Marker>
       )}
+
+      {/* Show coffee shop markers */}
+      {shops.map((shop: Shop) => (
+        <Marker
+          key={shop.placeId}
+          position={[
+            shop.geometry.location.lat,
+            shop.geometry.location.lng,
+          ]}
+          icon={createCustomIcon(shop)}
+          eventHandlers={{
+            click: () => handleClickShop(shop),
+          }}
+        />
+      ))}
     </MapContainer>
   )
 }
