@@ -1,9 +1,12 @@
 import { Stack, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
-export const StyledStack = styled(Stack)(() => ({
+export const StyledStack = styled(Stack)(({ theme }) => ({
    height: "100%", 
-   overflow: "auto"
+   overflow: "auto",
+   [theme.breakpoints.down('md')]: {
+    display: "none",
+   }
 }));
 
 export const StyledSecondTypography = styled(Typography)(() => ({

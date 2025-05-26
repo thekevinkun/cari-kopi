@@ -1,14 +1,14 @@
 import { Box, Typography } from "@mui/material";
 
-import { StyledAppBar, StyledToolbar, WhiteOutlinedButton } from "./styles";
+import { StyledAppBar, StyledToolbar, StyledTitleTypography, WhiteOutlinedButton } from "./styles";
 
 const Navbar = () => {
   return (
     <StyledAppBar position="static">
       <StyledToolbar>
-        <Typography variant="h5">
+        <StyledTitleTypography variant="h5">
           Carikopi
-        </Typography>
+        </StyledTitleTypography>
 
         <Box display="flex">
           <WhiteOutlinedButton href="#login" variant="outlined">

@@ -1,7 +1,20 @@
 import { styled, alpha, InputBase, Typography } from "@mui/material";
 
 export const StyledAddress = styled(Typography)(({ theme }) => ({
-  fontSize: "1rem",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  display: "-webkit-box",
+  WebkitLineClamp: "2",
+  WebkitBoxOrient: "vertical",
+  fontSize: "0.725rem",
+  fontWeight: "bold",
+  [theme.breakpoints.down('md')]: {
+    maxWidth: 640,
+    fontSize: "0.75rem",
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: "0.675rem"
+  }
 }));
 
 export const Search = styled("div")(({ theme }) => ({
@@ -13,7 +26,14 @@ export const Search = styled("div")(({ theme }) => ({
   border: `1px solid ${alpha(theme.palette.text.primary, 0.2)}`,
   boxShadow: `0 1px 3px ${alpha(theme.palette.common.black, 0.1)}`,
   padding: theme.spacing(0.25, 1.5),
-  width: "100%"
+  width: "100%",
+  [theme.breakpoints.down('md')]: {
+    maxWidth: 640,
+  },
+  [theme.breakpoints.down('sm')]: {
+    padding: theme.spacing(0.15, 1.25),
+    maxWidth: "100%"
+  }
 }));
 
 export const SearchIconWrapper = styled("div")(({ theme }) => ({
@@ -22,6 +42,9 @@ export const SearchIconWrapper = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "center",
   color: theme.palette.text.secondary,
+  [theme.breakpoints.down('sm')]: {
+    marginRight: theme.spacing(0.65),
+  }
 }));
 
 export const StyledInputBase = styled(InputBase)(({ theme }) => ({
@@ -31,4 +54,7 @@ export const StyledInputBase = styled(InputBase)(({ theme }) => ({
   "& .MuiInputBase-input": {
     padding: theme.spacing(1, 0),
   },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: "0.85rem",
+  }
 }));

@@ -1,4 +1,4 @@
-import { AppBar, Button, Toolbar } from "@mui/material";
+import { AppBar, Button, Toolbar, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 export const StyledAppBar = styled(AppBar)(() => ({
@@ -10,6 +10,12 @@ export const StyledToolbar = styled(Toolbar)(() => ({
   justifyContent: "space-between",
 }));
 
+export const StyledTitleTypography = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    fontSize: "1.25rem"
+  }
+}));
+
 export const WhiteOutlinedButton = styled(Button)(({ theme }) => ({
   color: "#fff",
   borderColor: "#fff",
@@ -17,4 +23,8 @@ export const WhiteOutlinedButton = styled(Button)(({ theme }) => ({
     backgroundColor: "rgba(255, 255, 255, 0.1)",
     borderColor: "#fff",
   },
+  [theme.breakpoints.down('sm')]: {
+    padding: theme.spacing(0.35, 1.35),
+    fontSize: "0.75rem",
+  }
 }));

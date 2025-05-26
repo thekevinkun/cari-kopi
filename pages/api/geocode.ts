@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
+import { formatShortAddress } from "@/utils/helpers";
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { lat, lng, address } = req.query;
 
@@ -13,10 +15,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(400).json({ error: "Reverse Geocoding failed", details: data });
 
       const address = data.address;
+      const fullAddress = formatShortAddress(data.address);
       const shortAddress = `${address.suburb || address.neighbourhood || address.village || ""}, ${address.city || address.town || address.county || ""}`.trim();
       
       return res.status(200).json({
-        fullAddress: data.display_name,
+        fullAddress,
         shortAddress,
       });
     } catch (error) {

@@ -22,6 +22,20 @@ export type ActionForm = {
     userLocation: Coordinates | null;
 }
 
+export type OSMAddress = {
+  road?: string;
+  residential?: string;
+  pedestrian?: string;
+  suburb?: string;
+  neighbourhood?: string;
+  village?: string;
+  city?: string;
+  town?: string;
+  county?: string;
+  state?: string;
+  country?: string;
+};
+
 export type PlaceResponse = {
   place_id: string;
   name: string;

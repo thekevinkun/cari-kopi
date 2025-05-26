@@ -1,6 +1,7 @@
 "use client"
 
 import ReactDOMServer from "react-dom/server";
+import { useMediaQuery } from "@mui/material";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -8,17 +9,17 @@ import "leaflet/dist/leaflet.css";
 import { getStarsSVG } from "@/utils/helpers";
 import type { Map, Shop } from "@/types";
 
-function createCustomIcon(shop: Shop) {
+function createCustomIcon(shop: Shop, isMobile: boolean) {
   const html = ReactDOMServer.renderToString(
     <div 
       title={shop.name}
       style={{
         background: "white",
-        padding: "10px",
+        padding: isMobile ? "8px" : "10px",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        width: "100px",
+        width: isMobile ? 82 : 100,
         boxShadow: "0 2px 10px rgba(0,0,0,0.2)",
         borderRadius: "8px",
         lineHeight: "1.2",
@@ -26,9 +27,9 @@ function createCustomIcon(shop: Shop) {
     >
       <strong 
         style={{ 
-          marginTop: 10,
-          marginBottom: 15,
-          fontSize: "0.685rem",
+          marginTop: isMobile ? 4 : 10,
+          marginBottom: isMobile ? 10 : 15,
+          fontSize: isMobile ? "0.55rem" : "0.685rem",
           overflow: "hidden",
           textOverflow: "ellipsis",
           display: "-webkit-box",
@@ -44,13 +45,13 @@ function createCustomIcon(shop: Shop) {
         alt={shop.name}
         style={{
           width: "100%",
-          height: 72,
+          height: isMobile ? 54 : 72,
           objectFit: "cover",
-          marginBottom: 10,
+          marginBottom: isMobile ? 7 : 10,
         }}
       />
 
-      <span dangerouslySetInnerHTML={{ __html: getStarsSVG(shop.rating) }}></span>
+      <span dangerouslySetInnerHTML={{ __html: getStarsSVG(shop.rating, isMobile) }}></span>
     </div>
   );
 
@@ -77,7 +78,9 @@ const Map = ({ userLocation, shops }: Map) => {
     ? [userLocation.lat, userLocation.lng]
     : defaultCenter;
   
-  const mapZoom = userLocation ? 15 : 2;
+  const isMobile = useMediaQuery("(max-width: 600px)");
+
+  const mapZoom = userLocation ? (isMobile ? 16 : 15) : 5;
 
   const handleClickShop = (shop: Shop) => {
     console.log("Clicked shop:", shop.placeId);
@@ -111,7 +114,7 @@ const Map = ({ userLocation, shops }: Map) => {
             shop.geometry.location.lat,
             shop.geometry.location.lng,
           ]}
-          icon={createCustomIcon(shop)}
+          icon={createCustomIcon(shop, isMobile)}
           eventHandlers={{
             click: () => handleClickShop(shop),
           }}

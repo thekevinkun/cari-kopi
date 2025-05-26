@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Box, CircularProgress, Grid } from "@mui/material";
+import { useEffect, useState, useRef } from "react";
+import { Box, CircularProgress, Grid, useMediaQuery } from "@mui/material";
 import dynamic from "next/dynamic";
 
 import type { Coordinates, Shop } from "@/types";
@@ -79,9 +79,43 @@ const Home = () => {
     )
   }, [])
 
+  const mapRef = useRef<HTMLDivElement>(null);
+  const [mapHeight, setMapHeight] = useState("100%");
+
+  const isTablet = useMediaQuery("(max-width: 900px)");
+
+  useEffect(() => {
+    const updateMapHeight = () => {
+      if (!isTablet || !mapRef.current) return;
+
+      const topOffset = mapRef.current.getBoundingClientRect().top;
+      console.log("topOffset: ", topOffset);
+      setMapHeight(`calc(100vh - ${topOffset}px)`);
+    };
+
+    updateMapHeight(); // Initial run
+
+    window.addEventListener("resize", updateMapHeight);
+    return () => window.removeEventListener("resize", updateMapHeight);
+  }, [isTablet]);
+
   return (
-    <Grid container spacing={1} style={{ width: "100%", height: "calc(100vh - 64px)" }}>
-      <Grid size={{ xs: 12, md: 8 }}>
+    <Grid 
+      container 
+      spacing={isTablet ? 2 : 1} 
+      flexDirection={isTablet ? "column-reverse" : "row"}
+      style={{ 
+        width: "100%", 
+        height: isTablet ? "100%" : "calc(100vh - 64px)" 
+      }}
+    >
+      <Grid 
+        ref={mapRef}
+        size={{ xs: 12, md: 8 }}
+        style={{ 
+          height: isTablet ? mapHeight : "100%" 
+        }}
+      >
         <Map userLocation={location} shops={shops} />
       </Grid>
       <Grid size={{ xs: 12, md: 4 }}>
