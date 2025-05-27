@@ -16,6 +16,7 @@ export type Shop = {
 export type Map = {
     userLocation: Coordinates | null;
     shops: Shop[];
+    onSelectShop: (shop: Shop) => void;
 }
 
 export type ActionForm = {
