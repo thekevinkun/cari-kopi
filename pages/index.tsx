@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { Box, CircularProgress, Grid, useMediaQuery } from "@mui/material";
 import dynamic from "next/dynamic";
 
-import type { Coordinates, Shop } from "@/types";
+import type { Coordinates, Shop, ShopDetail } from "@/types";
 
 const Map = dynamic(() => import('@/components/Map/Map'), {
   ssr: false,
@@ -35,6 +35,7 @@ const Home = () => {
   const [location, setLocation] = useState<Coordinates | null>(null);
   const [address, setAddress] = useState<string | null>(null);
   const [shops, setShops] = useState<Shop[]>([]);
+  const [selectedShop, setSelectedShop] = useState<ShopDetail | null>(null);
 
   const getAddress = async (lat: number, lng: number) => {
     try {
@@ -50,6 +51,21 @@ const Home = () => {
     return null;
   };
 
+  const getShopDetail = async (shop: Shop) => {
+    try {
+      const res = await fetch(`/api/detail?placeId=${shop.placeId}`);
+      const { data } = await res.json();
+      console.log("shop detail: ", data);
+      
+      if (data) {
+        setSelectedShop(data);
+      }
+    } catch (err) {
+      console.error("Failed to get shop detail:", err);
+    }
+    return null;
+  }
+
   // Get user location by device  
   useEffect(() => {
     if (!navigator.geolocation) {
@@ -60,9 +76,9 @@ const Home = () => {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
-        const userLocation = {lat: latitude, lng: longitude };
+        const userLocation = {lat: -0.4772294, lng: 117.1306983 }; // For development
         setLocation(userLocation);
-
+        
         // Get address as in city/street/etc
         const addressString = await getAddress(latitude, longitude);
         setAddress(addressString.fullAddress);
@@ -89,7 +105,7 @@ const Home = () => {
       if (!isTablet || !mapRef.current) return;
 
       const topOffset = mapRef.current.getBoundingClientRect().top;
-      console.log("topOffset: ", topOffset);
+      
       setMapHeight(`calc(100vh - ${topOffset}px)`);
     };
 
@@ -116,12 +132,19 @@ const Home = () => {
           height: isTablet ? mapHeight : "100%" 
         }}
       >
-        <Map userLocation={location} shops={shops} />
+        <Map 
+          userLocation={location} 
+          shops={shops} 
+          onSelectShop={(shop: Shop) => getShopDetail(shop)}
+        />
       </Grid>
       <Grid size={{ xs: 12, md: 4 }}>
         <Box display="flex" flexDirection="column">
           <ActionForm address={address} />
-          <ShopDetail />
+
+          {selectedShop && 
+            <ShopDetail shop={selectedShop}/>
+          }
         </Box>
       </Grid>
     </Grid>

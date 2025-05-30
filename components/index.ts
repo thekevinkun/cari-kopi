@@ -1,9 +1,15 @@
 import AuthForm from "./AuthForm/AuthForm";
 import Navbar from "./Navbar/Navbar";
-import ShopMarker from "./ShopMarker/ShopMarker";
+import ImageWithSkeleton from "./ImageWithSkeleton/ImageWithSkeleton";
+import PhotoSlide from "./ShopDetail/PhotoSlide";
+import OpeningHours from "./ShopDetail/OpeningHours";
+import ReviewSlide from "./ShopDetail/ReviewSlide";
 
 export {
     AuthForm,
     Navbar,
-    ShopMarker
+    PhotoSlide,
+    OpeningHours,
+    ImageWithSkeleton,
+    ReviewSlide
 }

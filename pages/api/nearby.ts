@@ -13,20 +13,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(400).json({ error: "Missing latitude or longitude." });
     }
 
-
-    const area = shortAddress ? slugify(String(shortAddress)) : `${lat},${lng}`;
     const subPath = "carikopi";
-    const cacheKey = area;
+    const cacheKey = shortAddress ? slugify(String(shortAddress)) : `${lat},${lng}`;
 
     // Check cache first
     const cached = await getFromCache<{ results: PlaceResponse[] }>(subPath, cacheKey);
     if (cached) {
-        console.log("Get from cache redis...");
+        console.log("Get nearby from cache redis...");
         return res.status(200).json({ fromCache: true, results: cached.results });
     }
 
     try {
-        console.log("Calling api...");
+        console.log("Calling nearby api...");
 
         // Call Google Places Nearby Search
         const radius = 2000; // in meters
@@ -42,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         
         const results = (data.results || []).map((place: PlaceResponse) => {
             const photoRef = place.photos?.[0]?.photo_reference;
-            const imageUrl = photoRef ? `/api/image?ref=${photoRef}&area=${area}&placeId=${place.place_id}` : null;
+            const imageUrl = photoRef ? `/api/image?ref=${photoRef}&type=thumbnail&area=place_${place.place_id}` : null;
 
             return {
                 placeId: place.place_id,

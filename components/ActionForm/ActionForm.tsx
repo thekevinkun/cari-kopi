@@ -14,7 +14,7 @@ const ActionForm = ({ address }: { address: string | null }) => {
           <LocationOnIcon 
             style={{
               fontSize: isMobile ? "1.15rem" : "1.25rem",
-              color: "#4d76c4",
+              color: "#6f91d1",
               marginRight: "3px"
             }}
           />
@@ -33,7 +33,7 @@ const ActionForm = ({ address }: { address: string | null }) => {
           <LocationOnIcon 
             style={{
               fontSize: isMobile ? "1.15rem" : "1.25rem",
-              color: "#4d76c4",
+              color: "#6f91d1",
               marginRight: "3px"
             }}
           />

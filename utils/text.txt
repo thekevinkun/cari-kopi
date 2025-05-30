@@ -1,0 +1,262 @@
+{
+    "address_components": [
+        {
+            "long_name": "no. 06A",
+            "short_name": "no. 06A",
+            "types": [
+                "street_number"
+            ]
+        },
+        {
+            "long_name": "Jalan Angklung",
+            "short_name": "Jl. Angklung",
+            "types": [
+                "route"
+            ]
+        },
+        {
+            "long_name": "Dadi Mulya",
+            "short_name": "Dadi Mulya",
+            "types": [
+                "administrative_area_level_4",
+                "political"
+            ]
+        },
+        {
+            "long_name": "prevab segiri",
+            "short_name": "prevab segiri",
+            "types": [
+                "administrative_area_level_3",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Kota Samarinda",
+            "short_name": "Kota Samarinda",
+            "types": [
+                "administrative_area_level_2",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Kalimantan Timur",
+            "short_name": "Kalimantan Timur",
+            "types": [
+                "administrative_area_level_1",
+                "political"
+            ]
+        },
+        {
+            "long_name": "Indonesia",
+            "short_name": "ID",
+            "types": [
+                "country",
+                "political"
+            ]
+        },
+        {
+            "long_name": "75242",
+            "short_name": "75242",
+            "types": [
+                "postal_code"
+            ]
+        }
+    ],
+    "business_status": "OPERATIONAL",
+    "formatted_address": "Jl. Angklung No.06A, Dadi Mulya, prevab segiri, Kota Samarinda, Kalimantan Timur 75242, Indonesia",
+    "formatted_phone_number": "0822-5090-8893",
+    "geometry": {
+        "location": {
+            "lat": -0.4876328,
+            "lng": 117.1486793
+        },
+        "viewport": {
+            "northeast": {
+                "lat": -0.4863021197084979,
+                "lng": 117.1500761302915
+            },
+            "southwest": {
+                "lat": -0.489000080291502,
+                "lng": 117.1473781697085
+            }
+        }
+    },
+    "international_phone_number": "+62 822-5090-8893",
+    "name": "KOPIKUMANA",
+    "opening_hours": {
+        "open_now": true,
+        "periods": [
+            {
+                "open": {
+                    "day": 0,
+                    "time": "0000"
+                }
+            }
+        ],
+        "weekday_text": [
+            "Monday: Open 24 hours",
+            "Tuesday: Open 24 hours",
+            "Wednesday: Open 24 hours",
+            "Thursday: Open 24 hours",
+            "Friday: Open 24 hours",
+            "Saturday: Open 24 hours",
+            "Sunday: Open 24 hours"
+        ]
+    },
+    "photos": [
+        {
+            "height": 4624,
+            "html_attributions": [
+                "<a href=\"https://maps.google.com/maps/contrib/105913365396914894400\">Stella Kartika</a>"
+            ],
+            "photo_reference": "AXQCQNT5HTFsyGHMkOTb04zD_UmQ-UXPITb6oL6fAnUwc3zcy3nzK_usgudyU3JdFsdL8V2fSi6Fzlvnym_kTWQ8WQnStfrPQPrJHLnu1Xpu2nChpJX6VwJBK_18tNflEoox-DlPayEeiFgaXpFtgCPovqZ-8G39zfL5opwgDCVc7WGIrs_ltVrbnvHo5GK19uF5rNSaCHmzzV4F0jE_az7eO9iJbGfUtQ-TsfKua91nwNEoZW4--JjzT7r66A857MIx4QQ1vxpDneCshvaFvuW01lkVY4ocRXvmCHYYx2BcC9_nEie24GrM1Az2ztPe3A3rrhV0fPNCBTeJfc9LpytsKSF8pRVpXGxZMJaJm0sVeSLjY2BMyhzh395G96fN7g_dSvp85tYgBTZ5Up5HAQv2lBMRlxiXJj27zTgr31N3bncuhUCPV3O34gOQh516zNLaICM6RIsX9WRDKYjpYJKSsf1dm60BHxbvOI_RFemxowbwWT7_7vud-ar95ho8QdZZfkljB01S2eBjbYzhw7K1D42XMnFxMIVvgoND8ZuFKkf6M034odFbIpxIlu4fSkXqMZGu5lhaiVxcPurHjm3pTmUX8EWWnJOwDgyp247Ylsc2DKVX06jNa4W0eV1rux2B9gDO9hr5",
+            "width": 3468
+        },
+        {
+            "height": 4000,
+            "html_attributions": [
+                "<a href=\"https://maps.google.com/maps/contrib/105913365396914894400\">Stella Kartika</a>"
+            ],
+            "photo_reference": "AXQCQNTvRhwj_hL2GGxISfmCmeC8iaBYY-gjg6j3p4RwDdpW08bRTdZMFE-w9DptzCAyvqWozGw2O_wa2fLIEvM8oNoRqD64kMz-n5Yu5oy2CxmWoMjGL1hXe_IWdnBsvTLwDplgrqVHvOJG37XMqWIaXHB3mPEtwx57cXtwI0pifAL5PJYnr38BmpEmM-SZPXY_GeIOCvPPVtB01bZR39XsO9w4zZGDhj0EXUMfDe35nXYWhzFyHi5bmo5jr_BY3xKuPH4mBbaZv9fROFQZHCTz7tbAXJw4xd_Wk3d5uFesAYL8fvtpw_b1tgPYcHGCIWPlsGPOSetmVlKj20ZVBVwsKJdhX-Vgt4v6zC70SnTi7XWSqoV8jp2bf5tdYufSwearHbj9OqdPld2g9JCXK2tLuVmP61aJEtIkQaLSqSVkGW8DozncnxhS22ZwGTod8Pt5VcUIWtSDN9TuDUqU5IS_MLO83Y--tkhbo_Egb4bT8cb_nRIHg0GaQm1N4kS7pyTOjQNBSfShTiKgCRed2mv9u67ydiNtcd57UKKHVt4QaK2C1SQveod1wRfvX1KF6AEye6j_qfHrxqugDs5MqPcb2gl2_7JwZTkwdorDa55LEBdt0B-7v07IET3SoRHQNRltUv-Fpw",
+            "width": 3000
+        },
+        {
+            "height": 4032,
+            "html_attributions": [
+                "<a href=\"https://maps.google.com/maps/contrib/104854859583716391562\">Vincent Salim</a>"
+            ],
+            "photo_reference": "AXQCQNTP4u02GzYADieA3i7f7sL_4TdK1l3xO8C-9QtGHKyKoMvzv4DT-Xt2-6C5q_l_3SW4Fqrz3Wnanb0BTZPxuCmtuLnhdsIObu8v33Wav8bye_6M8glfNUvbfzXdHw3POruJ3O6YwiqQ6Q3uvIA1LxunE-uOCHFcVXEIJ1DJAs13AQCIZSvbqxdYpzJTtYrJjODnX9M3949jdtKxoCsdJr5yEKpvIHjaBPZIiScuavE0W7yIiKtzGBxMGjRIbebo6ly1da9jOX9Pxpi0_AzTaSY-yTiJhasBaP8jimuhppcaW6VOO4inhwFGMErO9XsKL30mdJ6Ymwag1dOI-OIbmPI-HIyqpWzVOIsCdSHGxJnw-N5oiipsCe0GgXYZmWX2-XIGWhb-ORss4glbAnK8GS3xz72EVXU0-Pgfqx3A6HaqoROQZ2z2ny50Ere1lXBBLK5Y-RRBqpsGS1_7IHIGYVamyvHl-qbx-UnCfu58b-ryck7c1Re8PcJPfi5xEJPyq5ApjOVXIGLy_HR9558pb8Veyx-rii6fBKFLZAOPtfmP8TPNvl4oNaOkY4ty8xzLHLCl9YRkrVh80t29HNi6aHEpeyJ0keHWP49_LSyltGQ5FQfLMyYwtxME6OySj8PWnMCMnJ68",
+            "width": 3024
+        },
+        {
+            "height": 4624,
+            "html_attributions": [
+                "<a href=\"https://maps.google.com/maps/contrib/105913365396914894400\">Stella Kartika</a>"
+            ],
+            "photo_reference": "AXQCQNSn-3hPNOvioXulfJrJQpb9IFqxTzGQRwLtfzgqqxRPAmDixh4EQZN4p9O6HhlqO6xAO843H-6Pm_GqrFDdPPTaT8ShFgUIRYVo80fWJy1VZXvWxyT1Cbt8fjUK8BT1-xzxDCBRpgm4UxCszHBhI3IKy0rrqW4W1CQbcIxd1BMt2hVYyZa3QwQ3HFRQJMcxkX3hNRAIJHhqWQks58COtagV1lM6Jx04uq13WsS_o1uhKPqtyOG9aCHGKraAC4GjmGjWNKAOCCG8nGdsDuL7ME1dFwE5lGye70Ux-Kq2nT8h7IKyBZb7mK0QeJfep0tkc5oJW9xKFMc8Ed74mLn7kjRKPzc8Uyoe1h2tixEOlSPGkXeVlnG9YvylPvpT0y95SKztEGmux5zfL9w2gUXXPKUTVm4jyU8k-cvNJV_Shlp6PizMTePGYDpWeZU5zCubkQHzFzEY_Pyx9N7eejIyvnvEr7NYGi_k5ByZJKjtUhK7PREJNQBhSy7LXHgP15rs2P4m4uLn3vWsCSTJR3E1CLebWEcvk6h6W5H_7HKpMx9BcfaImtQbRyK7HkeCydIjSAUA4yMW0ut6i5mOECCvMu_PnlmVHY9CZ_6ZwFKowLqcYEYUWKwwERLAfRHacULhGH-1dA",
+            "width": 3468
+        },
+        {
+            "height": 4032,
+            "html_attributions": [
+                "<a href=\"https://maps.google.com/maps/contrib/113107846150544029902\">rido diki</a>"
+            ],
+            "photo_reference": "AXQCQNSH8rnyBtY2b4a-wFRK9204StgvT0zn_pwOJjZ_W46Scqn5cPKD2sqZDRV5jz9ASkbuTM48gZ9oAA_sRSDAJBXL_50oKpZsUSjbIKXsuWQATo2GjngzuWdRKdlPhR9mcQ0wdC9k7ZfLpuw95oL2yI-y96hOMHEDdSA6SUWFNAREG5v277yDShZdQUVzo3ntDzZG-uUYUSwbKdidalpIHdXDt3QiKnBccaWs23AYbz9CsZea8a7BoQtipWWftzV6TlhsxUUk35v_XP2zxg6E0mHpKgHcKYiiqhqCh-0CN6TAALVN4CVvZXVwCFFd4QlVo4D4a7Vj6LXrB-OGQeqDEV26Mm6Hp2ZmYK9PRyL3xqi1StLPFtgs2nb1ifLZt0ORQdSNxqYmMwQ8KLnmn0J-Ix8jxcQauy7vIVReq7N3PI0MWoxcVXFzIffTZZpJa9NgfK0czHoNbQRX4-tdTRsLcZTfeo3URcNtlYYIhf4d23gl4luMnj542nkY2L5DmUjPssZnj0O8Iym0szOYVPyIctJ5KN8I089go4jVV2icEq5ZAUXdVIu1nxv-U6J8063mUMNn8LzjgHYo3-_joWckXj-S9cIT5YrEWxbw1JWBsHOxg-H2I-zLl9iBIUdT6mEI-zY8zw",
+            "width": 3024
+        },
+        {
+            "height": 922,
+            "html_attributions": [
+                "<a href=\"https://maps.google.com/maps/contrib/113107846150544029902\">rido diki</a>"
+            ],
+            "photo_reference": "AXQCQNTzfZegE9viwm3FZ3-MkWyr1xEdYdfM6rJiKGY-3VSWiu1yFT0q0KIhebCdRZx6xAJ2TgC2nIiJiFN7fBAQ6Ij-b6mmF7EpfgfMRRRheJEkKgrxej7zuBKVovrj0sQZJ8bv_3E0PDa9BdZmDXE_hCRXMVQyZGMhfdhZnwHDvESAE4NrxJLCyfTG6KMPHbGIkGa-wR9OjaD35xnM1K1kiwwtVR5VrId00sPgzNZZrEWVntzNF7Bb7dfbyL93K_pwY7H3J2JOk1McAqTTbMB07AA_rmvHjY5rSVzP_ffKWa1w8psB2kzLrktx9ECXrhQ4YqjkG7IWNO5lomzUKMMRbDMPTl79UItEFdzMeYEfOTdxPcoDezbFa90vhnHeb226gccx7eZHATop7tG4Ux_gBZcSjWfeEDZ9838MwH9QgJlxfZgOAi6JCmHIjExnfC-hKby3ykuyFweJzGgP3YKhLW0NTavyGHwR8_HcykIZZHM71NIus8l4LdEYX-jnD6Q0_mR7l6eh0aePReAOTt9w31BZU7yJyeDEucHhGj0kmqaP2w2PH3zquq69ADqRWsC3dg_cUjtpA-mMED5f8-yZ0lg4m_W_XF6Yf9YGW8mi078GGH0dyt-8elytx5l20tcswhPgmZc-",
+            "width": 1230
+        },
+        {
+            "height": 4032,
+            "html_attributions": [
+                "<a href=\"https://maps.google.com/maps/contrib/111091317552431270372\">fitra ariadi</a>"
+            ],
+            "photo_reference": "AXQCQNTIG4QiUQRPLfBAmiStDY94FMLHB04d87OixRku4Utw4WQZNjI9fGZ7wXaBuGciipbvTXL4kTFGV7QI4WgKOksmsQ7qtaeVnpuln-UqsDBy0HFlzHKfXORISP6OE5iWQzYKi5yv5M3Omnea8vv93CkVoxe8rhzl5I6HqbRxH0SBa_5AvQOl5EVSD-SOx0MrPFi7Q6T6Mf1uqiBnqGIZEPbe7t5kMS1wK3pFxlbESqR1eaapDE38T_8lyA1KTO4OA-NT3UryuR8KssZ6rRCnOtlXOaCyAs9oTOkkC4ghw3QofyN5w-uW5T3hCDqNfNHqV0LNTILT83yzFo-50G9K8e2PECZREXSAsvti8umJmFTZ8CO9qFYWrWyIarQQ5DsrpGF0Ysd2lKrN690VhNHOuBtCApoJl2UY1h20wVe1-qIh_0LqpOVlzYJfldG69qMmsUVuilyaNOpPv5H6pUaBLny3dgkuPSqFKwcuC66iF6u4nt9w2-Lhe5Nt0k7y6ZHGIenAVWYvyzP_eFU7thCgzwPc-mzKBqyA4ypbyQbKKdHIoKYI4I9E6yOaBOekt5161aOP22pfNUNg0gxySduY3kg49J1N7x5AYsmjuNLJ6FCnSqZq97C9-W-3WyNd3SYefWwrvgxw",
+            "width": 3024
+        },
+        {
+            "height": 4032,
+            "html_attributions": [
+                "<a href=\"https://maps.google.com/maps/contrib/102746916904475269913\">Prastiwi Inten</a>"
+            ],
+            "photo_reference": "AXQCQNSVsJPMN51TLHHM0KrxMu89Z3KbfVkcjwQuTSAu-USSleq18pTj9UpZYJWdAMB5FFRqCt2xBzInVjDQhCV-zNF51KdL8QrKZMJDLt8WNN9EcFnmzWYkII7m7YOcs-TBvkxX8Csn0mZ0NRSbuFDCxCNxYIacN8HtMTlD-N8oXSjSFmpa_uI8VKknvf7AaC_-8YubcXfuzKuDCucReu2w6lGwi1FDtQW79wvF5fKYvhJEU2LldrmkaDYfJiY_EaqeXUXKGFo4y3EZHQ-NRmllqiwlFF2jmRBn9lkZRlyHvUm7DMOc1wyxFo2ey0I8emMeanhPNAsQFm8oSWWRkAZDRI8G11ksw6KlJeE7pFmPXUy6V0mpf5lfwi4iUqQY9BFfMGBzOdD9zmsAe8Adx8jGWLvl5my4ETUExVQgUunyTVw5eBFA3VhZZzvFC38WMkfEzMp1viQm5fX-KHkGlNsroyIVvuW3Idg_HVAKZPhcPGtMxh8NqMix6-xiOIazXkGwBOrTTF5dhKIv4y3QZih1PsKo5nG3_LrqGVIRZgGdvD2Qu4_XpJxa2-aKXQGjG2A7yjzS0Zj_hlbzn6hVjljNp39hyq4l0lwzoY2IDHjq018z4JU44a4PJnQ61nvoQQxK7yvE-A",
+            "width": 3024
+        },
+        {
+            "height": 4032,
+            "html_attributions": [
+                "<a href=\"https://maps.google.com/maps/contrib/102746916904475269913\">Prastiwi Inten</a>"
+            ],
+            "photo_reference": "AXQCQNSKTDJhmok1gHQF5i5G-czYLXVIKImaQ8jWPunpWapYKbZ5Q5mG-klsOkAuh8WVHkux-mhpccprfLDueuK3pfFahFRPMAknN0Lp2x-QWz8Xu2Voq5oZsP063JpPHCvJ7Xav3Jx6cxeKgt5kXZgFr3xL26gVZTwxj8BAPnSnXSn6Z4e5im4xIoXLXhCTB3aiktk8HCYoqq5IJQ98PTtio1VVqOkC232MuWQYM1pC75r1xQfbml7yA4P08nVJiRcBIcNSvhLfDQSZCuLfN2nnQFdG9FxqjbOYaD-RTE1lPX8oC4jC3CyzKxbmKIFFCqweSrvDlQZM6RARoHeYa7jqpnxAI6S3Q6zw_zM2TSiRydHIhSq73BqBvCGyq9mMxOd6fnREi4hz5f45l6PlZhErPoSEurCPNYjadpK1LYaR8EnUmABiKvpIUDLMEBU5rFaF_0XSNyMac7jWt_ciYHQALWu6uXCFK2P0E1lZtt2QEBxeLnd0UvX1vP42Bxeyh3Gp3LQ420xTWINOEfHRffCtaUKALn8tJgRT5LM_fUzupKBnlsBQrkp7OJI6bgtDm5xkgDUUbae7Mhzu1idgZy6u3ipAeXLnXoTQe3YQXhcGhekD_QoCLgwfHRxWblTBETTtfZuqlA",
+            "width": 3024
+        },
+        {
+            "height": 4032,
+            "html_attributions": [
+                "<a href=\"https://maps.google.com/maps/contrib/114563051458654497528\">Anggasta Putra</a>"
+            ],
+            "photo_reference": "AXQCQNQbS3c4KrH19aaFZgFv7D2MNYzoXjQLjyYEZ4WCjyVc6nf11RZEJsGhzWO0-szbg3ZOPBpIFqGAKgDaHfM55pfhsMQmhg1OLQRoHF5UtDBTOv2X3cMLg0xl3CBrOdHXzAOYCfX_FR-mlWORAexYxP5kkarUuitS9_3bRwngYMiDZeeaQuoviHQkjnltWIjXqm-29iNBZ2ao4hbgQhS88TkT7UzHEPUu1t7zaV28g4oS4bAY0QSTQULJPJ5SJPWyBm8bOlAG07Kr_QYJNDMKbiEvkhP8c7rBBmsA_qGLb71Dsio3R-SIUa80tnMVHBZbM_n5BnpDG7FJ1xdx73Yd5YeVqhK84VRAettZcXsaaDr6lPzl3JBXZfxHLn8TkOW24d92HaIYMzuaFNn7Y4yDzeXv1pW2xEnT9pxMaaNrZy4ouR9Y75iML0lrp1uUnJURx7g0yGUb-i8Qgf41ssmkD8RRvge1PYX7bpC0DkeRw-SBC7oIfp8zwC9RyHRSw36iAQstVt-FdbXGRL-AUIFu4G3YkMA5gNppopMJHWhB-oDqm8JG2SMtzF5Ibe4zLdCgY_YumrWYf5NV-C1IchaE2QSmREOa_k4LgPVxnnMz1NIGbWz8BNXBjv2hWHb7eeK0phh3I8t-",
+            "width": 3024
+        }
+    ],
+    "place_id": "ChIJJZGlj6J_9i0RBnhncXm4aWU",
+    "rating": 4.7,
+    "reviews": [
+        {
+            "author_name": "Nadine Deskananda",
+            "author_url": "https://www.google.com/maps/contrib/105564889329256763942/reviews",
+            "language": "en",
+            "original_language": "en",
+            "profile_photo_url": "https://lh3.googleusercontent.com/a-/ALV-UjWessJ_P15deo26iM3DE4LvloQObPIlWaFzr2FORR-L2H-fySbI=s128-c0x00000000-cc-rp-mo-ba3",
+            "rating": 5,
+            "relative_time_description": "a year ago",
+            "text": "The food was so-so. Staffs are not to friendly but it’s okay because the drinks save the day. I recommend to try their signature coffee. It’s refreshing. The place was great. All the area are smoking area include the indoor area. The atmosphere was great it feels like you visit your granny’s home",
+            "time": 1698366681,
+            "translated": false
+        },
+        {
+            "author_name": "Darus Ishak",
+            "author_url": "https://www.google.com/maps/contrib/109365647176727842026/reviews",
+            "language": "en",
+            "original_language": "en",
+            "profile_photo_url": "https://lh3.googleusercontent.com/a-/ALV-UjW2hMe__vWsG0o841ikQkaLH_qh-KyctlLf5oCZxLzamzxAX20v0g=s128-c0x00000000-cc-rp-mo-ba4",
+            "rating": 3,
+            "relative_time_description": "2 years ago",
+            "text": "Good spot for breakfast as they open very early in the morning. Limited choice of food and menu is not updated as well. Banana muffin is recommended tho.",
+            "time": 1654494863,
+            "translated": false
+        },
+        {
+            "author_name": "Khairul Umam",
+            "author_url": "https://www.google.com/maps/contrib/111011383036413711626/reviews",
+            "language": "en",
+            "original_language": "en",
+            "profile_photo_url": "https://lh3.googleusercontent.com/a-/ALV-UjU1iKq7cHMp2s89yZ0x2Ddrv7BjFxjDej27SYqlAp6ucJF_DYr2lw=s128-c0x00000000-cc-rp-mo-ba4",
+            "rating": 4,
+            "relative_time_description": "a year ago",
+            "text": "Kopikumana is a delightful family-owned cafe with a charming wooden ambiance. It's an ideal spot to unwind with friends, offering a warm and inviting atmosphere. The food and drinks served are consistently excellent, making it a great place to indulge your taste buds.\n\nThe open layout provides a plethora of smoking areas, making it perfect for those who enjoy a laid-back, sociable environment. While it's recommended for the younger crowd, families with children might want to explore other options. However, if you're set on visiting, daytime visits are optimal for a relaxed experience, whether you're catching up with friends or working. Kopikumana truly stands out as a haven for coffee enthusiasts seeking a cozy retreat.",
+            "time": 1705126154,
+            "translated": false
+        },
+        {
+            "author_name": "Muhammad Dzaky Dhiya Al Fath",
+            "author_url": "https://www.google.com/maps/contrib/109395767001777614332/reviews",
+            "language": "en",
+            "original_language": "en",
+            "profile_photo_url": "https://lh3.googleusercontent.com/a-/ALV-UjVQ7e-oxxqrLK4aQmgWWA3SKUfZ0U43ojdDkjarhHCK66NqhAdE_g=s128-c0x00000000-cc-rp-mo",
+            "rating": 5,
+            "relative_time_description": "8 months ago",
+            "text": "it's feels like home",
+            "time": 1726109547,
+            "translated": false
+        },
+        {
+            "author_name": "Putera Tiya Ilahi",
+            "author_url": "https://www.google.com/maps/contrib/104972712000103520894/reviews",
+            "language": "en",
+            "original_language": "en",
+            "profile_photo_url": "https://lh3.googleusercontent.com/a-/ALV-UjWYzLFLyDDDyqUK_qaZIIg5HZLbHk5kInRsZhc-8EEBcsJ5colLsQ=s128-c0x00000000-cc-rp-mo",
+            "rating": 5,
+            "relative_time_description": "2 years ago",
+            "text": "A good place to start your day with excellent coffee and superb selection of meals.",
+            "time": 1660473546,
+            "translated": false
+        }
+    ],
+    "types": [
+        "cafe",
+        "point_of_interest",
+        "store",
+        "food",
+        "establishment"
+    ],
+    "url": "https://maps.google.com/?cid=7307574702118500358",
+    "user_ratings_total": 233,
+    "vicinity": "Jalan Angklung No.06A, Dadi Mulya"
+}

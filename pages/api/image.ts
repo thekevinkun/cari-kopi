@@ -5,14 +5,14 @@ const GOOGLE_PLACE_PHOTO_BASE = "https://maps.googleapis.com/maps/api/place/phot
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY!;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { ref, area, placeId } = req.query;
+  const { ref, type, area } = req.query;
 
-  if (!ref || typeof ref !== "string" || !area || typeof area !== "string") {
-    return res.status(400).json({ error: "Missing ref or area param" });
+  if (!ref || typeof ref !== "string" || !type || typeof type !== "string" || !area || typeof area !== "string") {
+    return res.status(400).json({ error: "Missing ref, type, or placeId param" });
   }
 
   const subPath = "carikopi";
-  const cacheKey = `${area}:photo:place_${placeId}`;
+  const cacheKey = `${type}:${area}`;
   const cachedImage = await getFromCache<string>(subPath, cacheKey);
 
   if (cachedImage) {
