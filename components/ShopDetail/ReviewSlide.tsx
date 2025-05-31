@@ -10,7 +10,7 @@ import "swiper/css/navigation";
 
 import type { ReviewItemProps } from "@/types";
 
-const ReviewSlide = ({ reviews }: { reviews : ReviewItemProps[] | [] }) => {
+const ReviewSlide = ({ reviews }: { reviews : ReviewItemProps[] }) => {
    const swiperReviewRef = useRef<any>(null);
    const [activeIndex, setActiveIndex] = useState(0);
    const [readMore, setReadMore] = useState(false);
@@ -34,7 +34,7 @@ const ReviewSlide = ({ reviews }: { reviews : ReviewItemProps[] | [] }) => {
     }, [activeIndex]);
 
   return (
-    <Box sx={{ position: "relative", width: "100%" }}>
+    <Box sx={{ position: "relative", width: "100%",  mt: 5 }}>
         <Swiper
             modules={[Navigation]}
             navigation={{
@@ -47,7 +47,7 @@ const ReviewSlide = ({ reviews }: { reviews : ReviewItemProps[] | [] }) => {
         >
             {reviews.map((review: ReviewItemProps, index) => (
                 <SwiperSlide key={review.author_name}>
-                    <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
+                    <Paper elevation={1} sx={{ p: 2, mb: 1 }}>
                         <Box display="flex" alignItems="center" gap={2}>
                             <Avatar alt={review.author_name} src={review.profile_photo_url} />
                             
@@ -94,10 +94,13 @@ const ReviewSlide = ({ reviews }: { reviews : ReviewItemProps[] | [] }) => {
 
         <Box
             sx={{
+                display: {
+                    xs: "none",
+                    md: "flex"
+                },
                 position: "absolute",
                 top: 4,
                 right: 8,
-                display: "flex",
                 gap: 0,
                 backgroundColor: "rgba(0,0,0,0.3)",
                 borderRadius: 1,

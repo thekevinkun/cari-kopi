@@ -73,6 +73,12 @@ export type Map = {
   onSelectShop: (shop: Shop) => void;
 }
 
+export type ShopDetailProps = {
+  shop: ShopDetail;
+  showShopDetail: boolean;
+  onCloseShopDetail: () => void;
+}
+
 export type SkeletonImageProps = {
   src: string;
   alt: string;

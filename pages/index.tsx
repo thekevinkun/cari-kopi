@@ -25,7 +25,7 @@ const ActionForm = dynamic(() => import("@/components/ActionForm/ActionForm"), {
 const ShopDetail = dynamic(() => import("@/components/ShopDetail/ShopDetail"), {
   ssr: false,
   loading: () => (
-    <Box display="flex" justifyContent="center" alignItems="center">
+    <Box sx={{display: {xs: "none", md: "flex"}}} justifyContent="center" alignItems="center">
       <CircularProgress />
     </Box>
   ),
@@ -35,7 +35,9 @@ const Home = () => {
   const [location, setLocation] = useState<Coordinates | null>(null);
   const [address, setAddress] = useState<string | null>(null);
   const [shops, setShops] = useState<Shop[]>([]);
+
   const [selectedShop, setSelectedShop] = useState<ShopDetail | null>(null);
+  const [showShopDetail, setShowShopDetail] = useState(false);
 
   const getAddress = async (lat: number, lng: number) => {
     try {
@@ -59,6 +61,7 @@ const Home = () => {
       
       if (data) {
         setSelectedShop(data);
+        setShowShopDetail(true);
       }
     } catch (err) {
       console.error("Failed to get shop detail:", err);
@@ -84,7 +87,7 @@ const Home = () => {
         setAddress(addressString.fullAddress);
 
         // If success find user location, find coffe shop nearby
-        const res = await fetch(`/api/nearby?lat=${latitude}&lng=${longitude}&shortAddress=${addressString.shortAddress}`);
+        const res = await fetch(`/api/nearby?lat=${-0.4772294}&lng=${117.1306983}&shortAddress=${addressString.shortAddress}`);
         const data = await res.json();
       
         setShops(data.results || []);
@@ -142,8 +145,12 @@ const Home = () => {
         <Box display="flex" flexDirection="column">
           <ActionForm address={address} />
 
-          {selectedShop && 
-            <ShopDetail shop={selectedShop}/>
+          {(showShopDetail && selectedShop) && 
+            <ShopDetail 
+              shop={selectedShop}
+              showShopDetail={showShopDetail}
+              onCloseShopDetail={() => setShowShopDetail(false)}  
+            />
           }
         </Box>
       </Grid>

@@ -45,10 +45,13 @@ const PhotoSlide = ({name, photos}: {name: string, photos: string[] | []}) => {
 
         <Box
             sx={{
+                display: {
+                    xs: "none",
+                    md: "flex"
+                },
                 position: "absolute",
                 bottom: 8,
                 right: 8,
-                display: "flex",
                 gap: 1,
                 backgroundColor: "rgba(0,0,0,0.4)",
                 borderRadius: 1,
