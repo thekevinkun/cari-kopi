@@ -83,7 +83,7 @@ const Home = () => {
         setLocation(userLocation);
         
         // Get address as in city/street/etc
-        const addressString = await getAddress(latitude, longitude);
+        const addressString = await getAddress(-0.4772294, 117.1306983);
         setAddress(addressString.fullAddress);
 
         // If success find user location, find coffe shop nearby

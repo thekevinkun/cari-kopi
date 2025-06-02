@@ -1,3 +1,5 @@
+"use client"
+
 import { useEffect, useState, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Box, Card, CardContent, Link as MUILink, Typography, useMediaQuery } from "@mui/material";

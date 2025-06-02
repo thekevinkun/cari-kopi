@@ -1,17 +1,23 @@
 export type Coordinates = {
-    lat: number;
-    lng: number;
+  lat: number;
+  lng: number;
 }
 
 export type Shop = {
-    placeId: string;
-    name: string;
-    rating: number;
-    thumbnail: string;
-    geometry: {
-      location: Coordinates
-    }
+  placeId: string;
+  name: string;
+  rating: number;
+  thumbnail: string;
+  geometry: {
+    location: Coordinates
+  }
 }
+
+export type ShopMarkerProps = {
+  shop: Shop;
+  isMobile: boolean;
+  delay: number;
+};
 
 export type ReviewItemProps = {
   author_name: string;

@@ -1,13 +1,15 @@
 "use client"
 
-import ReactDOMServer from "react-dom/server";
 import L from "leaflet";
 
 import type { Shop } from "@/types";
 
 import { getStarsSVG } from "@/utils/helpers";
 
-export function createShopMarkerIcon(shop: Shop, isMobile: boolean): L.DivIcon {
+export function createShopMarkerIcon(shop: Shop, isMobile: boolean, delay?: number): L.DivIcon {
+  const fadeDuration = 0.3;
+  const fadeDelay = delay?.toFixed(2);
+
   const html = `
     <div 
       title="${shop.name}"
@@ -21,6 +23,9 @@ export function createShopMarkerIcon(shop: Shop, isMobile: boolean): L.DivIcon {
         box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         border-radius: 8px;
         line-height: 1.2;
+        animation: fadeInUp ${fadeDuration}s ease-out ${fadeDelay}s forwards;
+        opacity: 0;
+        transform: "translateY(10px)";
       "
     >
       <strong 
@@ -63,6 +68,11 @@ export function createShopMarkerIcon(shop: Shop, isMobile: boolean): L.DivIcon {
       <span>${getStarsSVG(shop.rating, isMobile)}</span>
 
       <style>
+        @keyframes fadeInUp {
+          0% { opacity: 0; transform: translateY(10px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+
         @keyframes spin {
           0% { transform: translate(-50%, -50%) rotate(0deg); }
           100% { transform: translate(-50%, -50%) rotate(360deg); }

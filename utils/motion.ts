@@ -1,3 +1,16 @@
+export const shopMarkerVariants = (delay?: number) => ({
+  hidden: { scale: 0, opacity: 0 },
+  visible: {
+    scale: 1,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      duration: 0.4,
+      delay
+    },
+  },
+});
+
 export const parentShopDetailVariants = (duration?: number) => ({
   hidden: { opacity: 0 },
   show: {

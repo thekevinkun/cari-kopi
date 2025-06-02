@@ -1,5 +1,6 @@
 "use client"
 
+import { useMemo } from "react";
 import { useMediaQuery } from "@mui/material";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
@@ -29,6 +30,12 @@ const Map = ({ userLocation, shops, onSelectShop }: Map) => {
 
   const mapZoom = userLocation ? (isMobile ? 16 : 15) : 5;
 
+  const markerIcon = useMemo(() => {
+    return shops.map((shop: Shop, index) => 
+      createShopMarkerIcon(shop, isMobile, index * 0.15)
+    )
+  }, [shops, isMobile])
+
   return (
     <MapContainer
       center={mapCenter}
@@ -49,11 +56,11 @@ const Map = ({ userLocation, shops, onSelectShop }: Map) => {
       )}
 
       {/* Show coffee shop markers */}
-      {shops.map((shop: Shop) => (
+      {shops.map((shop: Shop, index) => (
         <Marker
           key={shop.placeId}
           position={[shop.geometry.location.lat, shop.geometry.location.lng]}
-          icon={createShopMarkerIcon(shop, isMobile)}
+          icon={markerIcon[index]}
           eventHandlers={{
             click: () => onSelectShop(shop),
           }}
