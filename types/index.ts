@@ -93,8 +93,9 @@ export type SkeletonImageProps = {
   style?: React.CSSProperties;
 };
 
-export type ActionForm = {
-  userLocation: Coordinates | null;
+export type ActionFormProps = {
+  address: string | null;
+  onRequestLocation: () => void;
 }
 
 export type OSMAddress = {

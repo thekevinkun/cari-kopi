@@ -32,6 +32,7 @@ const ShopDetail = dynamic(() => import("@/components/ShopDetail/ShopDetail"), {
 });
 
 const Home = () => {
+  const [hasRequestedLocation, setHasRequestedLocation] = useState(false);
   const [location, setLocation] = useState<Coordinates | null>(null);
   const [address, setAddress] = useState<string | null>(null);
   const [shops, setShops] = useState<Shop[]>([]);
@@ -96,7 +97,7 @@ const Home = () => {
         console.error("Geolocation error:", error);
       }
     )
-  }, [])
+  }, [hasRequestedLocation])
 
   const mapRef = useRef<HTMLDivElement>(null);
   const [mapHeight, setMapHeight] = useState("100%");
@@ -152,7 +153,7 @@ const Home = () => {
       </Grid>
       <Grid size={{ xs: 12, md: 4 }}>
         <Box display="flex" flexDirection="column">
-          <ActionForm address={address} />
+          <ActionForm address={address} onRequestLocation={() => setHasRequestedLocation(true)} />
 
           {(showShopDetail && selectedShop) && 
             <ShopDetail 

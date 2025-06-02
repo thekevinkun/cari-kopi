@@ -110,8 +110,8 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail }: ShopDetailProps
               sx={{
                 mt: 3,
                 mb: 1,
+                textAlign: "right",
                 display: "flex", 
-                alignItems: "center", 
                 justifyContent: "space-between",
                 gap: 7
               }}
@@ -124,8 +124,8 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail }: ShopDetailProps
               color="textSecondary" 
               fontStyle={shop.international_phone_number ? "normal" : "italic"}
               sx={{
+                textAlign: "right",
                 display: "flex", 
-                alignItems: "center", 
                 justifyContent: "space-between",
                 gap: 7
               }}

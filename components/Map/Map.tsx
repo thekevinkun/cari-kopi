@@ -1,14 +1,15 @@
 "use client"
 
-import { useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useMediaQuery } from "@mui/material";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 import { createShopMarkerIcon } from "@/components/ShopMarker/ShopMarker";
 
-import type { Map, Shop } from "@/types";
+import type { Coordinates, Map, Shop } from "@/types";
 
 // Set up default marker icons
 delete (L.Icon.Default as any).prototype._getIconUrl;
@@ -17,6 +18,26 @@ L.Icon.Default.mergeOptions({
   iconUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
 });
+
+// Handles jumping to user's location
+const MapFlyTo = ({ userLocation, onFlyEnd }: { userLocation: Coordinates | null, onFlyEnd: () => void }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (userLocation) {
+      map.flyTo([userLocation.lat, userLocation.lng], 15);
+
+      const handleMoveEnd = () => {
+        onFlyEnd();
+        map.off("moveend", handleMoveEnd);
+      }
+
+      map.on("moveend", handleMoveEnd);
+    }
+  }, [userLocation, map, onFlyEnd]);
+
+  return null; // This component doesn't render anything visually
+};
 
 const Map = ({ userLocation, shops, onSelectShop }: Map) => {
   // Default map center if user location is unavailable (e.g. global view)
@@ -29,6 +50,8 @@ const Map = ({ userLocation, shops, onSelectShop }: Map) => {
   const isMobile = useMediaQuery("(max-width: 600px)");
 
   const mapZoom = userLocation ? 15 : 2;
+
+  const [showMarker, setShowMarker] = useState(false);
 
   const markerIcon = useMemo(() => {
     return shops.map((shop: Shop, index) => 
@@ -48,15 +71,20 @@ const Map = ({ userLocation, shops, onSelectShop }: Map) => {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
 
-      {/* Show user marker if location available */}
       {userLocation && (
-        <Marker position={[userLocation.lat, userLocation.lng]}>
-          <Popup>You are here</Popup>
-        </Marker>
+        <>
+          {/* Show user marker if location available */}
+          <Marker position={[userLocation.lat, userLocation.lng]}>
+            <Popup>You are here</Popup>
+          </Marker>
+          {/* Jump to location after find it */}
+          <MapFlyTo userLocation={userLocation} onFlyEnd={() => setShowMarker(true)}/>
+        </>
       )}
 
       {/* Show coffee shop markers */}
-      {shops.map((shop: Shop, index) => (
+      {showMarker &&
+        shops.map((shop: Shop, index) => (
         <Marker
           key={shop.placeId}
           position={[shop.geometry.location.lat, shop.geometry.location.lng]}
