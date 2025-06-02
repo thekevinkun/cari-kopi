@@ -10,7 +10,7 @@ import StarIcon from "@mui/icons-material/Star";
 
 import { OpeningHours, PhotoSlide, ReviewSlide } from "@/components";
 
-import { StyledStack, StyledAddressTypography, CloseButton } from "./styles";
+import { StyledStack, CloseButton } from "./styles";
 import { parentShopDetailVariants, shopDetailVariants } from "@/utils/motion";
 import type { ShopDetailProps } from "@/types";
 
@@ -25,19 +25,28 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail }: ShopDetailProps
   const [shopDetailHeight, setShopDetailHeight] = useState("100%");
 
   useEffect(() => {
-    const updateShopDetailHeight = () => {
-      if (isTablet || isMobile || !shopDetailRef.current) return;
+    if (isTablet || isMobile || !shopDetailRef.current) return;
 
-      const topOffset = shopDetailRef.current.getBoundingClientRect().top;
-      
-      setShopDetailHeight(`calc(100vh - ${topOffset}px)`);
-    };
+    const observer = new ResizeObserver(() => {
+      const topOffset = shopDetailRef.current!.getBoundingClientRect().top;
+      const height = window.innerHeight - topOffset;
 
-    updateShopDetailHeight(); // Initial run
+      setShopDetailHeight(`${height}px`);
+    });
 
-    window.addEventListener("resize", updateShopDetailHeight);
-    return () => window.removeEventListener("resize", updateShopDetailHeight);
-  }, [isMobile]);
+    const parentElement = shopDetailRef.current?.parentNode as Element | null;
+
+    if (parentElement)
+      observer.observe(parentElement)
+
+    // Run once on mount
+    const topOffset = shopDetailRef.current!.getBoundingClientRect().top;
+    const height = window.innerHeight - topOffset;
+
+    setShopDetailHeight(`${height}px`);
+
+    return () => observer.disconnect();
+  }, [isTablet, isMobile]);
   
   return (
     <AnimatePresence>
@@ -94,17 +103,21 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail }: ShopDetailProps
               <OpeningHours weekdayText={shop.opening_hours?.weekday_text} />
             }
 
-            <StyledAddressTypography 
+            <Typography 
               variant="body2" 
               color="textSecondary"
-              fontStyle={shop.formatted_address ? "normal" : "italic"}
+              fontStyle={shop.vicinity ? "normal" : "italic"}
               sx={{
                 mt: 3,
-                mb: 1.5
+                mb: 1,
+                display: "flex", 
+                alignItems: "center", 
+                justifyContent: "space-between",
+                gap: 7
               }}
             >
-              <LocationOnIcon /> {shop.formatted_address ? shop.formatted_address : "Unknown address"}
-            </StyledAddressTypography>
+              <LocationOnIcon /> {shop.vicinity ? shop.vicinity : "Unknown address"}
+            </Typography>
             
             <Typography 
               variant="body2" 
@@ -114,6 +127,7 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail }: ShopDetailProps
                 display: "flex", 
                 alignItems: "center", 
                 justifyContent: "space-between",
+                gap: 7
               }}
             >
               <PhoneIcon /> 
@@ -158,7 +172,7 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail }: ShopDetailProps
             left: 0,
             width: "100vw",
             height: "100vh",
-            background: "rgba(0,0,0,.15)",
+            background: "rgba(0,0,0,.25)",
             backdropFilter: "blur(2px)",
             zIndex: 1000
           }}

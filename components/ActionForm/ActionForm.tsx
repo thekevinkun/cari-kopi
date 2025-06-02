@@ -21,11 +21,11 @@ const ActionForm = ({ address }: { address: string | null }) => {
           <Typography 
             variant="body2" 
             color="textSecondary"
-            fontSize={isMobile ? "13px" : "14px"}
+            fontSize={isMobile ? "12px" : "14px"}
             fontStyle="italic"
             fontWeight="bold"
           >
-           Your location off
+           Your location is currently off. Please turn it on and refresh.
           </Typography>
         </Box>
       :

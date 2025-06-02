@@ -28,7 +28,7 @@ const Map = ({ userLocation, shops, onSelectShop }: Map) => {
   
   const isMobile = useMediaQuery("(max-width: 600px)");
 
-  const mapZoom = userLocation ? (isMobile ? 16 : 15) : 5;
+  const mapZoom = userLocation ? 15 : 2;
 
   const markerIcon = useMemo(() => {
     return shops.map((shop: Shop, index) => 

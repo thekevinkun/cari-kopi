@@ -34,16 +34,17 @@ const ReviewSlide = ({ reviews }: { reviews : ReviewItemProps[] }) => {
     }, [activeIndex]);
 
   return (
-    <Box sx={{ position: "relative", width: "100%",  mt: 5 }}>
+    <Box sx={{ position: "relative", width: "100%", mt: 5 }}>
         <Swiper
             modules={[Navigation]}
             navigation={{
                 nextEl: ".swiper-next_review",
                 prevEl: ".swiper-prev_review",
             }}
+            spaceBetween={12}
             onSwiper={(swiper) => (swiperReviewRef.current = swiper)}
             onSlideChange={handleReviewSlideChange}
-            style={{ height: "100%" }}
+            style={{ height: "100%", padding: "0 2px" }}
         >
             {reviews.map((review: ReviewItemProps, index) => (
                 <SwiperSlide key={review.author_name}>

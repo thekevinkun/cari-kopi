@@ -28,7 +28,7 @@ const OpeningHours = ({ weekdayText }: { weekdayText: string[] }) => {
         mt: 0.5, 
         pr: 1, 
         borderRadius: 0,
-        boxShadow: "0px 2px 1px -1px rgba(0,0,0,0.2),0px 0px 0px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12)" 
+        boxShadow: "0px 1px 0px 0px rgba(0,0,0,0.2),0px 0px 0px 0px rgba(0,0,0,0.14),0px 1.5px 0px 0px rgba(0,0,0,0.12)" 
     }}>
       <Box
         display="flex"

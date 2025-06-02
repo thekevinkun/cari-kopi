@@ -104,18 +104,27 @@ const Home = () => {
   const isTablet = useMediaQuery("(max-width: 900px)");
 
   useEffect(() => {
-    const updateMapHeight = () => {
-      if (!isTablet || !mapRef.current) return;
+    if (!mapRef.current) return;
 
-      const topOffset = mapRef.current.getBoundingClientRect().top;
-      
-      setMapHeight(`calc(100vh - ${topOffset}px)`);
-    };
+    const observer = new ResizeObserver(() => {
+      const topOffset = mapRef.current!.getBoundingClientRect().top;
+      const height = window.innerHeight - topOffset;
 
-    updateMapHeight(); // Initial run
+      setMapHeight(`${height}px`);
+    });
 
-    window.addEventListener("resize", updateMapHeight);
-    return () => window.removeEventListener("resize", updateMapHeight);
+    const parentElement = mapRef.current?.parentNode as Element | null;
+
+    if (parentElement)
+      observer.observe(parentElement)
+
+    // Run once on mount
+    const topOffset = mapRef.current!.getBoundingClientRect().top;
+    const height = window.innerHeight - topOffset;
+
+    setMapHeight(`${height}px`);
+
+    return () => observer.disconnect();
   }, [isTablet]);
 
   return (
@@ -125,7 +134,7 @@ const Home = () => {
       flexDirection={isTablet ? "column-reverse" : "row"}
       style={{ 
         width: "100%", 
-        height: isTablet ? "100%" : "calc(100vh - 64px)" 
+        height: isTablet ? "100%" : mapHeight 
       }}
     >
       <Grid 

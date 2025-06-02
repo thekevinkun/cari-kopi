@@ -1,4 +1,4 @@
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 export const StyledStack = styled(Stack)(({ theme }) => ({
@@ -30,14 +30,6 @@ export const StyledBoxImage = styled(Box)(({ theme }) => ({
    }
 }));
 
-export const StyledAddressTypography = styled(Typography)(() => ({
-   textAlign: "right",
-   display: "flex", 
-   alignItems: "flex-start", 
-   justifyContent: "space-between",
-   gap: "18px"
-}));
-
 export const CloseButton = styled(Button)(({ theme }) => ({
   position: "absolute",
   top: 0,
@@ -45,7 +37,7 @@ export const CloseButton = styled(Button)(({ theme }) => ({
   minWidth: 0,
   padding: "0.5rem 0.725rem",
   [theme.breakpoints.down('sm')]: {
-      top: -60,
+      top: -55,
       right: 10, 
   }
 }));
