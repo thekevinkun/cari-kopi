@@ -19,6 +19,22 @@ export const formatShortAddress = (address: OSMAddress): string => {
   return [street, suburb, city, state, country].filter(Boolean).join(", ");
 }
 
+const capitalize = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export const convertSerpApiHoursToWeekdayText = (hours: { [key: string]: string }[]): string[] => {
+  const orderedDays = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+
+  const dayMap = hours.reduce((acc, obj) => {
+    const [day, time] = Object.entries(obj)[0];
+    acc[day.toLowerCase()] = `${capitalize(day)}: ${time}`;
+    return acc;
+  }, {} as Record<string, string>);
+
+  return orderedDays.map(day => dayMap[day] || `${capitalize(day)}: Closed`);
+}
+
 export const getStarsSVG = (rating: number, isMobile: boolean): string => {
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating % 1 >= 0.25 && rating % 1 < 0.75;

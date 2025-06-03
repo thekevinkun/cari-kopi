@@ -8,10 +8,11 @@ import "swiper/css";
 import "swiper/css/navigation";
 
 import { ImageWithSkeleton } from "@/components";
+import { SerpPhotosProps } from "@/types";
 
 import { StyledBoxImage } from "./styles";
 
-const PhotoSlide = ({name, photos}: {name: string, photos: string[] | []}) => {
+const PhotoSlide = ({photos}: { photos: SerpPhotosProps[]}) => {
   const swiperPhotoRef = useRef<any>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -31,11 +32,11 @@ const PhotoSlide = ({name, photos}: {name: string, photos: string[] | []}) => {
             onSlideChange={handlePhotoSlideChange}
             style={{ height: "100%" }}
         >
-            {(photos?.length ? photos : ["/no-coffee-image.jpg"]).map((src, index) => (
-                <SwiperSlide key={index}>
+            {photos.map((item) => (
+                <SwiperSlide key={item.title}>
                     <ImageWithSkeleton
-                        src={src}
-                        alt={`${name}-${index}`}
+                        src={item.serpapi_thumbnail || item.thumbnail}
+                        alt={item.title}
                         height="100%"
                         style={{ objectPosition: "center center" }}
                     />
@@ -45,13 +46,10 @@ const PhotoSlide = ({name, photos}: {name: string, photos: string[] | []}) => {
 
         <Box
             sx={{
-                display: {
-                    xs: "none",
-                    md: "flex"
-                },
                 position: "absolute",
                 bottom: 8,
                 right: 8,
+                display: "flex",
                 gap: 1,
                 backgroundColor: "rgba(0,0,0,0.4)",
                 borderRadius: 1,

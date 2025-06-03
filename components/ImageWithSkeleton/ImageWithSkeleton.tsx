@@ -3,7 +3,7 @@ import { Box, Skeleton } from "@mui/material";
 
 import type { SkeletonImageProps } from "@/types";
 
-const SkeletonImage = ({ src, alt, width = "100%", height, style }: SkeletonImageProps) => {
+const ImageWithSkeleton = ({ src, alt, width = "100%", height, style }: SkeletonImageProps) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -51,4 +51,4 @@ const SkeletonImage = ({ src, alt, width = "100%", height, style }: SkeletonImag
   );
 };
 
-export default SkeletonImage;
+export default ImageWithSkeleton;

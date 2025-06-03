@@ -3,14 +3,16 @@
 import { useEffect, useState, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Box, Card, CardContent, Link as MUILink, Typography, useMediaQuery } from "@mui/material";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
+import StarIcon from "@mui/icons-material/Star";
 import PhoneIcon from "@mui/icons-material/Phone";
 import CloseIcon from '@mui/icons-material/Close';
-import StarIcon from "@mui/icons-material/Star";
+import LanguageIcon from '@mui/icons-material/Language';
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 import { OpeningHours, PhotoSlide, ReviewSlide } from "@/components";
 
 import { StyledStack, CloseButton } from "./styles";
+import { convertSerpApiHoursToWeekdayText } from "@/utils/helpers";
 import { parentShopDetailVariants, shopDetailVariants } from "@/utils/motion";
 import type { ShopDetailProps } from "@/types";
 
@@ -23,6 +25,8 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail }: ShopDetailProps
 
   const shopDetailRef = useRef<HTMLDivElement>(null);
   const [shopDetailHeight, setShopDetailHeight] = useState("100%");
+
+  const weekdayText = convertSerpApiHoursToWeekdayText(shop.hours ?? []);
 
   useEffect(() => {
     if (isTablet || isMobile || !shopDetailRef.current) return;
@@ -76,7 +80,7 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail }: ShopDetailProps
             overflow: "auto" 
           }}
         >
-          <PhotoSlide name={shop.name} photos={shop.photos ?? []}/>
+          <PhotoSlide photos={shop.images ?? []}/>
         
           <CardContent>
             <Box 
@@ -85,7 +89,7 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail }: ShopDetailProps
               justifyContent="space-between"
               gap={7}
             >
-              <Typography variant="h5">{shop.name}</Typography>
+              <Typography variant="h5">{shop.title}</Typography>
 
               <Box display="flex" alignItems="center">
                 <StarIcon 
@@ -95,55 +99,85 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail }: ShopDetailProps
                   }}
                 />
                 <Typography component="legend">{shop.rating}</Typography>
-                <Typography variant="body2" color="info">({shop.user_ratings_total})</Typography>
+                <Typography variant="body2" color="info">({shop.reviews})</Typography>
               </Box>
             </Box>
             
-            {(shop.opening_hours && shop.opening_hours.weekday_text) &&
-              <OpeningHours weekdayText={shop.opening_hours?.weekday_text} />
+            {(shop.hours && shop.hours?.length > 0) &&
+              <OpeningHours openState={shop.open_state || ""} weekdayText={weekdayText} />
             }
 
-            <Typography 
-              variant="body2" 
-              color="textSecondary"
-              fontStyle={shop.vicinity ? "normal" : "italic"}
-              sx={{
-                mt: 3,
-                mb: 1,
-                textAlign: "right",
-                display: "flex", 
-                justifyContent: "space-between",
-                gap: 7
-              }}
-            >
-              <LocationOnIcon /> {shop.vicinity ? shop.vicinity : "Unknown address"}
-            </Typography>
-            
-            <Typography 
-              variant="body2" 
-              color="textSecondary" 
-              fontStyle={shop.international_phone_number ? "normal" : "italic"}
-              sx={{
-                textAlign: "right",
-                display: "flex", 
-                justifyContent: "space-between",
-                gap: 7
-              }}
-            >
-              <PhoneIcon /> 
-              
-              {shop.international_phone_number ?
-                <MUILink href={`tel:${shop.international_phone_number}`}>{shop.international_phone_number}</MUILink>
-              :
-                "Unknown Phone Number"
-              }
-            </Typography>
-            
-            {shop.reviews && shop.reviews?.length > 0 &&
-              <ReviewSlide 
-                reviews={shop.reviews}
-              />
+            {shop.address &&
+              <Typography 
+                variant="body2" 
+                color="textSecondary"
+                fontStyle="normal"
+                sx={{
+                  mt: 3,
+                  textAlign: "right",
+                  display: "flex", 
+                  justifyContent: "space-between",
+                  gap: 7
+                }}
+              >
+                <LocationOnIcon /> {shop.address}
+              </Typography>
             }
+            
+            {shop.phone &&
+              <Typography 
+                variant="body2" 
+                color="textSecondary" 
+                fontStyle="normal"
+                sx={{
+                  mt: 1,
+                  textAlign: "right",
+                  display: "flex", 
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 7
+                }}
+              >
+                <PhoneIcon /> 
+                
+                <MUILink href={`tel:${shop.phone}`}>{shop.phone}</MUILink>
+              </Typography>
+            }
+            
+            {shop.web_results_link &&
+              <Typography 
+                variant="body2" 
+                color="textSecondary" 
+                fontStyle="normal"
+                sx={{
+                  mt: 1,
+                  textAlign: "right",
+                  display: "flex", 
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 7
+                }}
+              >
+                <LanguageIcon sx={{ position: "relative", top: "1.8px" }}/> 
+              
+                <MUILink href={shop.web_results_link}>Web Link</MUILink>
+              </Typography>
+            }
+
+            <Box mt={5}>
+              <Typography 
+                variant="h6" 
+                fontStyle="normal"
+              >
+                User Reviews
+              </Typography>
+
+              {shop.user_reviews && shop.user_reviews?.most_relevant.length > 0 &&
+                <ReviewSlide 
+                  reviews={shop.user_reviews.most_relevant}
+                />
+              }
+            </Box>
           </CardContent>
         </MotionCard>
 

@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { Box, CircularProgress, Grid, useMediaQuery } from "@mui/material";
 import dynamic from "next/dynamic";
 
-import type { Coordinates, Shop, ShopDetail } from "@/types";
+import type { Coordinates, Shop, SerpShopDetail } from "@/types";
 
 const Map = dynamic(() => import('@/components/Map/Map'), {
   ssr: false,
@@ -37,7 +37,7 @@ const Home = () => {
   const [address, setAddress] = useState<string | null>(null);
   const [shops, setShops] = useState<Shop[]>([]);
 
-  const [selectedShop, setSelectedShop] = useState<ShopDetail | null>(null);
+  const [selectedShop, setSelectedShop] = useState<SerpShopDetail | null>(null);
   const [showShopDetail, setShowShopDetail] = useState(false);
 
   const getAddress = async (lat: number, lng: number) => {
@@ -56,7 +56,7 @@ const Home = () => {
 
   const getShopDetail = async (shop: Shop) => {
     try {
-      const res = await fetch(`/api/detail?placeId=${shop.placeId}`);
+      const res = await fetch(`/api/detailSerp?placeId=${shop.placeId}`);
       const { data } = await res.json();
       console.log("shop detail: ", data);
       

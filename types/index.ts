@@ -19,7 +19,7 @@ export type ShopMarkerProps = {
   delay: number;
 };
 
-export type ReviewItemProps = {
+export type GoogleReviewItemProps = {
   author_name: string;
   author_url?: string;
   language?: string;
@@ -30,7 +30,22 @@ export type ReviewItemProps = {
   time: number;
 }
 
-export type ShopDetail = {
+export type SerpReviewItemProps = {
+  username: string;
+  rating: number;
+  date: string;
+  description: string;
+  link: string;
+  images?: { thumbnail: string }[];
+}
+
+export type SerpPhotosProps = {
+  title: string;
+  thumbnail: string;
+  serpapi_thumbnail: string;
+}
+
+export type GoogleShopDetail = {
   place_id: string;
   name: string;
   formatted_address?: string;
@@ -68,9 +83,61 @@ export type ShopDetail = {
     weekday_text?: string[];
   };
 
-  reviews?: ReviewItemProps[];
+  reviews?: GoogleReviewItemProps[];
 
   photos?: string[];
+}
+
+export interface SerpShopDetail {
+  place_id: string;
+  title: string;
+  rating: number;
+  reviews: number;
+  price?: string;
+  phone?: string;
+  address: string;
+  open_state?: string;
+  gps_coordinates: Coordinates;
+  hours?: { [day: string]: string }[];
+  type?: string[];
+  extensions?: {
+    service_options?: string[];
+    highlights?: string[];
+    popular_for?: string[];
+    offerings?: string[];
+    dining_options?: string[];
+    amenities?: string[];
+    atmosphere?: string[];
+    crowd?: string[];
+    planning?: string[];
+    payments?: string[];
+    children?: string[];
+    parking?: string[];
+  }[];
+  images?: {
+    title: string;
+    thumbnail: string;
+    serpapi_thumbnail: string;
+  }[];
+  rating_summary?: { stars: number; amount: number }[];
+  user_reviews?: {
+    summary: [],
+    most_relevant: SerpReviewItemProps[]
+  };
+  popular_times?: {
+    graph_results?: {
+      [day: string]: {
+        time: string;
+        info?: string;
+        busyness_score: number;
+      }[];
+    };
+    live_hash?: {
+      info: string;
+      time_spent?: string;
+    };
+  };
+  web_results_link: string;
 }
 
 export type Map = {
@@ -80,7 +147,7 @@ export type Map = {
 }
 
 export type ShopDetailProps = {
-  shop: ShopDetail;
+  shop: SerpShopDetail;
   showShopDetail: boolean;
   onCloseShopDetail: () => void;
 }

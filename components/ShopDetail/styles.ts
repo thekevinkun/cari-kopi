@@ -17,7 +17,7 @@ export const StyledStack = styled(Stack)(({ theme }) => ({
 }));
 
 export const StyledBoxImage = styled(Box)(({ theme }) => ({
-   height: 250,
+   height: 245,
    width: "100%",
    borderTopLeftRadius: theme.shape.borderRadius,
    borderTopRightRadius: theme.shape.borderRadius,

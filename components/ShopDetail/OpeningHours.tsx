@@ -11,14 +11,13 @@ import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
-const OpeningHours = ({ weekdayText }: { weekdayText: string[] }) => {
+const OpeningHours = ({ openState, weekdayText }: { openState: string, weekdayText: string[] }) => {
   const todayIndex = new Date().getDay(); // Sunday = 0
   const [expanded, setExpanded] = useState(false);
 
-  // Reorder: today first, then the rest
   const reordered = [
-    weekdayText[todayIndex],
-    ...weekdayText.filter((_, i) => i !== todayIndex),
+    ...weekdayText.slice(todayIndex),
+    ...weekdayText.slice(0, todayIndex),
   ];
 
   const [currentDayLabel, currentDayHours] = weekdayText[todayIndex].split(": ");
@@ -37,8 +36,21 @@ const OpeningHours = ({ weekdayText }: { weekdayText: string[] }) => {
         onClick={() => setExpanded(!expanded)}
         sx={{ cursor: "pointer" }}
       >
-        <Typography variant="body2" color="textSecondary" sx={{ display: "flex", alignItems: "center" }}>
-          <AccessTimeFilledIcon sx={{ fontSize: "1rem", marginRight: "6px" }} /> {currentDayHours}
+        <Typography 
+          variant="body2" 
+          color="textSecondary" 
+          fontSize="0.825rem"
+          sx={{ display: "flex", alignItems: "center" }}
+        >
+          <AccessTimeFilledIcon 
+            sx={{ 
+              position: "relative",
+              top: "-1.1px",
+              fontSize: "1rem", 
+              marginRight: "6px" 
+            }} 
+            /> 
+          {openState ? openState : currentDayHours}
         </Typography>
         <IconButton size="small">
           {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
@@ -49,7 +61,9 @@ const OpeningHours = ({ weekdayText }: { weekdayText: string[] }) => {
         <Grid container direction="column" spacing={1} sx={{ mt: 1, pl: 2, pb: 2 }}>
           {reordered.map((text, index) => {
             const [day, hours] = text.split(": ");
-            const isToday = index === 0;
+            const isToday = day.toLowerCase().startsWith(
+              new Date().toLocaleDateString("en-US", { weekday: "long"}).toLowerCase()
+            );
 
             return (
               <Grid
@@ -66,7 +80,14 @@ const OpeningHours = ({ weekdayText }: { weekdayText: string[] }) => {
                   {day}
                 </Typography>
 
-                <Typography fontSize="small" fontWeight={isToday ? "bold" : "normal"}>
+                <Typography 
+                  fontSize="small" 
+                  fontWeight={isToday ? "bold" : "normal"}
+                  sx={{
+                    color: /[(（]/.test(hours) ? "primary.main" : "text.primary",
+                    fontStyle: /[(（]/.test(hours) ? "italic" : "normal",
+                  }}
+                >
                   {hours}
                 </Typography>
               </Grid>
