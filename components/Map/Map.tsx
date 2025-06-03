@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { useMediaQuery } from "@mui/material";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { useMap } from "react-leaflet";
@@ -22,9 +22,11 @@ L.Icon.Default.mergeOptions({
 // Handles jumping to user's location
 const MapFlyTo = ({ userLocation, onFlyEnd }: { userLocation: Coordinates | null, onFlyEnd: () => void }) => {
   const map = useMap();
+  const hasFlownRef = useRef(false);
 
   useEffect(() => {
-    if (userLocation) {
+    if (userLocation && !hasFlownRef.current) {
+      hasFlownRef.current = true; // Prevent future runs
       map.flyTo([userLocation.lat, userLocation.lng], 15);
 
       const handleMoveEnd = () => {
