@@ -30,19 +30,19 @@ export type GoogleReviewItemProps = {
   time: number;
 }
 
+export type SerpPhotosProps = {
+  title?: string;
+  thumbnail?: string;
+  serpapi_thumbnail?: string;
+}
+
 export type SerpReviewItemProps = {
   username: string;
   rating: number;
   date: string;
   description: string;
   link: string;
-  images?: { thumbnail: string }[];
-}
-
-export type SerpPhotosProps = {
-  title: string;
-  thumbnail: string;
-  serpapi_thumbnail: string;
+  images?: SerpPhotosProps[];
 }
 
 export type ExtensionData = {
@@ -156,6 +156,7 @@ export type SkeletonImageProps = {
   width?: number | string;
   height?: number | string;
   style?: React.CSSProperties;
+  onClickImage?: () => void;
 };
 
 export type ActionFormProps = {

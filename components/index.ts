@@ -1,5 +1,6 @@
 import AuthForm from "./AuthForm/AuthForm";
 import Navbar from "./Navbar/Navbar";
+import FullscreenImage from "./FullscreenImage/FullscreenImage";
 import ImageWithSkeleton from "./ImageWithSkeleton/ImageWithSkeleton";
 import PhotoSlide from "./ShopDetail/PhotoSlide";
 import TitleRating from "./ShopDetail/TitleRating";
@@ -11,6 +12,7 @@ import UserReviews from "./ShopDetail/UserReviews";
 export {
     AuthForm,
     Navbar,
+    FullscreenImage,
     ImageWithSkeleton,
     PhotoSlide,
     TitleRating,

@@ -1,10 +1,14 @@
+import { useState } from "react";
 import { Avatar, Box, Button, Grid, IconButton, Paper, Rating, Typography } from "@mui/material";
 
-import { ImageWithSkeleton } from "@/components";
+import { FullscreenImage, ImageWithSkeleton } from "@/components";
 
 import type { SerpReviewItemProps } from "@/types";
 
 const UserReviews = ({ reviews }: { reviews : SerpReviewItemProps[] }) => {
+  const [reviewImageIndex, setReviewImageIndex] = useState<number | null>(null);
+  const [reviewIndex, setReviewIndex] = useState<number>(0);
+    
   return (
     <Box 
         mt={7}
@@ -14,7 +18,7 @@ const UserReviews = ({ reviews }: { reviews : SerpReviewItemProps[] }) => {
         flexDirection="column"
         gap={3}
     >
-        {reviews.map((review: SerpReviewItemProps) => (
+        {reviews.map((review: SerpReviewItemProps, index) => (
             <Paper 
                 key={review.username}
                 elevation={10} 
@@ -43,19 +47,21 @@ const UserReviews = ({ reviews }: { reviews : SerpReviewItemProps[] }) => {
                 
                 {review.images &&
                     <Grid container spacing={1} mt={4}>
-                        {review.images.map((image, index) => (
+                        {review.images.map((image, i) => (
                             <Grid 
-                                key={`${review.username} photo ${index + 1}`}
+                                key={`${review.username} photo ${i + 1}`}
                                 size={{ xs: 3 }}
                                 sx={{ height: 115 }}
                             >
                                 <ImageWithSkeleton 
-                                    src={`/api/image-proxy?url=${encodeURIComponent(image.thumbnail)}`} 
-                                    alt={`${review.username} photo ${index + 1}`}
+                                    src={`/api/image-proxy?url=${encodeURIComponent(image.thumbnail ?? "")}`} 
+                                    alt={`${review.username} photo ${i + 1}`}
                                     height="100%"
                                     style={{
-                                        borderRadius: 8
+                                        borderRadius: 8,
+                                        cursor: "pointer"
                                     }}
+                                    onClickImage={() => {setReviewImageIndex(i); setReviewIndex(index);}}
                                 />
                             </Grid>
                         ))}
@@ -63,8 +69,16 @@ const UserReviews = ({ reviews }: { reviews : SerpReviewItemProps[] }) => {
                 }
             </Paper>
         ))}
+
+        {reviewImageIndex !== null &&
+            <FullscreenImage 
+                photos={reviews[reviewIndex].images ?? []}
+                startIndex={reviewImageIndex}
+                type="review"
+                onClose={() => setReviewImageIndex(null)}
+            />
+        }
     </Box>
-    
   )
 }
 

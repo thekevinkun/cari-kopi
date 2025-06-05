@@ -3,7 +3,7 @@ import { Box, Skeleton } from "@mui/material";
 
 import type { SkeletonImageProps } from "@/types";
 
-const ImageWithSkeleton = ({ src, alt, width = "100%", height, style }: SkeletonImageProps) => {
+const ImageWithSkeleton = ({ src, alt, width = "100%", height, style, onClickImage }: SkeletonImageProps) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -39,10 +39,12 @@ const ImageWithSkeleton = ({ src, alt, width = "100%", height, style }: Skeleton
           setLoading(false);
           setError(true);
         }}
+        onClick={onClickImage}
         style={{
           width: "100%",
           height: "100%",
           objectFit: "cover",
+          userSelect: "none",
           display: loading ? "none" : "block",
           ...style,
         }}

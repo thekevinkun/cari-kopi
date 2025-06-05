@@ -7,12 +7,13 @@ import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import "swiper/css";
 import "swiper/css/navigation";
 
-import { ImageWithSkeleton } from "@/components";
+import { FullscreenImage, ImageWithSkeleton } from "@/components";
 import { SerpPhotosProps } from "@/types";
 
 import { StyledBoxImage } from "./styles";
 
 const PhotoSlide = ({photos}: { photos: SerpPhotosProps[]}) => {
+  const [fullscreenIndex, setFullscreenIndex] = useState<number | null>(null);
   const swiperPhotoRef = useRef<any>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -32,13 +33,14 @@ const PhotoSlide = ({photos}: { photos: SerpPhotosProps[]}) => {
             onSlideChange={handlePhotoSlideChange}
             style={{ height: "100%" }}
         >
-            {photos.map((item) => (
+            {photos.map((item, index) => (
                 <SwiperSlide key={item.title}>
                     <ImageWithSkeleton
-                        src={item.serpapi_thumbnail || item.thumbnail}
-                        alt={item.title}
+                        src={item.serpapi_thumbnail || item.thumbnail || ""}
+                        alt={item.title ?? ""}
                         height="100%"
-                        style={{ objectPosition: "center center" }}
+                        style={{ objectPosition: "center center", cursor: "pointer" }}
+                        onClickImage={() => setFullscreenIndex(index)}
                     />
                 </SwiperSlide>
             ))}
@@ -81,6 +83,14 @@ const PhotoSlide = ({photos}: { photos: SerpPhotosProps[]}) => {
                 <ChevronRight />
             </IconButton>
         </Box>
+
+        {fullscreenIndex !== null && (
+            <FullscreenImage
+                photos={photos}
+                startIndex={fullscreenIndex}
+                onClose={() => setFullscreenIndex(null)}
+            />
+        )}
     </StyledBoxImage>
   )
 }
