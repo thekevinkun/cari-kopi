@@ -45,6 +45,16 @@ export type SerpPhotosProps = {
   serpapi_thumbnail: string;
 }
 
+export type ExtensionData = {
+  [category: string]: string[];
+};
+
+export type ExtensionGroup = {
+  key: string;
+  values: string[];
+  _unsupported?: boolean;
+};
+
 export type GoogleShopDetail = {
   place_id: string;
   name: string;
@@ -100,20 +110,8 @@ export interface SerpShopDetail {
   gps_coordinates: Coordinates;
   hours?: { [day: string]: string }[];
   type?: string[];
-  extensions?: {
-    service_options?: string[];
-    highlights?: string[];
-    popular_for?: string[];
-    offerings?: string[];
-    dining_options?: string[];
-    amenities?: string[];
-    atmosphere?: string[];
-    crowd?: string[];
-    planning?: string[];
-    payments?: string[];
-    children?: string[];
-    parking?: string[];
-  }[];
+  extensions?: ExtensionData[];
+  unsupported_extensions?: ExtensionData[];
   images?: {
     title: string;
     thumbnail: string;

@@ -2,17 +2,18 @@
 
 import { useEffect, useState, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Box, Card, CardContent, Link as MUILink, Typography, useMediaQuery } from "@mui/material";
-import StarIcon from "@mui/icons-material/Star";
-import PhoneIcon from "@mui/icons-material/Phone";
+import { Box, Button, Card, CardContent, Typography, useMediaQuery } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
-import LanguageIcon from '@mui/icons-material/Language';
-import LocationOnIcon from "@mui/icons-material/LocationOn";
+import NearMeIcon from '@mui/icons-material/NearMe';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
-import { OpeningHours, PhotoSlide, ReviewSlide } from "@/components";
+import { 
+  PhotoSlide, TitleRating, OpeningHours, 
+  Information, ExtensionList, UserReviews 
+} from "@/components";
 
 import { StyledStack, CloseButton } from "./styles";
-import { convertSerpApiHoursToWeekdayText } from "@/utils/helpers";
+import { convertSerpApiHoursToWeekdayText, mergeExtensionsWithUnsupported } from "@/utils/helpers";
 import { parentShopDetailVariants, shopDetailVariants } from "@/utils/motion";
 import type { ShopDetailProps } from "@/types";
 
@@ -27,6 +28,7 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail }: ShopDetailProps
   const [shopDetailHeight, setShopDetailHeight] = useState("100%");
 
   const weekdayText = convertSerpApiHoursToWeekdayText(shop.hours ?? []);
+  const mergedExtensions = mergeExtensionsWithUnsupported(shop.extensions || [], shop.unsupported_extensions || []);
 
   useEffect(() => {
     if (isTablet || isMobile || !shopDetailRef.current) return;
@@ -80,104 +82,54 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail }: ShopDetailProps
             overflow: "auto" 
           }}
         >
+          {/* SHOP PHOTOS */}
           <PhotoSlide photos={shop.images ?? []}/>
-        
+          
+          {/* SHOP CONTENTS */}
           <CardContent>
-            <Box 
-              display="flex" 
-              alignItems="flex-start" 
-              justifyContent="space-between"
-              gap={7}
-            >
-              <Typography variant="h5">{shop.title}</Typography>
-
-              <Box display="flex" alignItems="center">
-                <StarIcon 
-                  style={{
-                    color: "#faaf00",
-                    fontSize: "1.5rem"
-                  }}
-                />
-                <Typography component="legend">{shop.rating}</Typography>
-                <Typography variant="body2" color="info">({shop.reviews})</Typography>
-              </Box>
-            </Box>
+            {/* SHOP TITLE AND RATING */}
+            <TitleRating title={shop.title} rating={shop.rating} reviews={shop.reviews}/>
             
+            {/* SHOP OPENING HOURS */}
             {(shop.hours && shop.hours?.length > 0) &&
               <OpeningHours openState={shop.open_state || ""} weekdayText={weekdayText} />
             }
 
-            {shop.address &&
-              <Typography 
-                variant="body2" 
-                color="textSecondary"
-                fontStyle="normal"
-                sx={{
-                  mt: 3,
-                  textAlign: "right",
-                  display: "flex", 
-                  justifyContent: "space-between",
-                  gap: 7
-                }}
-              >
-                <LocationOnIcon /> {shop.address}
-              </Typography>
-            }
-            
-            {shop.phone &&
-              <Typography 
-                variant="body2" 
-                color="textSecondary" 
-                fontStyle="normal"
-                sx={{
-                  mt: 1,
-                  textAlign: "right",
-                  display: "flex", 
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: 7
-                }}
-              >
-                <PhoneIcon /> 
-                
-                <MUILink href={`tel:${shop.phone}`}>{shop.phone}</MUILink>
-              </Typography>
-            }
-            
-            {shop.web_results_link &&
-              <Typography 
-                variant="body2" 
-                color="textSecondary" 
-                fontStyle="normal"
-                sx={{
-                  mt: 1,
-                  textAlign: "right",
-                  display: "flex", 
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: 7
-                }}
-              >
-                <LanguageIcon sx={{ position: "relative", top: "1.8px" }}/> 
-              
-                <MUILink href={shop.web_results_link}>Web Link</MUILink>
-              </Typography>
-            }
+            {/* SHOP INFORMATION */}
+            <Information 
+              address={shop.address ?? ""} 
+              price={shop.price ?? ""}
+              phone={shop.phone ?? ""}
+              webLink={shop.web_results_link}
+            />
 
-            <Box mt={5}>
-              <Typography 
-                variant="h6" 
-                fontStyle="normal"
-              >
-                User Reviews
-              </Typography>
+            {/* DIRECTION AND FAVORITES */}
+            <Box 
+              mt={5} 
+              display="flex" 
+              flexWrap="wrap" 
+              alignItems="center" 
+              justifyContent="space-between"
+              gap={2}
+            >
+              <Button variant="contained" sx={{ fontSize: 12 }}>
+                <NearMeIcon fontSize="small" sx={{ mr: 0.75 }}/> Start Directions
+              </Button>
 
-              {shop.user_reviews && shop.user_reviews?.most_relevant.length > 0 &&
-                <ReviewSlide 
-                  reviews={shop.user_reviews.most_relevant}
-                />
-              }
+              <Button variant="outlined" sx={{ fontSize: 12 }}>
+                <FavoriteIcon fontSize="small" sx={{ mr: 0.75 }}/> Add to Favorites
+              </Button>
             </Box>
+
+            {/* SHOP EXTENSIONS */}
+            {mergedExtensions && <ExtensionList extensions={mergedExtensions} />}
+
+            {/* SHOP REVIEWS */}
+            {shop.user_reviews && shop.user_reviews?.most_relevant.length > 0 &&
+              <UserReviews 
+                 reviews={shop.user_reviews.most_relevant}
+              />
+            }
           </CardContent>
         </MotionCard>
 

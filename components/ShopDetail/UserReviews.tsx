@@ -4,10 +4,10 @@ import { ImageWithSkeleton } from "@/components";
 
 import type { SerpReviewItemProps } from "@/types";
 
-const ReviewSlide = ({ reviews }: { reviews : SerpReviewItemProps[] }) => {
+const UserReviews = ({ reviews }: { reviews : SerpReviewItemProps[] }) => {
   return (
     <Box 
-        mt={2.5}
+        mt={7}
         width="100%"
         display="flex"
         alignItems="center"
@@ -68,4 +68,4 @@ const ReviewSlide = ({ reviews }: { reviews : SerpReviewItemProps[] }) => {
   )
 }
 
-export default ReviewSlide;
+export default UserReviews;

@@ -1,4 +1,4 @@
-import type { OSMAddress } from "@/types";
+import type { ExtensionData, ExtensionGroup, OSMAddress } from "@/types";
 
 export const slugify = (text: string): string => {
   return text
@@ -35,6 +35,39 @@ export const convertSerpApiHoursToWeekdayText = (hours: { [key: string]: string 
   return orderedDays.map(day => dayMap[day] || `${capitalize(day)}: Closed`);
 }
 
+export const mergeExtensionsWithUnsupported = (
+  extensions: ExtensionData[],
+  unsupported: ExtensionData[]
+): ExtensionGroup[] => {
+  const mappedExtensions: ExtensionGroup[] = extensions.map((entry) => {
+    const [key, values] = Object.entries(entry)[0];
+    return {
+      key,
+      values: Array.isArray(values) ? values : [],
+    };
+  });
+
+  const unsupportedMapped: ExtensionGroup[] = unsupported.map((entry) => {
+    const [key, values] = Object.entries(entry)[0];
+    return {
+      key,
+      values: Array.isArray(values) ? values : [],
+      _unsupported: true,
+    };
+  });
+
+  const result: ExtensionGroup[] = [];
+
+  for (const entry of mappedExtensions) {
+    result.push(entry);
+    if (entry.key === "popular_for") {
+      result.push(...unsupportedMapped);
+    }
+  }
+
+  return result;
+}
+
 export const getStarsSVG = (rating: number, isMobile: boolean): string => {
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating % 1 >= 0.25 && rating % 1 < 0.75;
@@ -65,4 +98,75 @@ export const getStarsSVG = (rating: number, isMobile: boolean): string => {
   const empty = emptyStar.repeat(emptyStars);
 
   return `<div style="display:flex;align-items:center">${full}${half}${empty}</div>`;
+}
+
+const emojiMap: { emoji: string; keywords: string[] }[] = [
+  { emoji: "☕", keywords: ["coffee"] },
+  { emoji: "🍵", keywords: ["tea"] },
+  { emoji: "⭐", keywords: ["great", "recommended", "popular"] },
+
+  { emoji: "🌤️", keywords: ["outdoor"] },
+  { emoji: "🥡", keywords: ["takeout", "take away"] },
+  { emoji: "🍽️", keywords: ["dine", "dining"] },
+
+  { emoji: "🚳", keywords: ["no delivery", "no-contact delivery"] },
+  { emoji: "🛵", keywords: ["delivery"] },
+
+  { emoji: "📶", keywords: ["wi-fi", "free wi-fi"] },
+  { emoji: "💻", keywords: ["laptop", "work", "remote"] },
+  { emoji: "📖", keywords: ["book", "read", "reading"] },
+
+  { emoji: "🧍", keywords: ["solo", "single"] },
+  { emoji: "🪑", keywords: ["seating", "seat"] },
+  { emoji: "🚻", keywords: ["restroom", "toilet", "bathroom"] },
+  { emoji: "♿️", keywords: ["wheelchair"] },
+
+  { emoji: "🌤️", keywords: ["breakfast", "morning"] },
+  { emoji: "☀️", keywords: ["lunch", "noon"] },
+  { emoji: "🍰", keywords: ["dessert"] },
+  { emoji: "🌙", keywords: ["dinner", "night"] },
+  { emoji: "⚡", keywords: ["quick"] },
+  { emoji: "🍴", keywords: ["bite", "snack"] },
+
+  { emoji: "😌", keywords: ["casual", "relaxed"] },
+  { emoji: "🛋️", keywords: ["cozy", "comfortable"] },
+  { emoji: "🤫", keywords: ["quiet"] },
+  { emoji: "🔥", keywords: ["trendy", "modern", "hip"] },
+
+  { emoji: "🎵", keywords: ["music", "live music"] },
+  { emoji: "⚽️", keywords: ["sport", "football"] },
+  
+  { emoji: "🎓", keywords: ["college", "student"] },
+  { emoji: "👥", keywords: ["group", "groups"] },
+  { emoji: "🧳", keywords: ["tourist"] },
+
+  { emoji: "📅", keywords: ["appointment", "reservation"] },
+
+  { emoji: "💳", keywords: ["credit", "card"] },
+  { emoji: "💵", keywords: ["cash", "money"] },
+
+  { emoji: "🪑👶", keywords: ["children", "high chair", "baby"] },
+
+  { emoji: "🅿️", keywords: ["parking"] },
+  { emoji: "🆓", keywords: ["free"] },
+  { emoji: "💰", keywords: ["paid"] },
+  { emoji: "✔️", keywords: ["plenty", "available"] },
+  { emoji: "❌", keywords: ["unavailable", "missing"] },
+  { emoji: "🚫", keywords: ["no", "not allowed", "forbidden"] },
+];
+
+export const getEmoji = (label: string, isUnsupported = false): string => {
+  const lowerLabel = label.toLowerCase();
+
+  for (const { emoji, keywords } of emojiMap) {
+    if (keywords.some((word) => lowerLabel.includes(word))) {
+      return isUnsupported ? "❌" : emoji;
+    }
+  }
+
+  return isUnsupported ? "❌" : "✔️";
+}
+
+export const formatTitle = (key: string): string => {
+  return key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
