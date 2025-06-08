@@ -1,7 +1,281 @@
+import { useState } from "react";
+import { useRouter } from "next/router";
+import { useUser } from "@/contexts/UserContext";
+import { GetServerSideProps } from "next";
+import { Alert, Box, Button, Checkbox, FormControlLabel, 
+  Divider, FormLabel, FormControl, 
+  Link as MUILink, TextField, Typography } from "@mui/material";
+  
+import { AuthContainer, AuthCard } from "@/components";
+
+import { verifyToken } from "@/lib/auth";
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const token = ctx.req.cookies.token;
+
+  const user = token ? verifyToken(token) : null;
+
+  if (user) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  return { props: {} };
+}
+
 const Login = () => {
+  const router = useRouter();
+  const { refreshUser } = useUser();
+
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password, remember }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Login failed");
+      } else {
+        await refreshUser();
+        router.push("/");
+      }
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div>Login</div>
-  )
+      <AuthContainer direction="column" justifyContent="space-between">
+        <AuthCard variant="outlined">
+          <Typography
+              component="h1"
+              variant="h4"
+              sx={{ width: "100%", fontSize: "clamp(1.5rem, 10vw, 2rem)", }}
+            >
+            Carikopi
+          </Typography>
+
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              width: "100%",
+              gap: 2,
+            }}
+          >
+            <FormControl>
+              <FormLabel htmlFor="username" sx={{ color: "#fff" }}>Username</FormLabel>
+
+              <TextField
+                id="username"
+                type="name"
+                name="username"
+                placeholder="Username"
+                autoComplete="off"
+                autoFocus
+                required
+                fullWidth
+                variant="outlined"
+                color="primary"
+                value={username}
+                onChange={(e) => {
+                  if (error) setError("");
+                  setUsername(e.target.value);
+                }}
+                onBlur={(e) => setUsername(e.target.value.toLowerCase())}
+                sx={{
+                  mt: 1,
+                  "& .MuiInputBase-root": {
+                    color: "#fff",
+                    backgroundColor: "rgba(255,255,255,0.1)",
+                  },
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#ddd",
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#fff",
+                  },
+                  "& .MuiFormHelperText-root": {
+                    color: "#fff",
+                  },
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "#ccc", // default
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#fff", // on hover
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#fff", // on focus
+                    },
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: "#fff",
+                    "&.Mui-focused": {
+                      color: "#fff",
+                    },
+                  },
+                }}
+              />
+            </FormControl>
+
+            <FormControl>
+              <FormLabel htmlFor="password" sx={{ color: "#fff" }}>Password</FormLabel>
+
+              <TextField
+                name="password"
+                placeholder="••••••"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                required
+                fullWidth
+                variant="outlined"
+                color="primary"
+                value={password}
+                onChange={(e) => {
+                  if (error) setError("");
+                  setPassword(e.target.value);
+                }}
+                sx={{
+                  mt: 1,
+                  "& .MuiInputBase-root": {
+                    color: "#fff",
+                    backgroundColor: "rgba(255,255,255,0.1)",
+                  },
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#ddd",
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#fff",
+                  },
+                  "& .MuiFormHelperText-root": {
+                    color: "#fff",
+                  },
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "#ccc", // default
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#fff", // on hover
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#fff", // on focus
+                    },
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: "#fff",
+                    "&.Mui-focused": {
+                      color: "#fff",
+                    },
+                  },
+                }}
+              />
+            </FormControl>
+
+            <FormControlLabel
+              control={
+                <Checkbox 
+                  value="remember" 
+                  color="primary" 
+                  checked={remember}
+                  onChange={(e) => setRemember(e.target.checked)}
+                  sx={{
+                    color: "#fff",
+                    "&.Mui-checked": {
+                      color: "#fff",
+                    }
+                  }}
+                />
+              }
+              label="Remember me"
+              sx={{
+                width: "fit-content",
+                borderColor: "#fff"
+              }}
+            />
+
+            {error && (
+              <Alert severity="error">
+                {error}
+              </Alert>
+            )}
+          
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              disabled={loading}
+              sx={{
+                backgroundColor: "#fff",
+                "&:hover": {
+                  backgroundColor: "#ddd",
+                },
+                color: "#111",
+              }}
+            >
+              {loading ? "Logging in..." : "Login"}
+            </Button>
+
+            <MUILink
+              component="button"
+              type="button"
+              onClick={() => {}}
+              variant="body2"
+              sx={{ alignSelf: "center", color: "#fff", textDecorationColor: "#eee" }}
+            >
+              Forgot your password?
+            </MUILink>
+          </Box>
+
+          <Divider 
+            sx={{ 
+              borderColor: "#fff",
+              color: "#fff",
+              "&::before, &::after": {
+                borderColor: "#fff"
+              }
+            }}
+          >
+            or
+          </Divider>
+
+          <Typography sx={{ textAlign: "center" }}>
+            Don&apos;t have an account?{" "}
+            <MUILink
+              href="/register"
+              variant="body2"
+              sx={{ alignSelf: "center", color: "#111", textDecorationColor: "#222" }}
+            >
+              Register
+            </MUILink>
+          </Typography>
+        </AuthCard>
+      </AuthContainer>
+  );
 }
 
 export default Login;

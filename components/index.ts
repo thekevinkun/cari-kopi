@@ -1,4 +1,5 @@
-import AuthForm from "./AuthForm/AuthForm";
+import AuthContainer from "./AuthLayout/AuthContainer";
+import AuthCard from "./AuthLayout/AuthCard";
 import Navbar from "./Navbar/Navbar";
 import FullscreenImage from "./FullscreenImage/FullscreenImage";
 import ImageWithSkeleton from "./ImageWithSkeleton/ImageWithSkeleton";
@@ -10,7 +11,8 @@ import ExtensionList from "./ShopDetail/ExtensionList";
 import UserReviews from "./ShopDetail/UserReviews";
 
 export {
-    AuthForm,
+    AuthContainer,
+    AuthCard,
     Navbar,
     FullscreenImage,
     ImageWithSkeleton,

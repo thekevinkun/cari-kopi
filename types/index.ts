@@ -1,3 +1,29 @@
+export interface User {
+  _id?: string;
+  name: string;
+  username: string;
+  email: string;
+  passwordHash: string;
+  verified: boolean;
+  verificationCode?: string | null;
+  verificationExpires?: string | null;
+  createdAt: string;
+}
+
+export type UserLogin = {
+  id: string;
+  name: string
+  username: string;
+  email: string;
+}
+
+export type UserContextType = {
+  user: UserLogin | null;
+  loading: boolean;
+  refreshUser: () => Promise<void>;
+}
+
+
 export type Coordinates = {
   lat: number;
   lng: number;

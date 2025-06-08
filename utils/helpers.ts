@@ -170,3 +170,15 @@ export const getEmoji = (label: string, isUnsupported = false): string => {
 export const formatTitle = (key: string): string => {
   return key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
+
+export const toTitleCase = (str: string): string => {
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+export const generateVerificationCode = (): string => {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
