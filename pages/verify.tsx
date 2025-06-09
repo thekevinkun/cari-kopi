@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { GetServerSideProps } from "next";
+import { useUser } from "@/contexts/UserContext";
+
 import { Alert, Box, Button, Paper, 
   Stack, TextField, Typography
 } from "@mui/material";
@@ -10,8 +12,10 @@ import { findUserByEmail } from "@/lib/user";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const email = ctx.query.email;
+  const cookieEmail = ctx.req.cookies.verify_email;
 
-  if (!email || typeof email !== "string") {
+  // No email? or doesn't match cookie → redirect
+  if (!email || email !== cookieEmail) {
     return {
       redirect: {
         destination: "/login",
@@ -23,7 +27,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const user = await findUserByEmail(email);
 
   if (!user 
-      || !user.verified 
+      || user.verified 
       || !user.verificationCode 
       || !user.verificationExpires
       || new Date(user.verificationExpires) < new Date()) {
@@ -42,6 +46,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 const VerifyPage = ({ email }: { email: string }) => {
   const router = useRouter();
+  const { refreshUser } = useUser();
 
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [message, setMessage] = useState("");
@@ -121,9 +126,10 @@ const VerifyPage = ({ email }: { email: string }) => {
       if (!res.ok) throw new Error(data.error || "Verification failed");
 
       setMessage("Email verified successfully!");
+      await refreshUser();
 
       setTimeout(() => {
-        router.push("/login");
+        router.push("/");
       }, 1500);
     } catch (err: any) {
       setError(err.message);

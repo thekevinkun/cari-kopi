@@ -1,6 +1,8 @@
 // pages/api/auth/verify.ts
 import type { NextApiRequest, NextApiResponse } from "next";
+import { serialize } from "cookie";
 
+import { signToken } from "@/lib/auth";
 import { findUserByEmailAndCode, markUserAsVerified } from "@/lib/user";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -24,6 +26,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: "Verification code expired" });
 
   await markUserAsVerified(email);
+
+  // Generate jwt payload
+  const token = signToken(user);
+
+  // Set token cookie
+  const cookie = serialize("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/",
+    maxAge: 60 * 60, // 1h
+  })
+
+  res.setHeader("Set-Cookie", cookie);
 
   return res.status(200).json({ message: "Your email has been verified. You can now log in." });
 }

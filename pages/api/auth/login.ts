@@ -1,12 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { compare } from "bcryptjs";
-import jwt from "jsonwebtoken";
 import { serialize } from "cookie";
 
+import { signToken } from "@/lib/auth";
 import { findUserByUsername } from "@/lib/user";
-
-const JWT_SECRET = process.env.JWT_SECRET!;
-const COOKIE_NAME = "token";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
@@ -37,18 +34,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   // Generate jwt payload
-  const token = jwt.sign(
-    {
-      id: user._id?.toString(),
-      username: user.username,
-      email: user.email
-    },
-    JWT_SECRET,
-    { expiresIn: remember ? "30d" : "1h" }
-  )
+  const token = signToken(user, remember);
 
   // Set token cookie
-  const cookie = serialize(COOKIE_NAME, token, {
+  const cookie = serialize("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
@@ -57,7 +46,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   })
 
   res.setHeader("Set-Cookie", cookie);
-
-  // ✅ If success
+  
   return res.status(200).json({ message: "Login successful" });
 }

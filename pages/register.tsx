@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
+import { GetServerSideProps} from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { GetServerSideProps} from "next";
+import Cookies from "js-cookie";
+
 import { Box, Button, CircularProgress, 
   Divider, FormLabel, FormControl, 
   Link as MUILink, TextField, Typography } from "@mui/material";
@@ -156,6 +158,7 @@ const Register = () => {
 
     const newErrors: typeof errors = {};
 
+    // Check name
     if (!name) newErrors.name = "Name is required";
     
     // Check username
@@ -197,6 +200,7 @@ const Register = () => {
       const data = await res.json();
 
       if (res.ok) {
+        Cookies.set("verify_email", email, { expires: 1 / 24 });
         router.push(`/verify?email=${email}`);
       } else {
         alert(data.error || "Login failed");
