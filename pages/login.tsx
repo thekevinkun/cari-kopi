@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { useUser } from "@/contexts/UserContext";
 import { GetServerSideProps } from "next";
@@ -65,6 +66,12 @@ const Login = () => {
   };
 
   return (
+    <>
+      <Head>
+        <title>Login | Carikopi</title>
+        <meta name="description" content="Login to your Carikopi account" />
+      </Head>
+    
       <AuthContainer direction="column" justifyContent="space-between">
         <AuthCard variant="outlined">
           <Typography
@@ -275,6 +282,7 @@ const Login = () => {
           </Typography>
         </AuthCard>
       </AuthContainer>
+    </>
   );
 }
 
