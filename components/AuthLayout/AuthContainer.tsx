@@ -8,10 +8,13 @@ const AuthContainer = styled(Stack)(({ theme }) => ({
   backgroundSize: "contain",
   backgroundPosition: "center center",
   height: "100%",
-  minHeight: "100%",
+  minHeight: "100vh",
   padding: theme.spacing(2),
   [theme.breakpoints.up("sm")]: {
-    padding: theme.spacing(4),
+    padding: theme.spacing(4)
+  },
+  [theme.breakpoints.down("sm")]: {
+    backgroundImage: "none"
   },
   "&::before": {
     content: '""',

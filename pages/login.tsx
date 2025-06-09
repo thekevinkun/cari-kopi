@@ -68,7 +68,7 @@ const Login = () => {
   return (
     <>
       <Head>
-        <title>Login | Carikopi</title>
+        <title>Log in | Carikopi</title>
         <meta name="description" content="Login to your Carikopi account" />
       </Head>
     
@@ -212,9 +212,6 @@ const Login = () => {
                   onChange={(e) => setRemember(e.target.checked)}
                   sx={{
                     color: "#fff",
-                    "&.Mui-checked": {
-                      color: "#fff",
-                    }
                   }}
                 />
               }
@@ -244,7 +241,7 @@ const Login = () => {
                 color: "#111",
               }}
             >
-              {loading ? "Logging in..." : "Login"}
+              {loading ? "Logging in..." : "Log in"}
             </Button>
 
             <MUILink
@@ -252,7 +249,14 @@ const Login = () => {
               type="button"
               onClick={() => {}}
               variant="body2"
-              sx={{ alignSelf: "center", color: "#fff", textDecorationColor: "#eee" }}
+              sx={{ 
+                alignSelf: "center",
+                color: "#fff", 
+                textDecoration: "none", 
+                "&:hover": {
+                  textDecoration: "underline",
+                }
+              }}
             >
               Forgot your password?
             </MUILink>
@@ -275,9 +279,15 @@ const Login = () => {
             <MUILink
               href="/register"
               variant="body2"
-              sx={{ alignSelf: "center", color: "#111", textDecorationColor: "#222" }}
+              sx={{ 
+                alignSelf: "center",
+                textDecoration: "none",
+                "&:hover": {
+                  textDecoration: "underline"
+                }
+              }}
             >
-              Register
+              Create
             </MUILink>
           </Typography>
         </AuthCard>

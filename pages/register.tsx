@@ -524,9 +524,15 @@ const Register = () => {
               <MUILink
                 href="/login"
                 variant="body2"
-                sx={{ alignSelf: "center", color: "#111", textDecorationColor: "#222" }}
+                sx={{ 
+                  alignSelf: "center",
+                  textDecoration: "none",
+                  "&:hover": {
+                    textDecoration: "underline"
+                  }
+                }}
               >
-                Login
+                Log in
               </MUILink>
             </Typography>
           </Box>
