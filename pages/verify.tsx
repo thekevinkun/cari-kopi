@@ -129,7 +129,7 @@ const VerifyPage = ({ email }: { email: string }) => {
       await refreshUser();
 
       setTimeout(() => {
-        router.push("/");
+        router.push("/greeting?welcome=true");
       }, 1500);
     } catch (err: any) {
       setError(err.message);

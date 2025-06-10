@@ -46,6 +46,23 @@ const GreetingPage = () => {
   const { user } = useUser();
 
   const [visible, setVisible] = useState(true);
+  const isWelcome = router.query.welcome === "true";
+
+  const name = user?.username?.split(" ")[0] || "friend";
+  const quote = quotes[Math.floor(Math.random() * quotes.length)];
+  const greeting = isWelcome ? "Welcome" : getGreeting(new Date().getHours());
+  const message = `${isWelcome ? "Let's find coffee?" 
+              : greeting === "Good Morning"
+              ? "It's time for morning coffee."
+              : greeting === "Good Afternoon"
+              ? "Coffee for work?"
+              : greeting === "Good Evening"
+              ? "Evening coffee time?" 
+              : "How about a night coffee?"}`
+
+  const handleExitComplete = () => {
+    router.push("/");
+  };
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -55,14 +72,6 @@ const GreetingPage = () => {
     return () => clearTimeout(timeout);
   }, [router]);
 
-  const handleExitComplete = () => {
-    router.push("/");
-  };
-
-  const name = user?.username?.split(" ")[0] || "friend";
-  const greeting = getGreeting(new Date().getHours());
-  const quote = quotes[Math.floor(Math.random() * quotes.length)];
-  
   return (
     <AnimatePresence onExitComplete={handleExitComplete}>
         {visible && (
@@ -96,19 +105,15 @@ const GreetingPage = () => {
                 >
                     {greeting}, {name}.
                 </MotionTypography>
-
-                <MotionTypography 
+                
+                <MotionTypography   
                     variants={textVariants("up", 0.8)}
                     initial="hidden"
                     animate="show"
                     variant="h5" 
                     gutterBottom
                 >
-                    {greeting === "Good Morning"
-                    ? "It's time for morning coffee."
-                    : greeting === "Good Afternoon"
-                    ? "Let's find coffee?"
-                    : "Night coffee?"}
+                    {message}
                 </MotionTypography>
 
                 <MotionTypography 
