@@ -1,13 +1,34 @@
+import { useState } from "react";
+import { useRouter } from "next/router";
 import Link from "next/link";
-import { Box, Typography } from "@mui/material";
-import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import { useUser } from "@/contexts/UserContext";
+import { Box, CardActions, CardContent, ClickAwayListener, Divider, Link as MUILink, Typography } from "@mui/material";
+import PersonIcon from '@mui/icons-material/Person';
 
-import { StyledAppBar, StyledToolbar, StyledTitleTypography, WhiteOutlinedButton } from "./styles";
+import { StyledAppBar, StyledToolbar, StyledTitleTypography,
+  MenuButton, MenuBox, MenuCard, WhiteOutlinedButton } from "./styles";
 
 const Navbar = () => {
-  const { user, loading } = useUser();
+  const router = useRouter();
+  const { user, loading, refreshUser } = useUser();
+  const [toggleMenu, setToggleMenu] = useState(false);
   
+  const handleLogout = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setToggleMenu(false);
+
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+      });
+
+      await refreshUser();
+      router.push("/login");
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
+  };
+
   return (
     <StyledAppBar position="static">
       <StyledToolbar>
@@ -23,7 +44,12 @@ const Navbar = () => {
                   Hi, {user.username}
                 </Typography>
 
-                <AccountBoxIcon />
+                <MenuButton 
+                  variant="outlined"
+                  onClick={() => setToggleMenu(!toggleMenu)}
+                >
+                  <PersonIcon sx={{ fontSize: "1.75rem" }}/>
+                </MenuButton> 
               </Box>
             :
               <Link href="/login">
@@ -33,6 +59,134 @@ const Navbar = () => {
               </Link>
             }
           </Box>
+        }
+
+        {(user && toggleMenu) &&
+          <ClickAwayListener onClickAway={() => setToggleMenu(false)}>
+            <MenuBox>
+              <MenuCard>
+                <CardContent
+                  sx={(theme) => ({
+                    padding: theme.spacing(0, 0)
+                  })}
+                > 
+                  <Box 
+                    display="flex" 
+                    flexDirection="column"
+                    sx={(theme) => ({
+                      padding: theme.spacing(2, 4)
+                    })}
+                  >
+                    <Typography gutterBottom variant="body1" color="#804A26" fontWeight="bold">
+                      {user.username}
+                    </Typography>
+
+                    <Typography variant="body2" pt={1}>
+                      {user.email}
+                    </Typography>
+                  </Box>
+
+                  <Divider 
+                    sx={{ 
+                      borderColor: "#804A26",
+                    }}
+                  />
+                  
+                  <Box 
+                    sx={(theme) => ({
+                      padding: theme.spacing(1, 0)
+                    })}
+                  >
+                    <MUILink
+                      href="/favorites"
+                      underline="none"
+                      sx={(theme) => ({
+                        display: "flex",
+                        padding: theme.spacing(1.25, 2),
+                        alignItems: "center",
+                        color: router.pathname.startsWith("/favorites") ? "#804A26" : "inherit",
+                        pointerEvents: router.pathname.startsWith("/favorites") ? "none" : "auto",
+                        transition: "all 0.2s ease",
+                        "&:hover": {
+                          backgroundColor: "rgba(128, 74, 38, 0.75)",
+                          "& .hover-text": {
+                            fontWeight: "bold",
+                          }
+                        },
+                      })}
+                      onClick={() => setToggleMenu(!toggleMenu)}
+                    >
+                      <Typography 
+                        variant="body1" 
+                        fontWeight={`${router.pathname.startsWith("/favorites") ? "bold" : "normal"}`}
+                        className="hover-text"
+                      >
+                        Favorites
+                      </Typography>
+                    </MUILink>
+                    
+                    <MUILink
+                      href="/account"
+                      underline="none"
+                      sx={(theme) => ({
+                        display: "flex",
+                        padding: theme.spacing(1.25, 2),
+                        alignItems: "center",
+                        color: router.pathname.startsWith("/account") ? "#804A26" : "inherit",
+                        pointerEvents: router.pathname.startsWith("/account") ? "none" : "auto",
+                        transition: "all 0.2s ease",
+                        "&:hover": {
+                          backgroundColor: "rgba(128, 74, 38, 0.75)",
+                          "& .hover-text": {
+                            fontWeight: "bold",
+                          }
+                        },
+                      })}
+                      onClick={() => setToggleMenu(!toggleMenu)}
+                    >
+                      <Typography 
+                        variant="body1"
+                        fontWeight={`${router.pathname.startsWith("/account") ? "bold" : "normal"}`} 
+                        className="hover-text"
+                      >
+                        Account
+                      </Typography>
+                    </MUILink>
+                  </Box>
+                </CardContent>
+                  
+                <Divider />
+                
+                <CardActions
+                  sx={(theme) => ({
+                    display: "block",
+                    padding: theme.spacing(1, 0, 0, 0)
+                  })}
+                >
+                  <MUILink
+                    href="/logout"
+                    underline="none"
+                    sx={(theme) => ({
+                      display: "flex",
+                      padding: theme.spacing(1.75, 2),
+                      alignItems: "center",
+                      color: "inherit",
+                      transition: "all 0.2s ease",
+                      "&:hover": {
+                        backgroundColor: "rgba(230, 230, 230, 0.5)",
+                        "& .hover-text": {
+                          fontWeight: "bold",
+                        }
+                      },
+                    })}
+                    onClick={handleLogout}
+                  >
+                    <Typography variant="body1" className="hover-text">Logout</Typography>
+                  </MUILink>
+                </CardActions> 
+              </MenuCard>
+            </MenuBox>
+          </ClickAwayListener>
         }
       </StyledToolbar>
     </StyledAppBar>
