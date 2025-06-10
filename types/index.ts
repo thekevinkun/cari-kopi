@@ -187,6 +187,7 @@ export type SkeletonImageProps = {
 
 export type ActionFormProps = {
   address: string | null;
+  shouldAsk: boolean;
   onRequestLocation: () => void;
 }
 

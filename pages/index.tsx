@@ -32,13 +32,15 @@ const ShopDetail = dynamic(() => import("@/components/ShopDetail/ShopDetail"), {
 });
 
 const Home = () => {
-  const [hasRequestedLocation, setHasRequestedLocation] = useState(false);
   const [location, setLocation] = useState<Coordinates | null>(null);
   const [address, setAddress] = useState<string | null>(null);
   const [shops, setShops] = useState<Shop[]>([]);
 
   const [selectedShop, setSelectedShop] = useState<SerpShopDetail | null>(null);
   const [showShopDetail, setShowShopDetail] = useState(false);
+
+  const [shouldAsk, setShouldAsk] = useState(false);
+  const triedInitialLocation = useRef(false);
 
   const getAddress = async (lat: number, lng: number) => {
     try {
@@ -70,8 +72,7 @@ const Home = () => {
     return null;
   }
 
-  // Get user location by device  
-  useEffect(() => {
+  const tryGetLocation = async () => {
     if (!navigator.geolocation) {
       console.error("Geolocation is not supported");
       return;
@@ -95,9 +96,18 @@ const Home = () => {
       },
       (error) => {
         console.error("Geolocation error:", error);
+        setShouldAsk(true); // Show "Find Location" button on ActionForm if error find loc
       }
     )
-  }, [hasRequestedLocation])
+  }
+
+  useEffect(() => {
+    // Avoid re-trigerring
+    if (!triedInitialLocation.current) {
+      triedInitialLocation.current = true;
+      tryGetLocation();
+    }
+  }, [])
 
   const mapRef = useRef<HTMLDivElement>(null);
   const [mapHeight, setMapHeight] = useState("100%");
@@ -151,9 +161,10 @@ const Home = () => {
           onSelectShop={(shop: Shop) => getShopDetail(shop)}
         />
       </Grid>
+      
       <Grid size={{ xs: 12, md: 4 }}>
         <Box display="flex" flexDirection="column">
-          <ActionForm address={address} onRequestLocation={() => setHasRequestedLocation(true)} />
+          <ActionForm address={address} shouldAsk={shouldAsk} onRequestLocation={tryGetLocation} />
 
           {(showShopDetail && selectedShop) && 
             <ShopDetail 

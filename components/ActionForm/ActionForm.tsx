@@ -1,4 +1,4 @@
-import { Box, Button, Stack, useMediaQuery } from "@mui/material";
+import { Box, Button, Stack, Typography, useMediaQuery } from "@mui/material";
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import SearchIcon from '@mui/icons-material/Search';
 
@@ -6,12 +6,12 @@ import type { ActionFormProps } from "@/types";
 
 import { Search, StyledAddress, SearchIconWrapper, StyledInputBase } from "./styles";
 
-const ActionForm = ({ address, onRequestLocation }: ActionFormProps) => {
+const ActionForm = ({ address, shouldAsk, onRequestLocation }: ActionFormProps) => {
   const isMobile = useMediaQuery("(max-width: 600px)");
   
   return (
     <Stack spacing={2} py={2} px={1}>
-      {!address ?
+      {(!address && shouldAsk) ?
         <Box display="flex" alignItems="center">
           <Button 
             variant="outlined"
@@ -43,12 +43,22 @@ const ActionForm = ({ address, onRequestLocation }: ActionFormProps) => {
             }}
           />
 
-          <StyledAddress 
-            variant="body1" 
-            color="textSecondary"
-          >
-            {address}
-          </StyledAddress>
+          {address ?
+            <StyledAddress 
+              variant="body1" 
+              color="textSecondary"
+            >
+              {address}
+            </StyledAddress>
+          :
+            <Typography 
+              variant="body1" 
+              color="textSecondary"
+              fontSize="0.825rem"
+            >
+              Finding location...
+            </Typography>
+          }
         </Box>
       }
 

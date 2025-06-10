@@ -19,6 +19,18 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
 });
 
+// Re-calculate the layout once the transition is done.
+const MapReady = () => {
+  const map = useMap();
+
+  useEffect(() => {
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 300);
+  }, []);
+  return null;
+};
+
 // Handles jumping to user's location
 const MapFlyTo = ({ userLocation, onFlyEnd }: { userLocation: Coordinates | null, onFlyEnd: () => void }) => {
   const map = useMap();
@@ -68,6 +80,8 @@ const Map = ({ userLocation, shops, onSelectShop }: Map) => {
       scrollWheelZoom
       style={{ height: "100%", width: "100%" }}
     >
+      <MapReady />
+      
       <TileLayer
         attribution="&copy; OpenStreetMap contributors"
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
