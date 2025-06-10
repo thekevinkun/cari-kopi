@@ -13,7 +13,7 @@ import { Navbar } from "@/components";
 const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
   
-  const hideNavbarOn = ["/login", "/register", "/verify"];
+  const hideNavbarOn = ["/login", "/register", "/verify", "/greeting"];
   const hideNavbar = hideNavbarOn.includes(router.pathname) || router.pathname.startsWith("/verify");
 
   return (

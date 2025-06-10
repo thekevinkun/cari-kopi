@@ -182,3 +182,9 @@ export const toTitleCase = (str: string): string => {
 export const generateVerificationCode = (): string => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
+
+export const getGreeting = (hour: number) => {
+  if (hour < 12) return "Good Morning";
+  if (hour < 17) return "Good Afternoon";
+  return "Good Evening";
+}

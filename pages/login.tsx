@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import Cookies from "js-cookie";
 import { useUser } from "@/contexts/UserContext";
-import { GetServerSideProps } from "next";
 import { Alert, Box, Button, Checkbox, FormControlLabel, 
   Divider, FormLabel, FormControl, 
   Link as MUILink, TextField, Typography } from "@mui/material";
@@ -56,7 +57,8 @@ const Login = () => {
         setError(data.error || "Login failed");
       } else {
         await refreshUser();
-        router.push("/");
+        Cookies.set("login_email", username, { expires: 1 / 24 });
+        router.push("/greeting");
       }
     } catch (err) {
       setError("Something went wrong. Please try again.");
