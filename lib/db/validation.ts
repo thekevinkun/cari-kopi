@@ -1,3 +1,16 @@
+export const validateName = (name: string): string | null => {
+  if (!name.trim()) return "Name is required";
+
+  // Allow all Unicode letters and spaces
+  const nameRegex = /^[\p{L}\p{Zs}]+$/u;
+
+  if (!nameRegex.test(name)) {
+    return "Name can only contain letters and spaces";
+  }
+
+  return null;
+}
+
 export const validateEmailFormat = (email: string): string | null => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
 

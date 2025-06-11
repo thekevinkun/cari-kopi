@@ -13,6 +13,9 @@ const Navbar = () => {
   const { user, loading, refreshUser } = useUser();
   const [toggleMenu, setToggleMenu] = useState(false);
   
+  const firstName = user?.name?.split(" ")[0];
+  const lastName = user?.name?.split(" ")[1]
+  
   const handleLogout = async (e: React.FormEvent) => {
     e.preventDefault();
     setToggleMenu(false);
@@ -41,7 +44,7 @@ const Navbar = () => {
             {user ? 
               <Box display="flex" alignItems="center" gap={1}>
                 <Typography component="span" variant="body1">
-                  Hi, {user.username}
+                  Hi, {firstName}
                 </Typography>
 
                 <MenuButton 
@@ -78,7 +81,7 @@ const Navbar = () => {
                     })}
                   >
                     <Typography gutterBottom variant="body1" color="#804A26" fontWeight="bold">
-                      {user.username}
+                      {firstName} {lastName}
                     </Typography>
 
                     <Typography variant="body2" pt={1}>

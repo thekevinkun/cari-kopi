@@ -10,11 +10,6 @@ export async function findUserByEmail(email: string) {
     return await users.findOne({ email });
 }
 
-export async function findUserByUsername(username: string) {
-    const users = await getUsersCollection();
-    return await users.findOne({ username });
-}
-
 export async function findUserByEmailAndCode(email: string, code: string) {
   const users = await getUsersCollection();
   return await users.findOne({ email, verificationCode: code });

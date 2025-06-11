@@ -2,8 +2,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { serialize } from "cookie";
 
-import { signToken } from "@/lib/auth";
-import { findUserByEmailAndCode, markUserAsVerified } from "@/lib/user";
+import { signToken } from "@/lib/db/auth";
+import { findUserByEmailAndCode, markUserAsVerified } from "@/lib/db/user";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST")

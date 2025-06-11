@@ -10,7 +10,8 @@ import { Alert, Box, Button, Checkbox, FormControlLabel,
   
 import { AuthContainer, AuthCard } from "@/components";
 
-import { verifyToken } from "@/lib/auth";
+import { verifyToken } from "@/lib/db/auth";
+import { inFifteenMinutes } from "@/utils/helpers";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const token = ctx.req.cookies.token;
@@ -33,7 +34,7 @@ const Login = () => {
   const router = useRouter();
   const { refreshUser } = useUser();
 
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
   const [error, setError] = useState("");
@@ -48,16 +49,18 @@ const Login = () => {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password, remember }),
+        body: JSON.stringify({ email, password, remember }),
       });
 
       const data = await res.json();
+
+      const expiresMinute = inFifteenMinutes();
 
       if (!res.ok) {
         setError(data.error || "Login failed");
       } else {
         await refreshUser();
-        Cookies.set("login_email", username, { expires: 1 / 24 });
+        Cookies.set("login_email", email, { expires: expiresMinute });
         router.push("/greeting");
       }
     } catch (err) {
@@ -96,25 +99,25 @@ const Login = () => {
             }}
           >
             <FormControl>
-              <FormLabel htmlFor="username" sx={{ color: "#fff" }}>Username</FormLabel>
+              <FormLabel htmlFor="email" sx={{ color: "#fff" }}>Email</FormLabel>
 
               <TextField
-                id="username"
+                id="email"
                 type="name"
-                name="username"
-                placeholder="Username"
+                name="email"
+                placeholder="Email"
                 autoComplete="off"
                 autoFocus
                 required
                 fullWidth
                 variant="outlined"
                 color="primary"
-                value={username}
+                value={email}
                 onChange={(e) => {
                   if (error) setError("");
-                  setUsername(e.target.value);
+                  setEmail(e.target.value);
                 }}
-                onBlur={(e) => setUsername(e.target.value.toLowerCase())}
+                onBlur={(e) => setEmail(e.target.value.toLowerCase())}
                 sx={{
                   mt: 1,
                   "& .MuiInputBase-root": {

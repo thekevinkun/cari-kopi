@@ -2,7 +2,7 @@
 
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { findUserByEmail, sendEmailVerificationCode, updateNewCode } from "@/lib/user";
+import { findUserByEmail, sendEmailVerificationCode, updateNewCode } from "@/lib/db/user";
 import { generateVerificationCode } from "@/utils/helpers";
 
 const EXPIRATION_MINUTES = 10;

@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { findUserByEmail } from "@/lib/user";
+import { findUserByEmail } from "@/lib/db/user";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { email } = req.query;

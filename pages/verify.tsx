@@ -2,17 +2,19 @@ import { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import Cookies from "js-cookie";
 import { useUser } from "@/contexts/UserContext";
 
 import { Alert, Box, Button, Paper, 
   Stack, TextField, Typography
 } from "@mui/material";
 
-import { findUserByEmail } from "@/lib/user";
+import { findUserByEmail } from "@/lib/db/user";
+import { inFifteenMinutes } from "@/utils/helpers";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const email = ctx.query.email;
-  const cookieEmail = ctx.req.cookies.verify_email;
+  const cookieEmail = ctx.req.cookies.register_email;
 
   // No email? or doesn't match cookie → redirect
   if (!email || email !== cookieEmail) {
@@ -126,6 +128,11 @@ const VerifyPage = ({ email }: { email: string }) => {
       if (!res.ok) throw new Error(data.error || "Verification failed");
 
       setMessage("Email verified successfully!");
+
+      const expiresMinute = inFifteenMinutes();
+      
+      Cookies.set("verify_email", email, { expires: expiresMinute });
+
       await refreshUser();
 
       setTimeout(() => {

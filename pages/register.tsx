@@ -10,15 +10,9 @@ import { Box, Button, CircularProgress,
 
 import { AuthContainer, AuthCard } from "@/components";
 
-import { verifyToken } from "@/lib/auth";
-import { toTitleCase } from "@/utils/helpers";
-import { validateEmailFormat, validatePassword } from "@/lib/validation";
-
-const checkUsernameAvailable = async (username: string) => {
-  const res = await fetch(`/api/auth/check-username?username=${encodeURIComponent(username)}`);
-  const data = await res.json();
-  return data.available;
-};
+import { verifyToken } from "@/lib/db/auth";
+import { inFifteenMinutes, toTitleCase } from "@/utils/helpers";
+import { validateName, validateEmailFormat, validatePassword } from "@/lib/db/validation";
 
 const checkEmailAvailable = async (email: string) => {
   const res = await fetch(`/api/auth/check-email?email=${encodeURIComponent(email)}`);
@@ -46,7 +40,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 const Register = () => {
   const router = useRouter();
   const [name, setName] = useState("");
-  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -54,29 +47,27 @@ const Register = () => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(false);
 
-  // Live username check
+  // Live name check
   useEffect(() => {
-    if (username === "") {
+    if (name === "") {
       setErrors((prev) => ({
         ...prev,
-        username: "",
+        name: "",
       }));
 
       return;
     }
 
-    if (username.trim().length < 5) return;
-
     const delayDebounce = setTimeout(async () => {
-      const available = await checkUsernameAvailable(username);
+      const invalidName = validateName(name);
       setErrors((prev) => ({
         ...prev,
-        username: available ? "" : "Username is not available",
+        name: invalidName ? invalidName : "",
       }));
     }, 500);
 
     return () => clearTimeout(delayDebounce);
-  }, [username]);
+  }, [name]);
 
   // Live email check
   useEffect(() => {
@@ -144,10 +135,10 @@ const Register = () => {
   }, [confirmPassword]);
 
   const checkButtonAction = () => {
-    if (!name || !username || !email || !password || !confirmPassword) 
+    if (!name || !email || !password || !confirmPassword) 
       return false;
     
-    if (errors.name || errors.username || errors.email || errors.password || errors.confirm) 
+    if (errors.name || errors.email || errors.password || errors.confirm) 
       return false;
 
     return true;
@@ -160,12 +151,9 @@ const Register = () => {
 
     // Check name
     if (!name) newErrors.name = "Name is required";
-    
-    // Check username
-    if (!username) newErrors.username = "Username is required";
 
-    let available = await checkUsernameAvailable(username);
-    if (!available) newErrors.username = "Username is not available";
+    const invalidName = validateName(name);
+    if (invalidName) newErrors.name = invalidName;
 
     // Check email 
     if (!email) newErrors.email = "Email is required";
@@ -173,8 +161,8 @@ const Register = () => {
     const formatEmail = validateEmailFormat(email);
     if (formatEmail) newErrors.email = formatEmail;
 
-    available = await checkEmailAvailable(email);
-    if (!available) newErrors.email = "Email already registered";
+    const emailAvailable = await checkEmailAvailable(email);
+    if (!emailAvailable) newErrors.email = "Email already registered";
 
     // Check password and confirm password
     if (!password) newErrors.password = "Password is required";
@@ -194,13 +182,15 @@ const Register = () => {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, username, email, password, confirmPassword }),
+        body: JSON.stringify({ name, email, password, confirmPassword }),
       });
 
       const data = await res.json();
 
+      const expiresMinute = inFifteenMinutes();
+      
       if (res.ok) {
-        Cookies.set("verify_email", email, { expires: 1 / 24 });
+        Cookies.set("register_email", email, { expires: expiresMinute });
         router.push(`/verify?email=${email}`);
       } else {
         alert(data.error || "Login failed");
@@ -273,57 +263,6 @@ const Register = () => {
                     },
                     "&.Mui-focused fieldset": {
                       borderColor: errors.name ? "#db1818" : "#fff", // on focus
-                    },
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: "#fff",
-                    "&.Mui-focused": {
-                      color: "#fff",
-                    },
-                  },
-                }}
-              />
-            </FormControl>
-
-            <FormControl>
-              <FormLabel htmlFor="username" sx={{ color: "#fff" }}>Username</FormLabel>
-
-              <TextField
-                autoComplete="off"
-                name="username"
-                required
-                fullWidth
-                id="username"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                onBlur={(e) => setUsername(e.target.value.toLowerCase())}
-                error={!!errors.username}
-                helperText={errors.username}
-                sx={{
-                  mt: 1,
-                  "& .MuiInputBase-root": {
-                    color: "#fff",
-                    backgroundColor: "rgba(255,255,255,0.1)",
-                  },
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#ddd",
-                  },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: errors.username ? "#db1818" : "#fff",
-                  },
-                  "& .MuiFormHelperText-root": {
-                    color: "#fff",
-                  },
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: "#ccc", // default
-                    },
-                    "&:hover fieldset": {
-                      borderColor: errors.username ? "#db1818" : "#fff", // on hover
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: errors.username ? "#db1818" : "#fff", // on focus
                     },
                   },
                   "& .MuiInputLabel-root": {

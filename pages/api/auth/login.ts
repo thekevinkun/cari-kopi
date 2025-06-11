@@ -2,22 +2,23 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { compare } from "bcryptjs";
 import { serialize } from "cookie";
 
-import { signToken } from "@/lib/auth";
-import { findUserByUsername } from "@/lib/user";
+import { signToken } from "@/lib/db/auth";
+import { findUserByEmail } from "@/lib/db/user";
+import { validateEmailFormat } from "@/lib/db/validation";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { username, password, remember } = req.body;
+  const { email, password, remember } = req.body;
 
-  if (!username || !password) {
-    return res.status(400).json({ error: "Missing username or password" });
+  if (!email || !password) {
+    return res.status(400).json({ error: "Missing email or password" });
   }
 
-  // Try to find user by username
-  const user = await findUserByUsername(username);
+  // Try to find user by email
+  const user = await findUserByEmail(email);
 
   if (!user) {
     return res.status(401).json({ error: "Account does not exist" });

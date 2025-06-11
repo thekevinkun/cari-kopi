@@ -1,5 +1,4 @@
 import { createContext, useState, useEffect, useContext } from "react";
-import { useRouter } from "next/router";
 
 import type { UserLogin, UserContextType } from "@/types";
 
@@ -10,7 +9,6 @@ const UserContext = createContext<UserContextType>({
 });
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<UserLogin | null>(null);
 

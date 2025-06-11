@@ -5,15 +5,16 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Box, Typography } from "@mui/material";
 import { useUser } from "@/contexts/UserContext";
 
-import { verifyToken } from "@/lib/auth";
+import { verifyToken } from "@/lib/db/auth";
 import { quotes } from "@/utils/quotes";
 import { greetingVariants, textVariants } from "@/utils/motion";
 import { getGreeting } from "@/utils/helpers";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const cookieLogin = ctx.req.cookies.login_email;
+  const cookieVerify = ctx.req.cookies.verify_email;
 
-  if (!cookieLogin) {
+  if (!cookieLogin && !cookieVerify) {
     return {
       redirect: {
         destination: "/login",
@@ -48,7 +49,7 @@ const GreetingPage = () => {
   const [visible, setVisible] = useState(true);
   const isWelcome = router.query.welcome === "true";
 
-  const name = user?.username?.split(" ")[0] || "friend";
+  const name = user?.name?.split(" ")[0] || "friend";
   const quote = quotes[Math.floor(Math.random() * quotes.length)];
   const greeting = isWelcome ? "Welcome" : getGreeting(new Date().getHours());
   const message = `${isWelcome ? "Let's find coffee?" 

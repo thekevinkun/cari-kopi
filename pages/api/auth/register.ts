@@ -1,8 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import bcrypt from "bcryptjs";
 
-import { findUserByEmail, findUserByUsername, sendEmailVerificationCode, createUser } from "@/lib/user";
-import { validateEmailFormat, validatePassword } from "@/lib/validation";
+import { findUserByEmail, sendEmailVerificationCode, createUser } from "@/lib/db/user";
+import { validateName, validateEmailFormat, validatePassword } from "@/lib/db/validation";
 import { generateVerificationCode, toTitleCase } from "@/utils/helpers";
 
 const EXPIRATION_MINUTES = 10;
@@ -10,19 +10,19 @@ const EXPIRATION_MINUTES = 10;
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== "POST") return res.status(405).end("Method Not Allowed");
 
-    const { name, username, email, password, confirmPassword } = req.body;
+    const { name, email, password, confirmPassword } = req.body;
 
     // Validate fields
-    if (!name || !username || !email || !password || !confirmPassword) {
+    if (!name || !email || !password || !confirmPassword) {
         return res.status(400).json({ error: "All fields are required" });
     }
 
-    // Check username and email availability
-    const existingUsername = await findUserByUsername(email);
-    if (existingUsername) {
-        return res.status(409).json({ error: "Username is not available" });
+    const invalidName = validateName(name);
+    if (invalidName) {
+        return res.status(400).json({ error: invalidName });
     }
-    
+
+    // Check email format and availability
     const formatEmail = validateEmailFormat(email);
     if (formatEmail) {
         return res.status(400).json({ error: formatEmail });
@@ -53,7 +53,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Create user
     await createUser({
         name: toTitleCase(name),
-        username,
         email,
         passwordHash: hashedPassword,
         verified: false,

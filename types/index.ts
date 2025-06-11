@@ -1,7 +1,6 @@
 export interface User {
   _id?: string;
   name: string;
-  username: string;
   email: string;
   passwordHash: string;
   verified: boolean;
@@ -13,7 +12,6 @@ export interface User {
 export type UserLogin = {
   id: string;
   name: string
-  username: string;
   email: string;
 }
 
