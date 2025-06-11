@@ -103,9 +103,19 @@ const Home = () => {
 
   useEffect(() => {
     // Avoid re-trigerring
-    if (!triedInitialLocation.current) {
-      triedInitialLocation.current = true;
-      tryGetLocation();
+    if (triedInitialLocation.current) return;
+    triedInitialLocation.current = true;
+
+    const fromGreeting = localStorage.getItem("fromGreeting");
+
+    if (fromGreeting === "true") {
+      // Delay slightly if just came from /greeting
+      setTimeout(() => {
+        tryGetLocation();
+        localStorage.removeItem("fromGreeting"); // clean up
+      }, 800); // adjust this number to match Map fly delay
+    } else {
+      tryGetLocation(); // regular load
     }
   }, [])
 

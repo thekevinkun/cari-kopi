@@ -63,11 +63,12 @@ const GreetingPage = () => {
               : "How about a night coffee?"}`
 
   const handleExitComplete = () => {
-    router.push("/");
+    router.replace("/");
   };
 
   useEffect(() => {
     const timeout = setTimeout(() => {
+      localStorage.setItem("fromGreeting", "true");
       setVisible(false); // trigger exit animation
     }, 8000);
 
