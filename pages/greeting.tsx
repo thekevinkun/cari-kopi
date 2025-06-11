@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { AnimatePresence, motion } from "framer-motion";
 import { Box, Typography } from "@mui/material";
@@ -74,75 +75,82 @@ const GreetingPage = () => {
   }, [router]);
 
   return (
-    <AnimatePresence onExitComplete={handleExitComplete}>
-        {visible && (
-            <MotionBox
-                variants={greetingVariants}
-                initial="hidden"
-                animate="show"
-                exit="exit"
-                sx={{
-                    height: "100vh",
-                    width: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    background: "radial-gradient(circle at center, #6e3c1b, #2e1a10)",
-                    backgroundSize: "200% 200%",
-                    animation: "pulseGlow 3s ease-in-out infinite",
-                    color: "white",
-                    textAlign: "center",
-                    px: 3,
-                }}
-            >
-                <MotionTypography 
-                    variants={textVariants("up", 0.3)}
-                    initial="hidden"
-                    animate="show"
-                    variant="h3" 
-                    fontWeight="bold" 
-                    gutterBottom
-                >
-                    {greeting}, {name}.
-                </MotionTypography>
-                
-                <MotionTypography   
-                    variants={textVariants("up", 0.8)}
-                    initial="hidden"
-                    animate="show"
-                    variant="h5" 
-                    gutterBottom
-                >
-                    {message}
-                </MotionTypography>
+    <>
+      <Head>
+        <title>{greeting}, {name} | Carikopi</title>
+        <meta name="description" content="Greeting user after login" />
+      </Head>
 
-                <MotionTypography 
-                    variants={textVariants("", 1.3)}
-                    initial="hidden"
-                    animate="show"
-                    variant="body1" 
-                    mt={4} 
-                    fontStyle="italic"
-                >
-                    “{quote}”
-                </MotionTypography>
+      <AnimatePresence onExitComplete={handleExitComplete}>
+          {visible && (
+              <MotionBox
+                  variants={greetingVariants}
+                  initial="hidden"
+                  animate="show"
+                  exit="exit"
+                  sx={{
+                      height: "100vh",
+                      width: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      background: "radial-gradient(circle at center, #6e3c1b, #2e1a10)",
+                      backgroundSize: "200% 200%",
+                      animation: "pulseGlow 3s ease-in-out infinite",
+                      color: "white",
+                      textAlign: "center",
+                      px: 3,
+                  }}
+              >
+                  <MotionTypography 
+                      variants={textVariants("up", 0.3)}
+                      initial="hidden"
+                      animate="show"
+                      variant="h3" 
+                      fontWeight="bold" 
+                      gutterBottom
+                  >
+                      {greeting}, {name}.
+                  </MotionTypography>
+                  
+                  <MotionTypography   
+                      variants={textVariants("up", 0.8)}
+                      initial="hidden"
+                      animate="show"
+                      variant="h5" 
+                      gutterBottom
+                  >
+                      {message}
+                  </MotionTypography>
 
-                <style jsx global>{`
-                    @keyframes pulseGlow {
-                        0%, 100% {
-                            background-position: 50% 50%;
-                            filter: brightness(1);
-                        }
-                        50% {
-                            background-position: 55% 55%;
-                            filter: brightness(1.15);
-                        }
-                    }
-                `}</style>
-            </MotionBox>
-        )}
-    </AnimatePresence>
+                  <MotionTypography 
+                      variants={textVariants("", 1.3)}
+                      initial="hidden"
+                      animate="show"
+                      variant="body1" 
+                      mt={4} 
+                      fontStyle="italic"
+                  >
+                      “{quote}”
+                  </MotionTypography>
+
+                  <style jsx global>{`
+                      @keyframes pulseGlow {
+                          0%, 100% {
+                              background-position: 50% 50%;
+                              filter: brightness(1);
+                          }
+                          50% {
+                              background-position: 55% 55%;
+                              filter: brightness(1.15);
+                          }
+                      }
+                  `}</style>
+              </MotionBox>
+          )}
+      </AnimatePresence>
+    </>
   )
 }
 
