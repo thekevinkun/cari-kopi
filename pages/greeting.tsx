@@ -2,33 +2,20 @@ import { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import Cookies from "js-cookie";
 import { AnimatePresence, motion } from "framer-motion";
-import { Box, Typography } from "@mui/material";
 import { useUser } from "@/contexts/UserContext";
+import { Box, Typography } from "@mui/material";
 
-import { verifyToken } from "@/lib/db/auth";
 import { quotes } from "@/utils/quotes";
 import { greetingVariants, textVariants } from "@/utils/motion";
 import { getGreeting } from "@/utils/helpers";
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const cookieLogin = ctx.req.cookies.login_email;
-  const cookieVerify = ctx.req.cookies.verify_email;
-
-  if (!cookieLogin && !cookieVerify) {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-  }
-
+export const getServerSideProps: GetServerSideProps = async (ctx) => { 
+  const hasGreetingAccess = ctx.req.cookies.greeting_access;
   const token = ctx.req.cookies.token;
-  
-  const user = token ? verifyToken(token) : null;
 
-  if (!user) {
+  if (!token || !hasGreetingAccess) {
     return {
       redirect: {
         destination: "/login",
@@ -59,7 +46,7 @@ const GreetingPage = () => {
               : greeting === "Good Afternoon"
               ? "Coffee for work?"
               : greeting === "Good Evening"
-              ? "Evening coffee time?" 
+              ? "Coffee for stay up late?" 
               : "How about a night coffee?"}`
 
   const handleExitComplete = () => {
@@ -68,6 +55,7 @@ const GreetingPage = () => {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
+      Cookies.remove("greeting_access");
       localStorage.setItem("fromGreeting", "true");
       setVisible(false); // trigger exit animation
     }, 8000);

@@ -183,10 +183,6 @@ export const generateVerificationCode = (): string => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-export const inFifteenMinutes = () => {
-  return new Date(new Date().getTime() + 15 * 60 * 1000);
-}
-
 export const getGreeting = (hour: number) => {
   if (hour >= 5 && hour < 12) return "Good Morning";
   if (hour >= 12 && hour < 17) return "Good Afternoon";

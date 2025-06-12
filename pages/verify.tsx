@@ -10,11 +10,10 @@ import { Alert, Box, Button, Paper,
 } from "@mui/material";
 
 import { findUserByEmail } from "@/lib/db/user";
-import { inFifteenMinutes } from "@/utils/helpers";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const email = ctx.query.email;
-  const cookieEmail = ctx.req.cookies.register_email;
+  const cookieEmail = ctx.req.cookies.verify_email;
 
   // No email? or doesn't match cookie → redirect
   if (!email || email !== cookieEmail) {
@@ -48,7 +47,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 const VerifyPage = ({ email }: { email: string }) => {
   const router = useRouter();
-  const { refreshUser } = useUser();
+  const { user, refreshUser } = useUser();
 
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [message, setMessage] = useState("");
@@ -129,11 +128,10 @@ const VerifyPage = ({ email }: { email: string }) => {
 
       setMessage("Email verified successfully!");
 
-      const expiresMinute = inFifteenMinutes();
-      
-      Cookies.set("verify_email", email, { expires: expiresMinute });
-
       await refreshUser();
+
+      Cookies.remove("verify_email");
+      Cookies.set("greeting_access", "true", { expires: 1 / 92 });
 
       setTimeout(() => {
         router.push("/greeting?welcome=true");
@@ -149,6 +147,8 @@ const VerifyPage = ({ email }: { email: string }) => {
 
     return true;
   };
+
+  if (user) return null;
 
   return (
     <>

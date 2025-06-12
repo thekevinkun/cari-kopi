@@ -15,22 +15,6 @@ const Navbar = () => {
   
   const firstName = user?.name?.split(" ")[0];
   const lastName = user?.name?.split(" ")[1]
-  
-  const handleLogout = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setToggleMenu(false);
-
-    try {
-      await fetch("/api/auth/logout", {
-        method: "POST",
-      });
-
-      await refreshUser();
-      router.push("/login");
-    } catch (err) {
-      console.error("Logout failed", err);
-    }
-  };
 
   return (
     <StyledAppBar position="static">
@@ -182,7 +166,7 @@ const Navbar = () => {
                         }
                       },
                     })}
-                    onClick={handleLogout}
+                    onClick={() => setToggleMenu(false)}
                   >
                     <Typography variant="body1" className="hover-text">Logout</Typography>
                   </MUILink>

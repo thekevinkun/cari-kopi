@@ -1,6 +1,7 @@
 import "@/styles/utilities.css";
 import "leaflet/dist/leaflet.css";
 
+import { useEffect } from "react";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
 import { useUser } from "@/contexts/UserContext"; 
@@ -12,9 +13,16 @@ import { Navbar } from "@/components";
 
 const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
+  const { user } = useUser();
   
-  const hideNavbarOn = ["/login", "/register", "/verify", "/greeting"];
+  const hideNavbarOn = ["/login", "/register", "/verify", "/greeting", "/logout"];
   const hideNavbar = hideNavbarOn.includes(router.pathname) || router.pathname.startsWith("/verify");
+
+  useEffect(() => {
+    if (user && typeof window !== "undefined") {
+      router.replace("/");
+    }
+  }, [user])
 
   return (
     <>

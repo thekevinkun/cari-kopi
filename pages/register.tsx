@@ -3,6 +3,7 @@ import { GetServerSideProps} from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
+import { useUser } from "@/contexts/UserContext";
 
 import { Box, Button, CircularProgress, 
   Divider, FormLabel, FormControl, 
@@ -11,7 +12,7 @@ import { Box, Button, CircularProgress,
 import { AuthContainer, AuthCard } from "@/components";
 
 import { verifyToken } from "@/lib/db/auth";
-import { inFifteenMinutes, toTitleCase } from "@/utils/helpers";
+import { toTitleCase } from "@/utils/helpers";
 import { validateName, validateEmailFormat, validatePassword } from "@/lib/db/validation";
 
 const checkEmailAvailable = async (email: string) => {
@@ -39,6 +40,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 const Register = () => {
   const router = useRouter();
+  const { user } = useUser();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -186,11 +188,9 @@ const Register = () => {
       });
 
       const data = await res.json();
-
-      const expiresMinute = inFifteenMinutes();
       
       if (res.ok) {
-        Cookies.set("register_email", email, { expires: expiresMinute });
+        Cookies.set("verify_email", email, { expires: 1 / 92 });
         router.push(`/verify?email=${email}`);
       } else {
         alert(data.error || "Login failed");
@@ -201,6 +201,8 @@ const Register = () => {
       setLoading(false);
     }
   };
+
+  if (user) return null;
 
   return (
     <>

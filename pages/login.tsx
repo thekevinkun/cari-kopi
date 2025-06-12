@@ -11,7 +11,6 @@ import { Alert, Box, Button, Checkbox, FormControlLabel,
 import { AuthContainer, AuthCard } from "@/components";
 
 import { verifyToken } from "@/lib/db/auth";
-import { inFifteenMinutes } from "@/utils/helpers";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const token = ctx.req.cookies.token;
@@ -32,7 +31,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 const Login = () => {
   const router = useRouter();
-  const { refreshUser } = useUser();
+  const { user, refreshUser } = useUser();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -54,13 +53,11 @@ const Login = () => {
 
       const data = await res.json();
 
-      const expiresMinute = inFifteenMinutes();
-
       if (!res.ok) {
         setError(data.error || "Login failed");
       } else {
         await refreshUser();
-        Cookies.set("login_email", email, { expires: expiresMinute });
+        Cookies.set("greeting_access", "true", { expires: 1 / 92 });
         router.push("/greeting");
       }
     } catch (err) {
@@ -69,6 +66,8 @@ const Login = () => {
       setLoading(false);
     }
   };
+
+  if (user) return null;
 
   return (
     <>
