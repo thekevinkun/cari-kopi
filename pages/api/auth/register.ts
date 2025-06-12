@@ -1,8 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import bcrypt from "bcryptjs";
 
-import { findUserByEmail, sendEmailVerificationCode, createUser } from "@/lib/db/user";
+import { sendEmailVerificationCode } from "@/lib/db/email";
+import { findUserByEmail, createUser } from "@/lib/db/user";
 import { validateName, validateEmailFormat, validatePassword } from "@/lib/db/validation";
+
 import { generateVerificationCode, toTitleCase } from "@/utils/helpers";
 
 const EXPIRATION_MINUTES = 10;

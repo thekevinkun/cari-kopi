@@ -37,7 +37,7 @@ export async function updateNewCode(email: string, newCode: string, expiresAt: D
   );
 }
 
-export async function sendEmailVerificationCode(email: string, verificationCode: string) {
+export async function simulateSendEmailVerificationCode(email: string, verificationCode: string) {
     console.log(`📧 Simulated: Sent verification code ${verificationCode} to ${email}`);
 }
 
