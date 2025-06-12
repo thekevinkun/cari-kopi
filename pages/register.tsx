@@ -48,6 +48,72 @@ const Register = () => {
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(false);
+  
+  const checkButtonAction = () => {
+    if (!name || !email || !password || !confirmPassword) 
+      return false;
+    
+    if (errors.name || errors.email || errors.password || errors.confirm) 
+      return false;
+
+    return true;
+  };
+  
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const newErrors: typeof errors = {};
+
+    // Check name
+    if (!name) newErrors.name = "Name is required";
+
+    const invalidName = validateName(name);
+    if (invalidName) newErrors.name = invalidName;
+
+    // Check email 
+    if (!email) newErrors.email = "Email is required";
+
+    const formatEmail = validateEmailFormat(email);
+    if (formatEmail) newErrors.email = formatEmail;
+
+    const emailAvailable = await checkEmailAvailable(email);
+    if (!emailAvailable) newErrors.email = "Email already registered";
+
+    // Check password and confirm password
+    if (!password) newErrors.password = "Password is required";
+
+    const passwordError = validatePassword(password);
+    if (passwordError) newErrors.password = passwordError;
+
+    if (password !== confirmPassword) newErrors.confirm = "Passwords do not match";
+
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
+
+    setLoading(true);
+
+    // API call to register
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password, confirmPassword }),
+      });
+
+      const data = await res.json();
+      
+      if (res.ok) {
+        Cookies.set("verify_email", email, { expires: 1 / 92 });
+        router.push(`/verify?email=${email}`);
+      } else {
+        alert(data.error || "Login failed");
+      }
+    } catch (err) {
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Live name check
   useEffect(() => {
@@ -136,71 +202,7 @@ const Register = () => {
     return () => clearTimeout(delayDebounce);
   }, [confirmPassword]);
 
-  const checkButtonAction = () => {
-    if (!name || !email || !password || !confirmPassword) 
-      return false;
-    
-    if (errors.name || errors.email || errors.password || errors.confirm) 
-      return false;
 
-    return true;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const newErrors: typeof errors = {};
-
-    // Check name
-    if (!name) newErrors.name = "Name is required";
-
-    const invalidName = validateName(name);
-    if (invalidName) newErrors.name = invalidName;
-
-    // Check email 
-    if (!email) newErrors.email = "Email is required";
-
-    const formatEmail = validateEmailFormat(email);
-    if (formatEmail) newErrors.email = formatEmail;
-
-    const emailAvailable = await checkEmailAvailable(email);
-    if (!emailAvailable) newErrors.email = "Email already registered";
-
-    // Check password and confirm password
-    if (!password) newErrors.password = "Password is required";
-
-    const passwordError = validatePassword(password);
-    if (passwordError) newErrors.password = passwordError;
-
-    if (password !== confirmPassword) newErrors.confirm = "Passwords do not match";
-
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length > 0) return;
-
-    setLoading(true);
-
-    // API call to register
-    try {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password, confirmPassword }),
-      });
-
-      const data = await res.json();
-      
-      if (res.ok) {
-        Cookies.set("verify_email", email, { expires: 1 / 92 });
-        router.push(`/verify?email=${email}`);
-      } else {
-        alert(data.error || "Login failed");
-      }
-    } catch (err) {
-      alert("Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   if (user) return null;
 

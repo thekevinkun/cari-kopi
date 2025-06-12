@@ -15,8 +15,10 @@ const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
   const { user } = useUser();
   
-  const hideNavbarOn = ["/login", "/register", "/verify", "/greeting", "/logout"];
-  const hideNavbar = hideNavbarOn.includes(router.pathname) || router.pathname.startsWith("/verify");
+  const hideNavbarOn = ["/login", "/register", "/verify", "/greeting", "/forgot", "/reset" ,"/logout"];
+  const hideNavbar = hideNavbarOn.includes(router.pathname) 
+        || router.pathname.startsWith("/verify")
+        || router.pathname.startsWith("/reset");
 
   useEffect(() => {
     if (user && typeof window !== "undefined") {

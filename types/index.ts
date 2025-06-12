@@ -6,6 +6,8 @@ export interface User {
   verified: boolean;
   verificationCode?: string | null;
   verificationExpires?: string | null;
+  resetToken?: string | null;
+  resetTokenExpires?: string | null;
   createdAt: string;
 }
 

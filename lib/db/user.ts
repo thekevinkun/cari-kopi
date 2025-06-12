@@ -15,6 +15,11 @@ export async function findUserByEmailAndCode(email: string, code: string) {
   return await users.findOne({ email, verificationCode: code });
 }
 
+export async function findUserByResetToken(resetToken: string) {
+  const users = await getUsersCollection();
+  return await users.findOne({ resetToken });
+}
+
 export async function markUserAsVerified(email: string) {
   const users = await getUsersCollection();
   return await users.updateOne(
@@ -34,6 +39,28 @@ export async function updateNewCode(email: string, newCode: string, expiresAt: D
   return await users.updateOne(
     { email },
     { $set: { verificationCode: newCode, verificationExpires: expiresAt.toISOString() } }
+  );
+}
+
+
+export async function updateToken(email: string, generatedToken: string, expiresAt: Date) {
+  const users = await getUsersCollection();
+  return await users.updateOne(
+    { email },
+    { $set: { resetToken: generatedToken, resetTokenExpires: expiresAt.toISOString() } }
+  );
+}
+
+export async function updatePassword(resetToken: string, hashedPassword: string) {
+  const users = await getUsersCollection();
+  return await users.updateOne(
+    { resetToken },
+    { $set: { 
+        passwordHash: hashedPassword,
+        resetToken: null, 
+        resetTokenExpires: null
+      } 
+    }
   );
 }
 

@@ -249,9 +249,7 @@ const Login = () => {
             </Button>
 
             <MUILink
-              component="button"
-              type="button"
-              onClick={() => {}}
+              href="/forgot"
               variant="body2"
               sx={{ 
                 alignSelf: "center",
