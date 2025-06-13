@@ -2,6 +2,7 @@ import AuthContainer from "./AuthLayout/AuthContainer";
 import AuthCard from "./AuthLayout/AuthCard";
 import Navbar from "./Navbar/Navbar";
 import FullscreenImage from "./FullscreenImage/FullscreenImage";
+import CenteredLoader from "./CenteredLoader/CenteredLoader";
 import ImageWithSkeleton from "./ImageWithSkeleton/ImageWithSkeleton";
 import PhotoSlide from "./ShopDetail/PhotoSlide";
 import TitleRating from "./ShopDetail/TitleRating";
@@ -15,6 +16,7 @@ export {
     AuthCard,
     Navbar,
     FullscreenImage,
+    CenteredLoader,
     ImageWithSkeleton,
     PhotoSlide,
     TitleRating,

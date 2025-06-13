@@ -1,34 +1,24 @@
 import { useEffect, useState, useRef } from "react";
-import { Box, CircularProgress, Grid, useMediaQuery } from "@mui/material";
 import dynamic from "next/dynamic";
+import { Box, Grid, useMediaQuery } from "@mui/material";
+
+import { CenteredLoader } from "@/components";
 
 import type { Coordinates, Shop, SerpShopDetail } from "@/types";
 
 const Map = dynamic(() => import('@/components/Map/Map'), {
   ssr: false,
-  loading: () => (
-    <Box display="flex" justifyContent="center" alignItems="center" height="calc(100vh - 64px)">
-      <CircularProgress />
-    </Box>
-  ),
+  loading: () => <CenteredLoader height="calc(100vh - 64px)"/>,
 });
 
 const ActionForm = dynamic(() => import("@/components/ActionForm/ActionForm"), {
   ssr: false,
-  loading: () => (
-    <Box display="flex" justifyContent="center" alignItems="center">
-      <CircularProgress />
-    </Box>
-  ),
+  loading: () => <CenteredLoader height="120px"/>,
 });
 
 const ShopDetail = dynamic(() => import("@/components/ShopDetail/ShopDetail"), {
   ssr: false,
-  loading: () => (
-    <Box sx={{display: {xs: "none", md: "flex"}}} justifyContent="center" alignItems="center">
-      <CircularProgress />
-    </Box>
-  ),
+  loading: () => <CenteredLoader height="70%" sx={{ display: { xs: "none", md: "flex" }}}/>,
 });
 
 const Home = () => {
@@ -173,7 +163,7 @@ const Home = () => {
       </Grid>
       
       <Grid size={{ xs: 12, md: 4 }}>
-        <Box display="flex" flexDirection="column">
+        <Box display="flex" flexDirection="column" sx={{ height: "100%"}}>
           <ActionForm address={address} shouldAsk={shouldAsk} onRequestLocation={tryGetLocation} />
 
           {(showShopDetail && selectedShop) && 
