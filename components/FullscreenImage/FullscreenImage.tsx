@@ -45,7 +45,7 @@ startIndex: number;
         style={{ width: "100%", height: "100%" }}
       >
         {photos.map((photo, i) => (
-          <SwiperSlide key={`fullscreen-image-${i}`}>
+          <SwiperSlide key={`fullscreen-${type}-image-${i + 1}`}>
             <Box
               sx={{
                 width: "100%",
@@ -92,7 +92,22 @@ startIndex: number;
       <style jsx global>{`
         .swiper-button-next,
         .swiper-button-prev {
-            color: #fff;
+          color: #fff;
+          outline: none;
+          box-shadow: none !important;
+          user-select: none;
+          -webkit-user-select: none;
+          -webkit-tap-highlight-color: transparent;
+        }
+        .swiper-button-prev:focus,
+        .swiper-button-next:focus {
+          outline: none;
+          box-shadow: none;
+        }
+        .swiper-button-prev:focus-visible,
+        .swiper-button-next:focus-visible {
+          outline: 2px solid #fff;
+          border-radius: 4px;
         }`}
       </style>
     </Box>

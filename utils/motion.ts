@@ -47,7 +47,7 @@ export const shopMarkerVariants = (delay?: number) => ({
   },
 });
 
-export const parentShopDetailVariants = (duration?: number) => ({
+export const parentCardDetailVariants = (duration?: number) => ({
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
@@ -63,7 +63,7 @@ export const parentShopDetailVariants = (duration?: number) => ({
   },
 });
 
-export const shopDetailVariants = (screen?: string | null) => ({
+export const cardDetailVariants = (screen?: string | null) => ({
   hidden: {
     opacity: 0,
     scale: screen === "mobile" || screen === "tablet" ? 1 : 0.95,

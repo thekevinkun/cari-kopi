@@ -16,6 +16,11 @@ const ActionForm = dynamic(() => import("@/components/ActionForm/ActionForm"), {
   loading: () => <CenteredLoader height="120px"/>,
 });
 
+const FavoritesShop = dynamic(() => import("@/components/FavoritesShop/FavoritesShop"), {
+  ssr: false,
+  loading: () => <CenteredLoader height="70%" sx={{ display: { xs: "none", md: "flex" }}}/>,
+});
+
 const ShopDetail = dynamic(() => import("@/components/ShopDetail/ShopDetail"), {
   ssr: false,
   loading: () => <CenteredLoader height="70%" sx={{ display: { xs: "none", md: "flex" }}}/>,
@@ -25,6 +30,7 @@ const Home = () => {
   const [location, setLocation] = useState<Coordinates | null>(null);
   const [address, setAddress] = useState<string | null>(null);
   const [shops, setShops] = useState<Shop[]>([]);
+  const [favorites, setFavorites] = useState<SerpShopDetail[] | null>(null);
 
   const [selectedShop, setSelectedShop] = useState<SerpShopDetail | null>(null);
   const [showShopDetail, setShowShopDetail] = useState(false);
@@ -50,9 +56,8 @@ const Home = () => {
     try {
       const res = await fetch(`/api/detailSerp?placeId=${shop.placeId}`);
       const { data } = await res.json();
-      console.log("shop detail: ", data);
       
-      if (data) {
+      if (res.ok) {
         setSelectedShop(data);
         setShowShopDetail(true);
       }
@@ -60,6 +65,19 @@ const Home = () => {
       console.error("Failed to get shop detail:", err);
     }
     return null;
+  }
+
+  const getUserFavorites = async () => {
+    try {
+      const res = await fetch(`/api/favorites`);
+      const data = await res.json();
+
+      if (res.ok) {
+        setFavorites(data.favorites);
+      }
+    } catch (error) {
+      console.error("Failed to get user favorites list", error);
+    }
   }
 
   const tryGetLocation = async () => {
@@ -109,6 +127,12 @@ const Home = () => {
     }
   }, [])
 
+  // Get user favorites
+  useEffect(() => {
+    getUserFavorites();
+  }, []);
+
+  // Calculate map height
   const mapRef = useRef<HTMLDivElement>(null);
   const [mapHeight, setMapHeight] = useState("100%");
 
@@ -166,12 +190,14 @@ const Home = () => {
         <Box display="flex" flexDirection="column" sx={{ height: "100%"}}>
           <ActionForm address={address} shouldAsk={shouldAsk} onRequestLocation={tryGetLocation} />
 
-          {(showShopDetail && selectedShop) && 
+          {showShopDetail && selectedShop ? 
             <ShopDetail 
               shop={selectedShop}
               showShopDetail={showShopDetail}
               onCloseShopDetail={() => setShowShopDetail(false)}  
             />
+          : favorites &&
+            <FavoritesShop favorites={favorites}/>
           }
         </Box>
       </Grid>

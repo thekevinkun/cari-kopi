@@ -2,10 +2,11 @@
 
 import { useEffect, useState, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Box, Button, Card, CardContent, Typography, useMediaQuery } from "@mui/material";
-import CloseIcon from '@mui/icons-material/Close';
-import NearMeIcon from '@mui/icons-material/NearMe';
-import FavoriteIcon from '@mui/icons-material/Favorite';
+import { Box, Button, Card, CardContent, CircularProgress, Grid, useMediaQuery } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import NearMeIcon from "@mui/icons-material/NearMe";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 
 import { 
   PhotoSlide, TitleRating, OpeningHours, 
@@ -14,13 +15,17 @@ import {
 
 import { StyledStack, CloseButton } from "./styles";
 import { convertSerpApiHoursToWeekdayText, mergeExtensionsWithUnsupported } from "@/utils/helpers";
-import { parentShopDetailVariants, shopDetailVariants } from "@/utils/motion";
+import { parentCardDetailVariants, cardDetailVariants } from "@/utils/motion";
 import type { ShopDetailProps } from "@/types";
 
 const MotionStyledStack = motion.create(StyledStack);
 const MotionCard = motion.create(Card);
 
 const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail }: ShopDetailProps) => {
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [checkingFavorite, setCheckingFavorite] = useState(true);
+  const [loading, setLoading] = useState(false);
+
   const isTablet = useMediaQuery("(max-width: 900px)");
   const isMobile = useMediaQuery("(max-width: 600px)");
 
@@ -29,6 +34,53 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail }: ShopDetailProps
 
   const weekdayText = convertSerpApiHoursToWeekdayText(shop.hours ?? []);
   const mergedExtensions = mergeExtensionsWithUnsupported(shop.extensions || [], shop.unsupported_extensions || []);
+
+  const handleAddFavorite = async () => {
+    setLoading(true);
+
+    const placeId = shop?.place_id;
+
+    try {
+      const res = await fetch("/api/favorites/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ placeId }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error);
+      } else {
+        setIsFavorite(true);
+        alert(data.message);
+      }
+
+    } catch (error) {
+      alert("Failed to add shop. Try again later.");
+      console.error("Failed to add shop", error);
+    } finally {
+      setLoading(false);
+    }
+  }; 
+
+  useEffect(() => {
+    const checkFavoriteStatus = async () => {
+      if (!shop?.place_id) return;
+
+      try {
+        const res = await fetch(`/api/favorites/is?placeId=${shop.place_id}`);
+        const data = await res.json();
+        setIsFavorite(data.isFavorite || false);
+      } catch (error) {
+        console.error("Failed to check favorite status", error);
+      } finally {
+        setCheckingFavorite(false);
+      }
+    }
+
+    checkFavoriteStatus();
+  }, [shop?.place_id]);
 
   useEffect(() => {
     if (isTablet || isMobile || !shopDetailRef.current) return;
@@ -57,7 +109,7 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail }: ShopDetailProps
   return (
     <AnimatePresence>
       <MotionStyledStack
-        variants={parentShopDetailVariants(0.15)}
+        variants={parentCardDetailVariants(0.15)}
         initial="hidden"
         animate="show"
         exit="exit"
@@ -65,11 +117,11 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail }: ShopDetailProps
         sx={{
           py: 2,
           px: 1,
-          height: isMobile ? "540px" : isTablet ? "auto" : shopDetailHeight,
+          height: isMobile ? "50vh" : isTablet ? "auto" : shopDetailHeight,
         }}
       >
         <MotionCard 
-          variants={shopDetailVariants(isMobile ? "mobile" : isTablet ? "tablet" : null)}
+          variants={cardDetailVariants(isMobile ? "mobile" : isTablet ? "tablet" : null)}
           initial="hidden"
           animate="show"
           exit="exit"
@@ -104,22 +156,49 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail }: ShopDetailProps
             />
 
             {/* DIRECTION AND FAVORITES */}
-            <Box 
+            <Grid 
+              container
               mt={5} 
-              display="flex" 
-              flexWrap="wrap" 
-              alignItems="center" 
-              justifyContent="space-between"
-              gap={2}
+              spacing={2}
+              alignItems="center"
             >
-              <Button variant="contained" sx={{ fontSize: 12 }}>
-                <NearMeIcon fontSize="small" sx={{ mr: 0.75 }}/> Start Directions
-              </Button>
-
-              <Button variant="outlined" sx={{ fontSize: 12 }}>
-                <FavoriteIcon fontSize="small" sx={{ mr: 0.75 }}/> Add to Favorites
-              </Button>
-            </Box>
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <Button variant="contained" sx={{ fontSize: 12, width: "100%" }}>
+                  <NearMeIcon fontSize="small" sx={{ mr: 0.75 }}/> Start Directions
+                </Button>
+              </Grid>
+              
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <Button 
+                  title={isFavorite ? "Remove from favorites?" : "Add to favorites?"}
+                  variant="outlined" 
+                  sx={{ fontSize: 12, width: "100%" }}
+                  disabled={loading}
+                  onClick={handleAddFavorite}
+                >
+                  {loading || checkingFavorite ? 
+                    <Box
+                      display="flex" 
+                      alignItems="center" 
+                      justifyContent="center"
+                      width="100%"
+                    >
+                      <CircularProgress size={18} sx={{ color: "#1976d2"}} />  
+                    </Box>
+                  :
+                    <>
+                      {isFavorite ?
+                        <FavoriteIcon fontSize="small" sx={{ mr: 0.75, color: "#ba0001" }} />
+                      :
+                        <FavoriteBorderIcon fontSize="small" sx={{ mr: 0.75, color: "#ba0001" }} />  
+                      }
+                      
+                      {isFavorite ? "In Favorites" : "Add to Favorites"}
+                    </>
+                  }
+                </Button>
+              </Grid>
+            </Grid>
 
             {/* SHOP EXTENSIONS */}
             {mergedExtensions && <ExtensionList extensions={mergedExtensions} />}
@@ -148,7 +227,7 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail }: ShopDetailProps
       {/* Blurred background */}
       {(isTablet && showShopDetail) &&
         <motion.div
-          variants={parentShopDetailVariants()}
+          variants={parentCardDetailVariants()}
           initial="hidden"
           animate="show"
           exit="exit"

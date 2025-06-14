@@ -27,10 +27,6 @@ const Navbar = () => {
           <Box display="flex">
             {user ? 
               <Box display="flex" alignItems="center" gap={1}>
-                <Typography component="span" variant="body1">
-                  Hi, {firstName}
-                </Typography>
-
                 <MenuButton 
                   variant="outlined"
                   onClick={() => setToggleMenu(!toggleMenu)}

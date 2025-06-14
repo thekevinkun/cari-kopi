@@ -4,7 +4,6 @@ import { getFromCache, saveToCache } from "@/lib/redis/cache";
 import type { SerpShopDetail } from "@/types";
 
 const SERP_API_KEY = process.env.SERP_API_KEY!;
-const BASE_URL = "https://serpapi.com/search.json";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { placeId } = req.query;
@@ -26,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
         console.log("Calling detail api...");
 
-        let response = await fetch(`${BASE_URL}?engine=google_maps&place_id=${placeId}&api_key=${SERP_API_KEY}`);
+        let response = await fetch(`https://serpapi.com/search.json?engine=google_maps&place_id=${placeId}&api_key=${SERP_API_KEY}`);
         let data = await response.json();
         
         if (!data.place_results) {

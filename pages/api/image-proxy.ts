@@ -1,9 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const imageUrl = req.query.url as string;
+  const imageUrl = req.query.url;
 
-  if (!imageUrl) {
+  if (!imageUrl || typeof imageUrl !== "string") {
     return res.status(400).send("Missing image URL");
   }
 

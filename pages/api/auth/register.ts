@@ -59,8 +59,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         passwordHash: hashedPassword,
         verified: false,
         verificationCode,
-        verificationExpires: expiresAt.toISOString(),
-        createdAt: new Date().toISOString(),
+        verificationExpires: expiresAt,
+        createdAt: new Date(),
     });
 
     // Send email

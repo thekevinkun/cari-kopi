@@ -14,7 +14,7 @@ const ExtensionList = ({ extensions }: { extensions: ExtensionGroup[] }) => {
         if (!values || values.length === 0) return null;
 
         return (
-          <Box key={idx} mb={2}>
+          <Box key={key} mb={2}>
             <Typography
               variant="subtitle2"
               fontWeight="bold"
@@ -27,7 +27,7 @@ const ExtensionList = ({ extensions }: { extensions: ExtensionGroup[] }) => {
             <Stack direction="row" flexWrap="wrap" gap={1}>
               {values.map((value, i) => (
                 <Chip
-                  key={i}
+                  key={value}
                   label={`${getEmoji(value,  _unsupported)} ${value}`}
                   variant="outlined"
                   size="small"

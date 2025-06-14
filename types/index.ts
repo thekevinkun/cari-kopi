@@ -1,14 +1,22 @@
+import { ObjectId } from "mongodb";
 export interface User {
-  _id?: string;
+  _id?: ObjectId;
   name: string;
   email: string;
   passwordHash: string;
   verified: boolean;
   verificationCode?: string | null;
-  verificationExpires?: string | null;
+  verificationExpires?: Date | null;
   resetToken?: string | null;
-  resetTokenExpires?: string | null;
-  createdAt: string;
+  resetTokenExpires?: Date | null;
+  createdAt: Date;
+}
+
+export type Favorite = {
+  _id?: ObjectId;
+  userId: ObjectId
+  placeId: string;
+  createdAt: Date;
 }
 
 export type UserLogin = {

@@ -23,10 +23,7 @@ export const StyledBoxImage = styled(Box)(({ theme }) => ({
    borderTopRightRadius: theme.shape.borderRadius,
    overflow: "hidden",
    [theme.breakpoints.down('md')]: {
-      height: 285,  
-   },
-   [theme.breakpoints.down('sm')]: {
-      height: 300,  
+      height: 265,  
    }
 }));
 

@@ -38,7 +38,7 @@ export async function updateNewCode(email: string, newCode: string, expiresAt: D
   const users = await getUsersCollection();
   return await users.updateOne(
     { email },
-    { $set: { verificationCode: newCode, verificationExpires: expiresAt.toISOString() } }
+    { $set: { verificationCode: newCode, verificationExpires: expiresAt } }
   );
 }
 
@@ -47,7 +47,7 @@ export async function updateToken(email: string, generatedToken: string, expires
   const users = await getUsersCollection();
   return await users.updateOne(
     { email },
-    { $set: { resetToken: generatedToken, resetTokenExpires: expiresAt.toISOString() } }
+    { $set: { resetToken: generatedToken, resetTokenExpires: expiresAt } }
   );
 }
 

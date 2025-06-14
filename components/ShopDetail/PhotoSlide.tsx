@@ -88,6 +88,7 @@ const PhotoSlide = ({photos}: { photos: SerpPhotosProps[]}) => {
             <FullscreenImage
                 photos={photos}
                 startIndex={fullscreenIndex}
+                type="gallery"
                 onClose={() => setFullscreenIndex(null)}
             />
         )}
