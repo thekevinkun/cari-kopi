@@ -37,6 +37,14 @@ export type Coordinates = {
   lng: number;
 }
 
+export type NearbyData = {
+  fromCache: boolean;
+  page: number;
+  totalPages: number,
+  totalResults: number,
+  results: Shop[],
+}
+
 export type Shop = {
   placeId: string;
   name: string;

@@ -4,7 +4,7 @@ import { Box, Grid, useMediaQuery } from "@mui/material";
 
 import { CenteredLoader } from "@/components";
 
-import type { Coordinates, Shop, SerpShopDetail } from "@/types";
+import type { Coordinates, NearbyData, Shop, SerpShopDetail  } from "@/types";
 
 const Map = dynamic(() => import('@/components/Map/Map'), {
   ssr: false,
@@ -29,6 +29,8 @@ const ShopDetail = dynamic(() => import("@/components/ShopDetail/ShopDetail"), {
 const Home = () => {
   const [location, setLocation] = useState<Coordinates | null>(null);
   const [address, setAddress] = useState<string | null>(null);
+  const [shortAddress, setShortAddress] = useState<string | null>(null);
+  const [nearbyData, setNearbyData] = useState<NearbyData | null>(null);
   const [shops, setShops] = useState<Shop[]>([]);
   const [favorites, setFavorites] = useState<SerpShopDetail[] | null>(null);
 
@@ -54,19 +56,34 @@ const Home = () => {
     }
   };
 
-  const getNearbyCoffee = async (lat: number, lng: number, shortAddress: string) => {
+  const getNearbyCoffee = async (lat: number, lng: number, shortAddress: string, page: number = 1) => {
     try {
-      const res = await fetch(`/api/nearby?lat=${-0.4772294}&lng=${117.1306983}&shortAddress=${shortAddress}`);
+      const res = await fetch(`
+        /api/nearby?lat=${lat}&lng=${lng}&shortAddress=${shortAddress}&page=${page}`
+      );
       const data = await res.json();
 
       if (!res.ok) {
-        console.error("Failed to fetch nearby coffe: ", data.error);
+        console.error("Failed to fetch nearby coffee: ", data.error);
         return;
       }
 
-      return data.results;
+      return data;
     } catch (error) {
       console.error("Failed to fetch nearby coffe: ", error);
+    }
+  }
+
+  const handleNextPage = async () => {
+    if (!nearbyData || !location || !shortAddress) return;
+
+    const nextPage = nearbyData.page + 1;
+    if (nextPage > nearbyData.totalPages) return;
+
+    const nextData = await getNearbyCoffee(location.lat, location.lng, shortAddress, nextPage);
+    if (nextData) {
+      setNearbyData(nextData);
+      setShops((prev) => [...prev, ...nextData.results]); // Append
     }
   }
 
@@ -136,10 +153,12 @@ const Home = () => {
         if (!addressData) return;
 
         setAddress(addressData.fullAddress);
+        setShortAddress(addressData.shortAddress)
 
         // If success find user location, find coffe shop nearby
-        const shops = await getNearbyCoffee(-0.4772294, 117.1306983, addressData.shortAddress);
-        setShops(shops || []);
+        const data = await getNearbyCoffee(-0.4772294, 117.1306983, addressData.shortAddress);
+        setNearbyData(data);
+        setShops(data.results || []);
       },
       (error) => {
         console.error("Geolocation error:", error);
