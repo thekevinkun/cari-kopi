@@ -3,18 +3,19 @@
 import { useEffect, useState, useRef } from "react";
 import { useUser } from "@/contexts/UserContext";
 import { AnimatePresence, motion } from "framer-motion";
-import { Box, Button, Card, CardContent, CardMedia, Grid, Stack, Typography, useMediaQuery } from "@mui/material";
+import { Box, Card, CardContent, CardMedia, Grid, Rating, Stack, Typography, useMediaQuery } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
 import { ImageWithSkeleton } from "@/components";
-import { SerpShopDetail } from "@/types";
+import { FavoritesShopProps } from "@/types";
 
-import { parentCardDetailVariants, cardDetailVariants } from "@/utils/motion";
+import { parentCardDetailVariants, cardVariants } from "@/utils/motion";
 
 const MotionStack = motion.create(Stack);
+const MotionGrid = motion.create(Grid);
 
-const FavoritesShop = ({ favorites }: { favorites: SerpShopDetail[] }) => {
+const FavoritesShop = ({ favorites, onSelectShop }: FavoritesShopProps) => {
   const isTablet = useMediaQuery("(max-width: 900px)");
 
   const favoriteShopRef = useRef<HTMLDivElement>(null);
@@ -52,11 +53,15 @@ const FavoritesShop = ({ favorites }: { favorites: SerpShopDetail[] }) => {
         animate="show"
         exit="exit"
         ref={favoriteShopRef}
-        sx={{
-          py: 2,
-          px: 1,
-          height: favoriteShopHeight,
-        }}
+        sx={(theme) => ({
+            [theme.breakpoints.down('md')]: {
+              display: "none"
+            },
+            py: 2,
+            px: 1,
+            height: favoriteShopHeight,
+          })
+        }
       >
         <Box display="flex" alignItems="center" gap={0.5}>
           <FavoriteIcon fontSize="small" sx={{ color: "#ba0001" }} />
@@ -67,14 +72,27 @@ const FavoritesShop = ({ favorites }: { favorites: SerpShopDetail[] }) => {
         </Box>     
 
         {(favorites && favorites.length > 0) &&
-          <Grid container spacing={2} sx={{ mt: 1, py: 2, overflow: "auto" }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 2, // spacing in px
+              mt: 1,
+              py: 2,
+              overflow: "auto",
+            }}
+          >
             {favorites.map((shop, i) => (
-              <Grid size={{ xs: 12, sm: 6, md: 4 }} sx={{ display: "flex" }} key={`favorite-${i + 1}`}>
-                <Card 
-                  elevation={4} 
-                  sx={{ flexGrow: 1 }}
-                >
-                  <CardMedia>
+              <motion.div
+                key={`favorite-${i + 1}`}
+                variants={cardVariants(0.25 * i)}
+                initial="hidden"
+                animate="visible"
+                style={{ flex: "1 1 250px", maxWidth: "130px" }}
+                
+              >
+                <Card title={shop.title} elevation={4} sx={{ height: "100%" }}>
+                  <CardMedia sx={{ cursor: "pointer" }} onClick={() => onSelectShop(shop)}>
                     <ImageWithSkeleton
                       src={shop.images ? shop.images[0].serpapi_thumbnail : ""}
                       alt={shop.images ? shop.images[0].title : `Image favorite ${i}`}
@@ -82,16 +100,65 @@ const FavoritesShop = ({ favorites }: { favorites: SerpShopDetail[] }) => {
                       style={{ objectPosition: "center center" }}
                     />
                   </CardMedia>
-
-                  <CardContent>
-                    <Typography component="h3" variant="body2" fontWeight="bold">
+                  <CardContent sx={{ padding: 1, "&:last-child": { paddingBottom: 2 } }}>
+                    <Typography
+                      gutterBottom
+                      component="h3"
+                      variant="body2"
+                      sx={{
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        display: "-webkit-box",
+                        WebkitLineClamp: "1",
+                        WebkitBoxOrient: "vertical",
+                        fontWeight: "bold",
+                        cursor: "pointer",
+                        "&:hover": {
+                          color: "#804A26"
+                        }
+                      }}
+                      onClick={() => onSelectShop(shop)}
+                    >
                       {shop.title}
+                    </Typography>
+
+                    <Rating 
+                      name="half-rating-read" 
+                      defaultValue={shop.rating} 
+                      precision={0.5}
+                      readOnly 
+                      sx={{
+                        fontSize: "0.925rem"
+                      }}
+                    />
+                    
+                    <Typography 
+                      component="span" 
+                      sx={{ 
+                        display: "block",
+                        fontSize: "0.675rem" 
+                      }}
+                    >
+                      <Typography component="span" sx={{ fontWeight: "bold", fontSize: "0.725rem"  }}>
+                        {shop.reviews}
+                      </Typography> Reviews
+                    </Typography>
+
+                    <Typography 
+                      component="span" 
+                      sx={{ 
+                        display: "block",
+                        fontSize: "0.675rem", 
+                        marginTop: "0.5rem",
+                      }}
+                    >
+                      {shop.price}
                     </Typography>
                   </CardContent>
                 </Card>
-              </Grid>
+              </motion.div>
             ))}
-          </Grid>
+          </Box>
         }
       </MotionStack>
     </AnimatePresence>

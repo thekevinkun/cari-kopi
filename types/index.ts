@@ -182,6 +182,12 @@ export type ShopDetailProps = {
   shop: SerpShopDetail;
   showShopDetail: boolean;
   onCloseShopDetail: () => void;
+  onFavoriteUpdate?: () => void;
+}
+
+export type FavoritesShopProps = {
+  favorites: SerpShopDetail[];
+  onSelectShop: (shop: SerpShopDetail) => void;
 }
 
 export type SkeletonImageProps = {

@@ -43,28 +43,48 @@ const Home = () => {
       const res = await fetch(`/api/geocode?lat=${lat}&lng=${lng}`);
       const data = await res.json();
 
-      if (data.fullAddress) {
-        return data;
+      if (!res.ok) {
+        console.error("Failed to get address: ", data.error);
+        return;
       }
+
+      return data;
     } catch (err) {
       console.error("Failed to get address:", err);
     }
-    return null;
   };
 
-  const getShopDetail = async (shop: Shop) => {
+  const getNearbyCoffee = async (lat: number, lng: number, shortAddress: string) => {
     try {
-      const res = await fetch(`/api/detailSerp?placeId=${shop.placeId}`);
+      const res = await fetch(`/api/nearby?lat=${-0.4772294}&lng=${117.1306983}&shortAddress=${shortAddress}`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        console.error("Failed to fetch nearby coffe: ", data.error);
+        return;
+      }
+
+      return data.results;
+    } catch (error) {
+      console.error("Failed to fetch nearby coffe: ", error);
+    }
+  }
+
+  const getShopDetail = async (placeId: string) => {
+    try {
+      const res = await fetch(`/api/detailSerp?placeId=${placeId}`);
       const { data } = await res.json();
       
-      if (res.ok) {
-        setSelectedShop(data);
-        setShowShopDetail(true);
+      if (!res.ok) {
+        console.error("Failed to get shop detail: ", data.error);
+        return;
       }
+
+      setSelectedShop(data);
+      setShowShopDetail(true);
     } catch (err) {
       console.error("Failed to get shop detail:", err);
     }
-    return null;
   }
 
   const getUserFavorites = async () => {
@@ -72,11 +92,30 @@ const Home = () => {
       const res = await fetch(`/api/favorites`);
       const data = await res.json();
 
-      if (res.ok) {
-        setFavorites(data.favorites);
+      if (!res.ok) {
+        console.error("Failed to get user favorites list: ", data.error);
+        return;
       }
+
+      setFavorites(data.favorites);
     } catch (error) {
       console.error("Failed to get user favorites list", error);
+    }
+  }
+
+  const refreshFavorites = async () => {
+    try {
+      const res = await fetch(`/api/favorites`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        console.error("Failed to refresh user favorites list: ", data.error);
+        return;
+      }
+
+      setFavorites(data.favorites);
+    } catch (error) {
+      console.error("Failed to refresh user favorites list", error);
     }
   }
 
@@ -93,14 +132,14 @@ const Home = () => {
         setLocation(userLocation);
         
         // Get address as in city/street/etc
-        const addressString = await getAddress(-0.4772294, 117.1306983);
-        setAddress(addressString.fullAddress);
+        const addressData = await getAddress(-0.4772294, 117.1306983);
+        if (!addressData) return;
+
+        setAddress(addressData.fullAddress);
 
         // If success find user location, find coffe shop nearby
-        const res = await fetch(`/api/nearby?lat=${-0.4772294}&lng=${117.1306983}&shortAddress=${addressString.shortAddress}`);
-        const data = await res.json();
-      
-        setShops(data.results || []);
+        const shops = await getNearbyCoffee(-0.4772294, 117.1306983, addressData.shortAddress);
+        setShops(shops || []);
       },
       (error) => {
         console.error("Geolocation error:", error);
@@ -182,7 +221,7 @@ const Home = () => {
         <Map 
           userLocation={location} 
           shops={shops} 
-          onSelectShop={(shop: Shop) => getShopDetail(shop)}
+          onSelectShop={(shop: Shop) => getShopDetail(shop.placeId)}
         />
       </Grid>
       
@@ -195,9 +234,13 @@ const Home = () => {
               shop={selectedShop}
               showShopDetail={showShopDetail}
               onCloseShopDetail={() => setShowShopDetail(false)}  
+              onFavoriteUpdate={refreshFavorites}
             />
           : favorites &&
-            <FavoritesShop favorites={favorites}/>
+            <FavoritesShop 
+              favorites={favorites}
+              onSelectShop={(shop: SerpShopDetail) => getShopDetail(shop.place_id)}
+            />
           }
         </Box>
       </Grid>

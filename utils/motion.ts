@@ -34,19 +34,6 @@ export const textVariants = (direction?: string, delay?: number) => ({
   },
 });
 
-export const shopMarkerVariants = (delay?: number) => ({
-  hidden: { scale: 0, opacity: 0 },
-  visible: {
-    scale: 1,
-    opacity: 1,
-    transition: {
-      type: "spring",
-      duration: 0.4,
-      delay
-    },
-  },
-});
-
 export const parentCardDetailVariants = (duration?: number) => ({
   hidden: { opacity: 0 },
   show: {
@@ -59,6 +46,19 @@ export const parentCardDetailVariants = (duration?: number) => ({
     opacity: 0,
     transition: {
       duration,
+    },
+  },
+});
+
+export const cardVariants = (delay?: number) => ({
+  hidden: { scale: 0, opacity: 0 },
+  visible: {
+    scale: 1,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      duration: 0.4,
+      delay
     },
   },
 });

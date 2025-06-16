@@ -21,7 +21,7 @@ import type { ShopDetailProps } from "@/types";
 const MotionStyledStack = motion.create(StyledStack);
 const MotionCard = motion.create(Card);
 
-const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail }: ShopDetailProps) => {
+const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail, onFavoriteUpdate }: ShopDetailProps) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [checkingFavorite, setCheckingFavorite] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -53,6 +53,7 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail }: ShopDetailProps
         alert(data.error);
       } else {
         setIsFavorite(true);
+        onFavoriteUpdate?.();
         alert(data.message);
       }
 
@@ -115,7 +116,7 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail }: ShopDetailProps
         exit="exit"
         ref={shopDetailRef}
         sx={{
-          py: 2,
+          pb: 2,
           px: 1,
           height: isMobile ? "50vh" : isTablet ? "auto" : shopDetailHeight,
         }}
@@ -213,7 +214,7 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail }: ShopDetailProps
         </MotionCard>
 
         {/* Close shop detail */}
-        {(isTablet && showShopDetail) && 
+        {showShopDetail && 
           <CloseButton 
             variant="contained" 
             color="error"

@@ -2,7 +2,10 @@ import { Box, Button, Stack } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 export const StyledStack = styled(Stack)(({ theme }) => ({
+   display: "flex",
+   flexDirection: "column-reverse",
    [theme.breakpoints.down('md')]: {
+    display: "block",
     position: "absolute",
     left: 0,
     bottom: 0,
@@ -28,11 +31,17 @@ export const StyledBoxImage = styled(Box)(({ theme }) => ({
 }));
 
 export const CloseButton = styled(Button)(({ theme }) => ({
-  position: "absolute",
-  top: 0,
-  right: -65,
+  width: "fit-content",
   minWidth: 0,
-  padding: "0.5rem 0.725rem",
+  marginLeft: "auto",
+  marginBottom: "0.5rem",
+  padding: "0.325rem 0.45rem",
+  [theme.breakpoints.down('sm')]: {
+      position: "absolute",
+      top: 0,
+      right: -65,
+      padding: "0.5rem 0.725rem",
+  },
   [theme.breakpoints.down('sm')]: {
       top: -55,
       right: 10, 
