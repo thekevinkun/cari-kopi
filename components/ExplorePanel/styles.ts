@@ -13,7 +13,7 @@ export const StyledAddress = styled(Typography)(({ theme }) => ({
     fontSize: "0.75rem",
   },
   [theme.breakpoints.down('sm')]: {
-    fontSize: "0.675rem"
+    fontSize: "0.7rem"
   }
 }));
 
@@ -56,5 +56,8 @@ export const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
   [theme.breakpoints.down('sm')]: {
     fontSize: "0.85rem",
+    "& .MuiInputBase-input": {
+      padding: theme.spacing(0.75, 0),
+    },
   }
 }));

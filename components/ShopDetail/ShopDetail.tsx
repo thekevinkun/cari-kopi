@@ -116,9 +116,9 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail, onFavoriteUpdate 
         exit="exit"
         ref={shopDetailRef}
         sx={{
-          pb: 2,
+          pb: 1,
           px: 1,
-          height: isMobile ? "50vh" : isTablet ? "auto" : shopDetailHeight,
+          height: isMobile ? "50vh" : isTablet ? "70vh" : shopDetailHeight,
         }}
       >
         <MotionCard 
@@ -157,19 +157,23 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail, onFavoriteUpdate 
             />
 
             {/* DIRECTION AND FAVORITES */}
-            <Grid 
-              container
-              mt={5} 
-              spacing={2}
-              alignItems="center"
+            <Box
+              sx={{
+                mt: 5,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexWrap: "wrap",
+                gap: 2
+              }}
             >
-              <Grid size={{ xs: 12, sm: 6 }}>
+              <Box sx={{ flex: "1 1 250px", maxWidth: "183px" }}>
                 <Button variant="contained" sx={{ fontSize: 12, width: "100%" }}>
                   <NearMeIcon fontSize="small" sx={{ mr: 0.75 }}/> Start Directions
                 </Button>
-              </Grid>
+              </Box>
               
-              <Grid size={{ xs: 12, sm: 6 }}>
+              <Box sx={{ flex: "1 1 250px", maxWidth: "183px" }}>
                 <Button 
                   title={isFavorite ? "Remove from favorites?" : "Add to favorites?"}
                   variant="outlined" 
@@ -198,8 +202,8 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail, onFavoriteUpdate 
                     </>
                   }
                 </Button>
-              </Grid>
-            </Grid>
+              </Box>
+            </Box>
 
             {/* SHOP EXTENSIONS */}
             {mergedExtensions && <ExtensionList extensions={mergedExtensions} />}

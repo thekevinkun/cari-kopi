@@ -1,3 +1,7 @@
+body {
+  overflow: hidden;
+}
+
 .review-clamp-text {
   display: -webkit-box;
   line-clamp: 6;

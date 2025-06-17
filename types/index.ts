@@ -207,10 +207,17 @@ export type SkeletonImageProps = {
   onClickImage?: () => void;
 };
 
-export type ActionFormProps = {
+export type ExplorePanelProps = {
   address: string | null;
+  currentResults?: number | null;
+  totalResults?: number | null;
+  currentPage?: number | null;
+  totalPages?: number | null;
   shouldAsk: boolean;
   onRequestLocation: () => void;
+  isLoadNextPage: boolean;
+  onNextPage: () => void;
+  onShowLessPage: () => void;
 }
 
 export type OSMAddress = {

@@ -8,22 +8,22 @@ import type { Coordinates, NearbyData, Shop, SerpShopDetail  } from "@/types";
 
 const Map = dynamic(() => import('@/components/Map/Map'), {
   ssr: false,
-  loading: () => <CenteredLoader height="calc(100vh - 64px)"/>,
+  loading: () => <CenteredLoader sx={{ height: { xs: "100%", md: "calc(100vh - 64px)" }}}/>,
 });
 
-const ActionForm = dynamic(() => import("@/components/ActionForm/ActionForm"), {
+const ExplorePanel = dynamic(() => import("@/components/ExplorePanel/ExplorePanel"), {
   ssr: false,
   loading: () => <CenteredLoader height="120px"/>,
 });
 
 const FavoritesShop = dynamic(() => import("@/components/FavoritesShop/FavoritesShop"), {
   ssr: false,
-  loading: () => <CenteredLoader height="70%" sx={{ display: { xs: "none", md: "flex" }}}/>,
+  loading: () => <CenteredLoader height="50%" sx={{ display: { xs: "none", md: "flex" }}}/>,
 });
 
 const ShopDetail = dynamic(() => import("@/components/ShopDetail/ShopDetail"), {
   ssr: false,
-  loading: () => <CenteredLoader height="70%" sx={{ display: { xs: "none", md: "flex" }}}/>,
+  loading: () => <CenteredLoader height="50%" sx={{ display: { xs: "none", md: "flex" }}}/>,
 });
 
 const Home = () => {
@@ -33,11 +33,10 @@ const Home = () => {
   const [nearbyData, setNearbyData] = useState<NearbyData | null>(null);
   const [shops, setShops] = useState<Shop[]>([]);
   const [favorites, setFavorites] = useState<SerpShopDetail[] | null>(null);
-
   const [selectedShop, setSelectedShop] = useState<SerpShopDetail | null>(null);
   const [showShopDetail, setShowShopDetail] = useState(false);
-
   const [shouldAsk, setShouldAsk] = useState(false);
+  const [loadingNextPage, setLoadingNextPage] = useState(false);
   const triedInitialLocation = useRef(false);
 
   const getAddress = async (lat: number, lng: number) => {
@@ -80,11 +79,31 @@ const Home = () => {
     const nextPage = nearbyData.page + 1;
     if (nextPage > nearbyData.totalPages) return;
 
+    setLoadingNextPage(true);
+
     const nextData = await getNearbyCoffee(location.lat, location.lng, shortAddress, nextPage);
     if (nextData) {
       setNearbyData(nextData);
-      setShops((prev) => [...prev, ...nextData.results]); // Append
+      setShops((prev) => [...prev, ...nextData.results]);
     }
+
+    setLoadingNextPage(false);
+  }
+
+  const handleShowLessPage = async () => {
+    if (!nearbyData || !location || !shortAddress) return;
+
+    const nextPage = 1;
+
+    setLoadingNextPage(true);
+
+    const nextData = await getNearbyCoffee(location.lat, location.lng, shortAddress, nextPage);
+    if (nextData) {
+      setNearbyData(nextData);
+      setShops(nextData.results);
+    }
+
+    setLoadingNextPage(false);
   }
 
   const getShopDetail = async (placeId: string) => {
@@ -223,7 +242,7 @@ const Home = () => {
   return (
     <Grid 
       container 
-      spacing={isTablet ? 2 : 1} 
+      spacing={1} 
       flexDirection={isTablet ? "column-reverse" : "row"}
       style={{ 
         width: "100%", 
@@ -246,7 +265,18 @@ const Home = () => {
       
       <Grid size={{ xs: 12, md: 4 }}>
         <Box display="flex" flexDirection="column" sx={{ height: "100%"}}>
-          <ActionForm address={address} shouldAsk={shouldAsk} onRequestLocation={tryGetLocation} />
+          <ExplorePanel 
+            address={address} 
+            currentResults={shops?.length ?? null}
+            totalResults={nearbyData?.totalResults ?? null}
+            currentPage={nearbyData?.page ?? null}
+            totalPages={nearbyData?.totalPages ?? null}
+            shouldAsk={shouldAsk} 
+            onRequestLocation={tryGetLocation} 
+            isLoadNextPage={loadingNextPage}
+            onNextPage={handleNextPage}
+            onShowLessPage={handleShowLessPage}
+          />
 
           {showShopDetail && selectedShop ? 
             <ShopDetail 

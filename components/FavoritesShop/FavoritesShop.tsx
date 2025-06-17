@@ -1,10 +1,8 @@
 "use client"
 
 import { useEffect, useState, useRef } from "react";
-import { useUser } from "@/contexts/UserContext";
 import { AnimatePresence, motion } from "framer-motion";
 import { Box, Card, CardContent, CardMedia, Grid, Rating, Stack, Typography, useMediaQuery } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
 import { ImageWithSkeleton } from "@/components";
@@ -54,16 +52,17 @@ const FavoritesShop = ({ favorites, onSelectShop }: FavoritesShopProps) => {
         exit="exit"
         ref={favoriteShopRef}
         sx={(theme) => ({
+            py: 1,
+            px: 1,
+            height: favoriteShopHeight,
+            overflow: "hidden",
             [theme.breakpoints.down('md')]: {
               display: "none"
             },
-            py: 2,
-            px: 1,
-            height: favoriteShopHeight,
           })
         }
       >
-        <Box display="flex" alignItems="center" gap={0.5}>
+        <Box display="flex" alignItems="center" gap={0.5} mb={1}>
           <FavoriteIcon fontSize="small" sx={{ color: "#ba0001" }} />
 
           <Typography variant="body1" fontWeight="bold">
@@ -72,31 +71,22 @@ const FavoritesShop = ({ favorites, onSelectShop }: FavoritesShopProps) => {
         </Box>     
 
         {(favorites && favorites.length > 0) &&
-          <Box
-            sx={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: 2, // spacing in px
-              mt: 1,
-              py: 2,
-              overflow: "auto",
-            }}
-          >
+          <Grid container spacing={2} sx={{ mt: 1, pb: 2, overflowX: "hidden", overflowY: "auto" }}>
             {favorites.map((shop, i) => (
-              <motion.div
+              <MotionGrid 
                 key={`favorite-${i + 1}`}
                 variants={cardVariants(0.25 * i)}
                 initial="hidden"
                 animate="visible"
-                style={{ flex: "1 1 250px", maxWidth: "130px" }}
-                
+                size={{ xs: 12, sm: 6, lg: 4 }}
+                sx={{ display: "flex" }}
               >
-                <Card title={shop.title} elevation={4} sx={{ height: "100%" }}>
+                <Card title={shop.title} elevation={4} sx={{ flexGrow: 1 }}>
                   <CardMedia sx={{ cursor: "pointer" }} onClick={() => onSelectShop(shop)}>
                     <ImageWithSkeleton
                       src={shop.images ? shop.images[0].serpapi_thumbnail : ""}
                       alt={shop.images ? shop.images[0].title : `Image favorite ${i}`}
-                      height="125px"
+                      height="120px"
                       style={{ objectPosition: "center center" }}
                     />
                   </CardMedia>
@@ -156,9 +146,9 @@ const FavoritesShop = ({ favorites, onSelectShop }: FavoritesShopProps) => {
                     </Typography>
                   </CardContent>
                 </Card>
-              </motion.div>
+              </MotionGrid>
             ))}
-          </Box>
+          </Grid>
         }
       </MotionStack>
     </AnimatePresence>

@@ -57,7 +57,10 @@ const Navbar = () => {
                     display="flex" 
                     flexDirection="column"
                     sx={(theme) => ({
-                      padding: theme.spacing(2, 4)
+                      padding: theme.spacing(2, 4),
+                      [theme.breakpoints.down('sm')]: {
+                        padding: theme.spacing(2, 3),
+                      }
                     })}
                   >
                     <Typography gutterBottom variant="body1" color="#804A26" fontWeight="bold">

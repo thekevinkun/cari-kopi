@@ -44,7 +44,10 @@ export const MenuBox = styled(Box)(({ theme }) => ({
   position: "absolute",
   top: 52,
   right: 24,
-  zIndex: 9999
+  zIndex: 9999,
+  [theme.breakpoints.down('sm')]: {
+    right: 16,
+  }
 }));
 
 export const MenuCard = styled(Card)(({ theme }) => ({

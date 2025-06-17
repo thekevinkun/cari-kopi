@@ -5,7 +5,6 @@ export const StyledStack = styled(Stack)(({ theme }) => ({
    display: "flex",
    flexDirection: "column-reverse",
    [theme.breakpoints.down('md')]: {
-    display: "block",
     position: "absolute",
     left: 0,
     bottom: 0,
@@ -36,11 +35,13 @@ export const CloseButton = styled(Button)(({ theme }) => ({
   marginLeft: "auto",
   marginBottom: "0.5rem",
   padding: "0.325rem 0.45rem",
-  [theme.breakpoints.down('sm')]: {
+  [theme.breakpoints.down('md')]: {
       position: "absolute",
       top: 0,
       right: -65,
       padding: "0.5rem 0.725rem",
+      marginLeft: 0,
+      marginBottom: 0,
   },
   [theme.breakpoints.down('sm')]: {
       top: -55,
