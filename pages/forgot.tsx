@@ -79,9 +79,11 @@ const ForgotPassword = () => {
             display="flex"
             justifyContent="center"
             alignItems="center"
-            minHeight="100vh"
-            bgcolor="#f5f5f5"
-            px={2}
+            sx={{
+                px: 2,
+                bgcolor: "#f5f5f5",
+                minHeight: ["100vh", "100svh"]
+            }}
         >
             <Paper elevation={3} sx={{ background: "#804A26", color: "#fff", maxWidth: 420, width: "100%", p: 4 }}>
                 <Typography variant="h5" fontWeight="bold" textAlign="center" mb={2}>

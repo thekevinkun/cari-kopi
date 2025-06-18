@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useUser } from "@/contexts/UserContext";
@@ -10,6 +10,7 @@ import { StyledAppBar, StyledToolbar, StyledTitleTypography,
 
 const Navbar = () => {
   const router = useRouter();
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const { user, loading, refreshUser } = useUser();
   const [toggleMenu, setToggleMenu] = useState(false);
   
@@ -28,8 +29,9 @@ const Navbar = () => {
             {user ? 
               <Box display="flex" alignItems="center" gap={1}>
                 <MenuButton 
+                  ref={buttonRef}
                   variant="outlined"
-                  onClick={() => setToggleMenu(!toggleMenu)}
+                  onClick={() => setToggleMenu((prev) => !prev)}
                 >
                   <PersonIcon sx={{ fontSize: "1.75rem" }}/>
                 </MenuButton> 
@@ -45,7 +47,17 @@ const Navbar = () => {
         }
 
         {(user && toggleMenu) &&
-          <ClickAwayListener onClickAway={() => setToggleMenu(false)}>
+          <ClickAwayListener 
+            onClickAway={(event) => {
+              if (
+                buttonRef.current &&
+                buttonRef.current.contains(event.target as Node)
+              ) {
+                return; // don't close if the click is on the button
+              }
+              setToggleMenu(false);
+            }}
+          >
             <MenuBox>
               <MenuCard>
                 <CardContent
@@ -100,7 +112,7 @@ const Navbar = () => {
                           }
                         },
                       })}
-                      onClick={() => setToggleMenu(!toggleMenu)}
+                      onClick={() => setToggleMenu((prev) => !prev)}
                     >
                       <Typography 
                         variant="body1" 
@@ -128,7 +140,7 @@ const Navbar = () => {
                           }
                         },
                       })}
-                      onClick={() => setToggleMenu(!toggleMenu)}
+                      onClick={() => setToggleMenu((prev) => !prev)}
                     >
                       <Typography 
                         variant="body1"

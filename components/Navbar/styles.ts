@@ -46,6 +46,7 @@ export const MenuBox = styled(Box)(({ theme }) => ({
   right: 24,
   zIndex: 9999,
   [theme.breakpoints.down('sm')]: {
+    top: 48,
     right: 16,
   }
 }));

@@ -26,10 +26,11 @@ startIndex: number;
     <Box
       sx={{
         position: "fixed",
-        top: 0,
+        bottom: 0,
         left: 0,
         width: "100vw",
-        height: "100vh",
+        height: "100%",
+        minHeight: "100svh",
         bgcolor: "rgba(0,0,0,0.92)",
         display: "flex",
         alignItems: "center",

@@ -141,8 +141,8 @@ const ExplorePanel = ({
         <SearchIconWrapper>
           <SearchIcon 
             style={{
-              width: isMobile ? "0.85em" : "1em",
-              height: isMobile ? "0.85em" : "1em",
+              width: "1em",
+              height: "1em",
             }}
           />
         </SearchIconWrapper>

@@ -50,12 +50,12 @@ export const SearchIconWrapper = styled("div")(({ theme }) => ({
 export const StyledInputBase = styled(InputBase)(({ theme }) => ({
   flex: 1,
   color: theme.palette.text.primary,
-  fontSize: "0.95rem",
+  fontSize: "16px",
   "& .MuiInputBase-input": {
     padding: theme.spacing(1, 0),
   },
   [theme.breakpoints.down('sm')]: {
-    fontSize: "0.85rem",
+    fontSize: "16px",
     "& .MuiInputBase-input": {
       padding: theme.spacing(0.75, 0),
     },

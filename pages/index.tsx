@@ -1,10 +1,11 @@
 import { useEffect, useState, useRef } from "react";
 import dynamic from "next/dynamic";
-import { Box, Grid, useMediaQuery } from "@mui/material";
+import { Alert, Box, Grid, useMediaQuery } from "@mui/material";
 
 import { CenteredLoader } from "@/components";
 
 import type { Coordinates, NearbyData, Shop, SerpShopDetail  } from "@/types";
+import { getLocationPermissionInstructions } from "@/utils/helpers";
 
 const Map = dynamic(() => import('@/components/Map/Map'), {
   ssr: false,
@@ -27,17 +28,23 @@ const ShopDetail = dynamic(() => import("@/components/ShopDetail/ShopDetail"), {
 });
 
 const Home = () => {
+  const triedInitialLocation = useRef(false);
+
   const [location, setLocation] = useState<Coordinates | null>(null);
+  const [locationError, setLocationError] = useState<string | null>(null);
+  const [shouldAsk, setShouldAsk] = useState(false);
+  const [userClickedFind, setUserClickedFind] = useState(false);
+
   const [address, setAddress] = useState<string | null>(null);
   const [shortAddress, setShortAddress] = useState<string | null>(null);
+  
   const [nearbyData, setNearbyData] = useState<NearbyData | null>(null);
   const [shops, setShops] = useState<Shop[]>([]);
-  const [favorites, setFavorites] = useState<SerpShopDetail[] | null>(null);
-  const [selectedShop, setSelectedShop] = useState<SerpShopDetail | null>(null);
   const [showShopDetail, setShowShopDetail] = useState(false);
-  const [shouldAsk, setShouldAsk] = useState(false);
+  const [selectedShop, setSelectedShop] = useState<SerpShopDetail | null>(null);
+  const [favorites, setFavorites] = useState<SerpShopDetail[] | null>(null);
+  
   const [loadingNextPage, setLoadingNextPage] = useState(false);
-  const triedInitialLocation = useRef(false);
 
   const getAddress = async (lat: number, lng: number) => {
     try {
@@ -157,7 +164,10 @@ const Home = () => {
 
   const tryGetLocation = async () => {
     if (!navigator.geolocation) {
-      console.error("Geolocation is not supported");
+      alert("Geolocation is not supported by your browser.");
+      if (userClickedFind) {
+        alert("Geolocation is not supported by your browser.");
+      }
       return;
     }
 
@@ -166,6 +176,7 @@ const Home = () => {
         const { latitude, longitude } = position.coords;
         const userLocation = {lat: -0.4772294, lng: 117.1306983 }; // For development
         setLocation(userLocation);
+        setShouldAsk(false);  
         
         // Get address as in city/street/etc
         const addressData = await getAddress(-0.4772294, 117.1306983);
@@ -181,7 +192,19 @@ const Home = () => {
       },
       (error) => {
         console.error("Geolocation error:", error);
-        setShouldAsk(true); // Show "Find Location" button on ActionForm if error find loc
+        setShouldAsk(true);  
+
+        if (userClickedFind && error.code === error.PERMISSION_DENIED) {
+          alert(getLocationPermissionInstructions() +
+            "\n\nPlease refresh this page for changes to take effect.");
+        } else if (userClickedFind) {
+          alert("Unable to retrieve your location. Please try again.");
+        }
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
       }
     )
   }
@@ -191,10 +214,9 @@ const Home = () => {
     if (triedInitialLocation.current) return;
     triedInitialLocation.current = true;
 
+    // Delay slightly if just came from /greeting
     const fromGreeting = localStorage.getItem("fromGreeting");
-
     if (fromGreeting === "true") {
-      // Delay slightly if just came from /greeting
       setTimeout(() => {
         tryGetLocation();
         localStorage.removeItem("fromGreeting"); // clean up
@@ -202,7 +224,7 @@ const Home = () => {
     } else {
       tryGetLocation(); // regular load
     }
-  }, [])
+  }, []);
 
   // Get user favorites
   useEffect(() => {
@@ -272,7 +294,10 @@ const Home = () => {
             currentPage={nearbyData?.page ?? null}
             totalPages={nearbyData?.totalPages ?? null}
             shouldAsk={shouldAsk} 
-            onRequestLocation={tryGetLocation} 
+            onRequestLocation={() => {
+              setUserClickedFind(true);
+              tryGetLocation();
+            }} 
             isLoadNextPage={loadingNextPage}
             onNextPage={handleNextPage}
             onShowLessPage={handleShowLessPage}

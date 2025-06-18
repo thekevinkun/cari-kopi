@@ -9,6 +9,47 @@ export const slugify = (text: string): string => {
     .replace(/^-+|-+$/g, ""); // Trim hyphens from start/end
 };
 
+export const getLocationPermissionInstructions = (): string => {
+  const ua = navigator.userAgent.toLowerCase();
+
+  if (/iphone|ipad|ipod/.test(ua)) {
+    if (ua.includes("safari") && !ua.includes("crios") && !ua.includes("fxios")) {
+      return "We can’t access your location.\n\nTo enable it:\nSettings > Privacy & Security > Location Services > Safari Websites";
+    }
+    if (ua.includes("crios")) {
+      return "We can’t access your location.\n\nTo enable it:\nSettings > Privacy & Security > Location Services > Chrome";
+    }
+    if (ua.includes("fxios")) {
+      return "We can’t access your location.\n\nTo enable it:\nSettings > Privacy & Security > Location Services > Firefox";
+    }
+
+    return "We can’t access your location. Please check your iPhone Settings > Privacy & Security > Location Services > [Browser].";
+  }
+
+  if (/android/.test(ua)) {
+    if (ua.includes("chrome")) {
+      return "We can’t access your location.\n\nPlease check: Settings > Apps > Chrome > Permissions > Location";
+    }
+    return "We can’t access your location.\n\nPlease check your browser and device location permissions.";
+  }
+
+  if (/macintosh|windows|linux/.test(ua)) {
+    if (ua.includes("chrome")) {
+      return "We can’t access your location.\n\nPlease check: Chrome Settings > Privacy and Security > Site Settings > Location";
+    }
+    if (ua.includes("firefox")) {
+      return "We can’t access your location.\n\nPlease check: Firefox Settings > Privacy & Security > Permissions > Location";
+    }
+    if (ua.includes("safari")) {
+      return "We can’t access your location.\n\nPlease check: System Settings > Security & Privacy > Location Services";
+    }
+
+    return "We can’t access your location. Please check your browser's location permission settings.";
+  }
+
+  return "We can’t access your location. Please check your browser or device settings to allow access.";
+};
+
 export const formatShortAddress = (address: OSMAddress): string => {
   const street = address.road || address.residential || address.pedestrian || "";
   const suburb = address.suburb || address.neighbourhood || address.village || "";

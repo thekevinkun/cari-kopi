@@ -39,12 +39,11 @@ export const CloseButton = styled(Button)(({ theme }) => ({
       position: "absolute",
       top: 0,
       right: -65,
-      padding: "0.5rem 0.725rem",
       marginLeft: 0,
       marginBottom: 0,
   },
   [theme.breakpoints.down('sm')]: {
-      top: -55,
+      top: -45,
       right: 10, 
   }
 }));

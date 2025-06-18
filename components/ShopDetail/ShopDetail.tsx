@@ -118,7 +118,7 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail, onFavoriteUpdate 
         sx={{
           pb: 1,
           px: 1,
-          height: isMobile ? "50vh" : isTablet ? "70vh" : shopDetailHeight,
+          height: isTablet ? "75svh" : shopDetailHeight,
         }}
       >
         <MotionCard 
@@ -241,7 +241,7 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail, onFavoriteUpdate 
             top: 0,
             left: 0,
             width: "100vw",
-            height: "100vh",
+            height: "100svh",
             background: "rgba(0,0,0,.25)",
             backdropFilter: "blur(2px)",
             zIndex: 1000
