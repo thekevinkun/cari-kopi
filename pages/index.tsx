@@ -4,7 +4,7 @@ import { Alert, Box, Grid, useMediaQuery } from "@mui/material";
 
 import { CenteredLoader } from "@/components";
 
-import type { Coordinates, NearbyData, Shop, SerpShopDetail  } from "@/types";
+import type { Coordinates, NearbyData, Shop, SerpShopDetail, TargetShop  } from "@/types";
 import { getLocationPermissionInstructions } from "@/utils/helpers";
 
 const Map = dynamic(() => import('@/components/Map/Map'), {
@@ -37,9 +37,11 @@ const Home = () => {
   
   const [nearbyData, setNearbyData] = useState<NearbyData | null>(null);
   const [shops, setShops] = useState<Shop[]>([]);
+  const [tempShops, setTempShops] = useState<Shop[]>([]);
   const [showShopDetail, setShowShopDetail] = useState(false);
   const [selectedShop, setSelectedShop] = useState<SerpShopDetail | null>(null);
   const [favorites, setFavorites] = useState<SerpShopDetail[] | null>(null);
+  const [targetShop, setTargetShop] = useState<TargetShop | null>(null);
   
   const [loadingNextPage, setLoadingNextPage] = useState(false);
 
@@ -89,6 +91,7 @@ const Home = () => {
     if (nextData) {
       setNearbyData(nextData);
       setShops((prev) => [...prev, ...nextData.results]);
+      setTempShops([]);
     }
 
     setLoadingNextPage(false);
@@ -105,6 +108,7 @@ const Home = () => {
     if (nextData) {
       setNearbyData(nextData);
       setShops(nextData.results);
+      setTempShops([]);
     }
 
     setLoadingNextPage(false);
@@ -157,6 +161,30 @@ const Home = () => {
     } catch (error) {
       console.error("Failed to refresh user favorites list", error);
     }
+  }
+
+  const handleViewOnMap = (shop: SerpShopDetail) => {
+    const lat = shop.gps_coordinates.latitude;
+    const lng = shop.gps_coordinates.longitude;
+
+    // Convert SerpShopDetail to Shop and store in temp if not already present
+    const converted: Shop = {
+      placeId: shop.place_id,
+      name: shop.title,
+      rating: shop.rating,
+      thumbnail: shop.images ? shop.images[0].serpapi_thumbnail : "/no-coffee-image.jpg",
+      geometry: {
+        location: { lat, lng },
+      }
+    }
+
+    setTempShops(prev => {
+      const exists = prev.some(s => s.placeId === shop.place_id) || shops.some(s => s.placeId === shop.place_id);
+      return exists ? prev : [...prev, converted];
+    });
+
+    // Fly to the shop
+    setTargetShop({ lat, lng });
   }
 
   const tryGetLocation = async (): Promise<GeolocationPosition | null> => {
@@ -276,7 +304,8 @@ const Home = () => {
       flexDirection={isTablet ? "column-reverse" : "row"}
       style={{ 
         width: "100%", 
-        height: isTablet ? "100%" : mapHeight 
+        height: isTablet ? "100%" : mapHeight,
+        overflow: "hidden" 
       }}
     >
       <Grid 
@@ -288,8 +317,10 @@ const Home = () => {
       >
         <Map 
           userLocation={location} 
-          shops={shops} 
+          shops={shops}
+          tempShops={tempShops}
           onSelectShop={(shop: Shop) => getShopDetail(shop.placeId)}
+          targetShop={targetShop}
         />
       </Grid>
       
@@ -315,10 +346,12 @@ const Home = () => {
               onCloseShopDetail={() => setShowShopDetail(false)}  
               onFavoriteUpdate={refreshFavorites}
             />
-          : favorites &&
+          : (locationStatus === "success" && favorites) &&
             <FavoritesShop 
               favorites={favorites}
               onSelectShop={(shop: SerpShopDetail) => getShopDetail(shop.place_id)}
+              onFavoriteUpdate={refreshFavorites}
+              onViewOnMap={handleViewOnMap}
             />
           }
         </Box>

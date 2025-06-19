@@ -9,7 +9,7 @@ import "leaflet/dist/leaflet.css";
 
 import { createShopMarkerIcon } from "@/components/ShopMarker/ShopMarker";
 
-import type { Coordinates, Map, Shop } from "@/types";
+import type { Coordinates, MapProps, Shop } from "@/types";
 
 // Set up default marker icons
 delete (L.Icon.Default as any).prototype._getIconUrl;
@@ -53,7 +53,7 @@ const MapFlyTo = ({ userLocation, onFlyEnd }: { userLocation: Coordinates | null
   return null; // This component doesn't render anything visually
 };
 
-const Map = ({ userLocation, shops, onSelectShop }: Map) => {
+const Map = ({ userLocation, shops, tempShops, onSelectShop, targetShop }: MapProps) => {
   // Default map center if user location is unavailable (e.g. global view)
   const defaultCenter: [number, number] = [20, 0]; // Near the equator
 
@@ -73,6 +73,25 @@ const Map = ({ userLocation, shops, onSelectShop }: Map) => {
     )
   }, [shops, isMobile])
 
+  const CaptureMapInstance = () => {
+    const map = useMap();
+    useEffect(() => {
+      mapRef.current = map;
+    }, [map]);
+    return null;
+  }
+
+  const mapRef = useRef<L.Map | null>(null);
+
+// Handle flyTo when targetShop is set
+  useEffect(() => {
+    if (targetShop && mapRef.current) {
+      mapRef.current.flyTo([targetShop.lat, targetShop.lng], 18, {
+        duration: 1.25,
+      });
+    }
+  }, [targetShop]);
+
   return (
     <MapContainer
       center={mapCenter}
@@ -81,6 +100,8 @@ const Map = ({ userLocation, shops, onSelectShop }: Map) => {
       style={{ height: "100%", width: "100%" }}
     >
       <MapReady />
+
+      <CaptureMapInstance />
       
       <TileLayer
         attribution="&copy; OpenStreetMap contributors"
@@ -98,7 +119,7 @@ const Map = ({ userLocation, shops, onSelectShop }: Map) => {
         </>
       )}
 
-      {/* Show coffee shop markers */}
+      {/* Render regular shops (no re-render on tempShop change) */}
       {showMarker &&
         shops.map((shop: Shop, index) => (
         <Marker
@@ -109,6 +130,17 @@ const Map = ({ userLocation, shops, onSelectShop }: Map) => {
             click: () => onSelectShop(shop),
           }}
         />
+      ))}
+
+      {/* Render temp shops (just one or few, appear instantly) */}
+      {showMarker &&
+        tempShops.map((shop: Shop) => (
+          <Marker
+            key={"temp-" + shop.placeId}
+            position={[shop.geometry.location.lat, shop.geometry.location.lng]}
+            icon={createShopMarkerIcon(shop, isMobile, 0)} // No animation delay
+            eventHandlers={{ click: () => onSelectShop(shop) }}
+          />
       ))}
     </MapContainer>
   )

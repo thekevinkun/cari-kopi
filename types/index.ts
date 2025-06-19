@@ -149,7 +149,10 @@ export interface SerpShopDetail {
   phone?: string;
   address: string;
   open_state?: string;
-  gps_coordinates: Coordinates;
+  gps_coordinates: {
+    latitude: number,
+    longitude: number
+  };
   hours?: { [day: string]: string }[];
   type?: string[];
   extensions?: ExtensionData[];
@@ -180,22 +183,31 @@ export interface SerpShopDetail {
   web_results_link: string;
 }
 
-export type Map = {
+export type MapProps = {
   userLocation: Coordinates | null;
   shops: Shop[];
+  tempShops: Shop[];
   onSelectShop: (shop: Shop) => void;
+  targetShop?: TargetShop | null;
 }
 
 export type ShopDetailProps = {
   shop: SerpShopDetail;
   showShopDetail: boolean;
   onCloseShopDetail: () => void;
-  onFavoriteUpdate?: () => void;
+  onFavoriteUpdate: () => void;
 }
 
 export type FavoritesShopProps = {
   favorites: SerpShopDetail[];
   onSelectShop: (shop: SerpShopDetail) => void;
+  onFavoriteUpdate: () => void;
+  onViewOnMap: (shop: SerpShopDetail) => void;
+}
+
+export type TargetShop = {
+  lat: number;
+  lng: number;
 }
 
 export type SkeletonImageProps = {
