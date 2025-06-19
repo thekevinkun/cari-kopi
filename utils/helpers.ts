@@ -60,6 +60,35 @@ export const formatShortAddress = (address: OSMAddress): string => {
   return [street, suburb, city, state, country].filter(Boolean).join(", ");
 }
 
+export const parseSerpAddress = (
+  fullAddress: string,
+  format: "cityCountry" | "street" = "cityCountry"
+): string => {
+  const parts = fullAddress.split(",").map((p) => p.trim());
+
+  if (format === "cityCountry") {
+    const country = parts[parts.length - 1] || "";
+
+    // Find city by scanning backward and picking the first part WITHOUT a number
+    let city = "";
+    for (let i = parts.length - 2; i >= 0; i--) {
+      const part = parts[i];
+      if (!/\d/.test(part)) { // skip parts with numbers like ZIP codes
+        city = part;
+        break;
+      }
+    }
+
+    return [city, country].filter(Boolean).join(", ");
+  }
+
+  if (format === "street") {
+    return parts[0] || fullAddress;
+  }
+
+  return fullAddress;
+}
+
 const capitalize = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }

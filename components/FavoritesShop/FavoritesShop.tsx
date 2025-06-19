@@ -2,22 +2,53 @@
 
 import { useEffect, useState, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Box, Card, CardContent, CardMedia, Grid, Rating, Stack, Typography, useMediaQuery } from "@mui/material";
+import { Box, Button, Card, CardActions, CardContent, CardMedia, 
+  CircularProgress, Grid, Rating, Stack, Typography, useMediaQuery 
+} from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import MapIcon from '@mui/icons-material/Map';
 
 import { ImageWithSkeleton } from "@/components";
 import { FavoritesShopProps } from "@/types";
 
 import { parentCardDetailVariants, cardVariants } from "@/utils/motion";
+import { parseSerpAddress } from "@/utils/helpers";
 
 const MotionStack = motion.create(Stack);
 const MotionGrid = motion.create(Grid);
 
-const FavoritesShop = ({ favorites, onSelectShop }: FavoritesShopProps) => {
+const FavoritesShop = ({ favorites, onSelectShop, onFavoriteUpdate, onViewOnMap }: FavoritesShopProps) => {
   const isTablet = useMediaQuery("(max-width: 900px)");
-
+  const [unsavingId, setUnsavingId] = useState<string | null>(null);
   const favoriteShopRef = useRef<HTMLDivElement>(null);
   const [favoriteShopHeight, setFavoriteShopHeight] = useState("100%");
+
+  const handleRemoveFavorite = async (placeId: string) => {
+    setUnsavingId(placeId);
+
+    try {
+      const res = await fetch("/api/favorites/remove", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ placeId }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error);
+      } else {
+        onFavoriteUpdate?.();
+        alert(data.message);
+      }
+
+    } catch (error) {
+      alert("Failed to remove shop. Try again later.");
+      console.error("Failed to remove shop", error);
+    } finally {
+      setUnsavingId(null);
+    }
+  }; 
 
   useEffect(() => {
     if (isTablet || !favoriteShopRef.current) return;
@@ -71,7 +102,7 @@ const FavoritesShop = ({ favorites, onSelectShop }: FavoritesShopProps) => {
         </Box>     
 
         {(favorites && favorites.length > 0) &&
-          <Grid container spacing={2} sx={{ mt: 1, pb: 2, overflowX: "hidden", overflowY: "auto" }}>
+          <Grid container spacing={1.5} sx={{ mt: 1, pb: 2, overflowX: "hidden", overflowY: "auto" }}>
             {favorites.map((shop, i) => (
               <MotionGrid 
                 key={`favorite-${i + 1}`}
@@ -86,7 +117,7 @@ const FavoritesShop = ({ favorites, onSelectShop }: FavoritesShopProps) => {
                     <ImageWithSkeleton
                       src={shop.images ? shop.images[0].serpapi_thumbnail : ""}
                       alt={shop.images ? shop.images[0].title : `Image favorite ${i}`}
-                      height="120px"
+                      height="108px"
                       style={{ objectPosition: "center center" }}
                     />
                   </CardMedia>
@@ -112,39 +143,101 @@ const FavoritesShop = ({ favorites, onSelectShop }: FavoritesShopProps) => {
                       {shop.title}
                     </Typography>
 
-                    <Rating 
-                      name="half-rating-read" 
-                      defaultValue={shop.rating} 
-                      precision={0.5}
-                      readOnly 
-                      sx={{
-                        fontSize: "0.925rem"
-                      }}
-                    />
-                    
-                    <Typography 
-                      component="span" 
-                      sx={{ 
-                        display: "block",
-                        fontSize: "0.675rem" 
-                      }}
-                    >
-                      <Typography component="span" sx={{ fontWeight: "bold", fontSize: "0.725rem"  }}>
-                        {shop.reviews}
-                      </Typography> Reviews
-                    </Typography>
+                    <Box display="flex" alignItems="center" gap={0.5}>
+                      <Rating 
+                        name="half-rating-read" 
+                        defaultValue={shop.rating} 
+                        precision={0.5}
+                        readOnly 
+                        sx={{
+                          fontSize: "0.875rem"
+                        }}
+                      />
+
+                      <Typography component="span" sx={{ fontWeight: "bold", fontSize: "0.7rem"  }}>
+                        ({shop.reviews})
+                      </Typography>
+                    </Box>
 
                     <Typography 
+                      title={parseSerpAddress(shop.address, "street")}
                       component="span" 
                       sx={{ 
-                        display: "block",
-                        fontSize: "0.675rem", 
-                        marginTop: "0.5rem",
+                        fontSize: "0.675rem",
+                        mt: 1,
+                        display: "-webkit-box",
+                        textOverflow: "ellipsis",
+                        WebkitLineClamp: "1",
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden", 
                       }}
                     >
-                      {shop.price}
+                      {parseSerpAddress(shop.address, "street")}
                     </Typography>
                   </CardContent>
+
+                  <CardActions
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 1
+                    }}
+                  >
+                    <Button
+                      title="Remove from favorites?"
+                      fullWidth
+                      variant="outlined"
+                      startIcon={unsavingId === shop.place_id ? null :
+                        <FavoriteIcon sx={{ color: "#ba0001", fontSize: "0.95rem !important" }} />
+                      }
+                      onClick={() => handleRemoveFavorite(shop.place_id)}
+                      sx={{
+                        padding: "3px 9px",
+                        fontSize: "0.625rem",
+                        color: "#000",
+                        borderColor: "#ba7f57",
+                        "&:hover": {
+                          borderColor: "#804A26",
+                        }
+                      }}
+                      disabled={unsavingId === shop.place_id}
+                    >
+                      {unsavingId === shop.place_id ?
+                        <Box
+                          display="flex" 
+                          alignItems="center" 
+                          justifyContent="center"
+                          width="100%"
+                        >
+                          <CircularProgress size={17} sx={{ color: "#1976d2"}} />  
+                        </Box>
+                      :
+                        "Remove"  
+                      }
+                    </Button>
+
+                    <Button
+                      title="View on map"
+                      fullWidth
+                      variant="outlined"
+                      startIcon={<MapIcon sx={{ color: "rgba(0,0,0,0.75)", fontSize: "0.95rem !important" }} />}
+                      sx={{
+                        padding: "3px 9px",
+                        fontSize: "0.625rem",
+                        marginLeft: "0 !important",
+                        color: "#000",
+                        borderColor: "#ba7f57",
+                        "&:hover": {
+                          borderColor: "#804A26",
+                        }
+                      }}
+                      onClick={() => onViewOnMap(shop)}
+                    >
+                      View
+                    </Button>
+                  </CardActions>
                 </Card>
               </MotionGrid>
             ))}
