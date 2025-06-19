@@ -213,7 +213,7 @@ export type ExplorePanelProps = {
   totalResults?: number | null;
   currentPage?: number | null;
   totalPages?: number | null;
-  shouldAsk: boolean;
+  locationStatus: "idle" | "fetching" | "success" | "failed";
   onRequestLocation: () => void;
   isLoadNextPage: boolean;
   onNextPage: () => void;

@@ -1,4 +1,4 @@
-import { Box, Button, CircularProgress, Stack, Typography, useMediaQuery } from "@mui/material";
+import { Box, Button, CircularProgress, Stack, Typography } from "@mui/material";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import SearchIcon from "@mui/icons-material/Search";
@@ -13,17 +13,32 @@ const ExplorePanel = ({
   totalResults,
   currentPage,
   totalPages,
-  shouldAsk, 
+  locationStatus, 
   onRequestLocation, 
   isLoadNextPage, 
   onNextPage,
   onShowLessPage 
 }: ExplorePanelProps) => {
-  const isMobile = useMediaQuery("(max-width: 600px)");
-  
+ 
   return (
     <Stack spacing={2} py={2} px={1}>
-      {(!address && shouldAsk) ?
+      {locationStatus === "fetching" ? (
+        <Box display="flex">
+          <LocationOnIcon 
+            sx={{
+              fontSize: {
+                xs: "1.15rem",
+                sm: "1.25rem"
+              },
+              color: "rgba(0,0,0,0.54)",
+              marginRight: "3px"
+            }}
+          />
+          <Typography variant="body1" color="textSecondary" fontSize="0.825rem">
+            Finding location...
+          </Typography>
+        </Box>
+      ) : locationStatus === "failed" ? (
         <Box display="flex" alignItems="center">
           <Button 
             variant="outlined"
@@ -45,34 +60,23 @@ const ExplorePanel = ({
             Find your location
           </Button>
         </Box>
-      :
+      ) : address ? (
         <Box display="flex">
           <LocationOnIcon 
-            style={{
-              fontSize: isMobile ? "1.15rem" : "1.25rem",
+            sx={{
+              fontSize: {
+                xs: "1.15rem",
+                sm: "1.25rem"
+              },
               color: "#1976d2",
               marginRight: "3px"
             }}
           />
-
-          {address ?
-            <StyledAddress 
-              variant="body1" 
-              color="textSecondary"
-            >
-              {address}
-            </StyledAddress>
-          :
-            <Typography 
-              variant="body1" 
-              color="textSecondary"
-              fontSize="0.825rem"
-            >
-              Finding location...
-            </Typography>
-          }
+          <StyledAddress variant="body1" color="textSecondary">
+            {address}
+          </StyledAddress>
         </Box>
-      }
+      ) : null}
 
       {totalPages && totalPages > 1 &&
         <Box 
@@ -149,7 +153,7 @@ const ExplorePanel = ({
         <StyledInputBase  placeholder="Search..." />
       </Search>
     </Stack>
-  )
-}
+  );
+};
 
 export default ExplorePanel;

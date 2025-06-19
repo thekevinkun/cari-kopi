@@ -48,8 +48,8 @@ export function createShopMarkerIcon(shop: Shop, isMobile: boolean, delay?: numb
           src="${shop.thumbnail}"
           alt="${shop.name}"
           style="width: 100%; height: ${isMobile ? 54 : 72}px; object-fit: cover; display: block;"
-          onload="this.nextElementSibling.style.display='none'"
-          onerror="this.nextElementSibling.style.display='none'; this.src='/no-coffee-image.jpg'"
+          onload="if (this.nextElementSibling) this.nextElementSibling.style.display='none'"
+          onerror="if (this.nextElementSibling) this.nextElementSibling.style.display='none'; this.src='/no-coffee-image.jpg'"
         />
 
         <div class="spinner" style="

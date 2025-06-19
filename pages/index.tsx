@@ -29,11 +29,8 @@ const ShopDetail = dynamic(() => import("@/components/ShopDetail/ShopDetail"), {
 
 const Home = () => {
   const triedInitialLocation = useRef(false);
-
   const [location, setLocation] = useState<Coordinates | null>(null);
-  const [locationError, setLocationError] = useState<string | null>(null);
-  const [shouldAsk, setShouldAsk] = useState(false);
-  const [userClickedFind, setUserClickedFind] = useState(false);
+  const [locationStatus, setLocationStatus] = useState<"idle" | "fetching" | "success" | "failed">("idle");
 
   const [address, setAddress] = useState<string | null>(null);
   const [shortAddress, setShortAddress] = useState<string | null>(null);
@@ -162,68 +159,79 @@ const Home = () => {
     }
   }
 
-  const tryGetLocation = async () => {
-    if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser.");
-      if (userClickedFind) {
-        alert("Geolocation is not supported by your browser.");
+  const tryGetLocation = async (): Promise<GeolocationPosition | null> => {
+    return new Promise((resolve) => {
+      if (!navigator.geolocation) {
+        console.warn("Geolocation is not supported");
+        return resolve(null);
       }
-      return;
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => resolve(position),
+        (error) => {
+          console.error("Geolocation error:", error);
+          resolve(null);
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    });
+  };
+
+  const handleLocationSuccess = async (position: GeolocationPosition) => {
+    const { latitude, longitude } = position.coords;
+    const userLocation = { lat: -0.4772294, lng: 117.1306983 };
+    setLocation(userLocation);
+
+    const addressData = await getAddress(-0.4772294, 117.1306983);
+    if (!addressData) return;
+
+    setAddress(addressData.fullAddress);
+    setShortAddress(addressData.shortAddress);
+
+    const data = await getNearbyCoffee(-0.4772294, 117.1306983, addressData.shortAddress);
+    if (data) {
+      setNearbyData(data);
+      setShops(data.results || []);
     }
+  };
 
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { latitude, longitude } = position.coords;
-        const userLocation = {lat: -0.4772294, lng: 117.1306983 }; // For development
-        setLocation(userLocation);
-        setShouldAsk(false);  
-        
-        // Get address as in city/street/etc
-        const addressData = await getAddress(-0.4772294, 117.1306983);
-        if (!addressData) return;
+  const onFindLocationClick = async () => {
+    setLocationStatus("fetching");
+    const pos = await tryGetLocation();
 
-        setAddress(addressData.fullAddress);
-        setShortAddress(addressData.shortAddress)
-
-        // If success find user location, find coffe shop nearby
-        const data = await getNearbyCoffee(-0.4772294, 117.1306983, addressData.shortAddress);
-        setNearbyData(data);
-        setShops(data.results || []);
-      },
-      (error) => {
-        console.error("Geolocation error:", error);
-        setShouldAsk(true);  
-
-        if (userClickedFind && error.code === error.PERMISSION_DENIED) {
-          alert(getLocationPermissionInstructions() +
-            "\n\nPlease refresh this page for changes to take effect.");
-        } else if (userClickedFind) {
-          alert("Unable to retrieve your location. Please try again.");
-        }
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0,
-      }
-    )
-  }
+    if (pos) {
+      await handleLocationSuccess(pos);
+      setLocationStatus("success");
+    } else {
+      alert(getLocationPermissionInstructions() + 
+        "\n\nRefresh the page after changing permission.");
+      setLocationStatus("failed");
+    }
+  };
 
   useEffect(() => {
-    // Avoid re-trigerring
+    // Avoid re-trigerring after came from /greeting
     if (triedInitialLocation.current) return;
     triedInitialLocation.current = true;
 
     // Delay slightly if just came from /greeting
-    const fromGreeting = localStorage.getItem("fromGreeting");
-    if (fromGreeting === "true") {
-      setTimeout(() => {
-        tryGetLocation();
-        localStorage.removeItem("fromGreeting"); // clean up
-      }, 800); // adjust this number to match Map fly delay
-    } else {
-      tryGetLocation(); // regular load
-    }
+    const fromGreeting = localStorage.getItem("fromGreeting") === "true";
+    const delay = fromGreeting ? 800 : 0;
+
+    setTimeout(async () => {
+      setLocationStatus("fetching");
+      const pos = await tryGetLocation();
+      if (pos) {
+        await handleLocationSuccess(pos);
+        setLocationStatus("success");
+      } else {
+        setLocationStatus("failed");
+      }
+
+      if (fromGreeting) {
+        localStorage.removeItem("fromGreeting");
+      }
+    }, delay);
   }, []);
 
   // Get user favorites
@@ -287,17 +295,14 @@ const Home = () => {
       
       <Grid size={{ xs: 12, md: 4 }}>
         <Box display="flex" flexDirection="column" sx={{ height: "100%"}}>
-          <ExplorePanel 
-            address={address} 
+          <ExplorePanel
+            address={address}
             currentResults={shops?.length ?? null}
             totalResults={nearbyData?.totalResults ?? null}
             currentPage={nearbyData?.page ?? null}
             totalPages={nearbyData?.totalPages ?? null}
-            shouldAsk={shouldAsk} 
-            onRequestLocation={() => {
-              setUserClickedFind(true);
-              tryGetLocation();
-            }} 
+            locationStatus={locationStatus}
+            onRequestLocation={onFindLocationClick}
             isLoadNextPage={loadingNextPage}
             onNextPage={handleNextPage}
             onShowLessPage={handleShowLessPage}
