@@ -96,6 +96,7 @@ const ExplorePanel = ({
               marginRight: "8px !important",
               [theme.breakpoints.down('md')]: {
                 maxWidth: 640,
+                marginRight: 0,
               },
             })
           }
@@ -126,6 +127,7 @@ const ExplorePanel = ({
               marginRight: "8px !important",
               [theme.breakpoints.down('md')]: {
                 maxWidth: 640,
+                marginRight: 0,
               },
             })
           }
