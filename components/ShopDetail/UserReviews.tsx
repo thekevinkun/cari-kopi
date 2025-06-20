@@ -11,7 +11,7 @@ const UserReviews = ({ reviews }: { reviews : SerpReviewItemProps[] }) => {
     
   return (
     <Box 
-        mt={7}
+        mt={6}
         width="100%"
         display="flex"
         alignItems="center"

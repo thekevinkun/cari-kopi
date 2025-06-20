@@ -81,7 +81,7 @@ const Information = ({ address, price, phone, webLink, website }:
             >
                 <LanguageIcon /> 
                 
-                <MUILink href={website}>Website</MUILink>
+                <MUILink href={website} target="_blank" rel="noopener noreferrer">Website</MUILink>
             </Typography>
         }
 
@@ -101,7 +101,7 @@ const Information = ({ address, price, phone, webLink, website }:
             >
                 <TagIcon /> 
                 
-                <MUILink href={webLink}>Social Media Website</MUILink>
+                <MUILink href={webLink} target="_blank" rel="noopener noreferrer">Social Media Website</MUILink>
             </Typography>
         }
     </>

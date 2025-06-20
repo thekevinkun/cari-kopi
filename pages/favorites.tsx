@@ -148,19 +148,23 @@ const FavoritesPage = () => {
         </Head>
     
         <Box px={2} py={3}>
-            <Typography variant="h6" mb={2} sx={{ fontStyle: favorites && favorites.length > 0 ? "normal" : "italic" }}>
-                {   isDesktop ?
-                    "The favorites page is only available on mobile screen."
-                    :
-                    loading ?
-                    "Collecting your favorites..."
-                    :
-                    favorites && favorites.length > 0 ? 
-                    "Your Favorites" 
-                    : 
-                    "You don’t have any favorite yet."
-                }
-            </Typography>
+            { isDesktop ?
+              <Typography variant="h6" mb={2} sx={{ fontStyle: "normal" }}>
+                The favorites page is only available on mobile screen.
+              </Typography>
+            : loading ?
+              <Typography variant="body1" mb={2} sx={{ fontStyle: "italic" }}>
+                Collecting your favorites...
+              </Typography>
+            : favorites && favorites.length > 0 ? 
+              <Typography variant="h6" mb={2} sx={{ fontStyle: "normal" }}>
+                Your Favorites
+              </Typography>
+            :
+              <Typography variant="h6" mb={2} sx={{ fontStyle: "normal" }}>
+                You don’t have any favorite yet.
+              </Typography>
+            }
 
             {!isDesktop && (favorites && favorites.length > 0) &&
                 <Grid container spacing={2}>
@@ -186,8 +190,8 @@ const FavoritesPage = () => {
                                     <ImageWithSkeleton
                                         src={shop.images ? shop.images[0].serpapi_thumbnail : ""}
                                         alt={shop.images ? shop.images[0].title : ` Image favorite`}
-                                        width="80px"
-                                        height="80px"
+                                        width="87px"
+                                        height="87px"
                                         style={{ objectPosition: "center center" }}
                                     />
                                 </CardMedia>
@@ -243,6 +247,20 @@ const FavoritesPage = () => {
                                         }}
                                     >
                                         {parseSerpAddress(shop.address, "cityCountry")}
+                                    </Typography>
+
+                                    <Typography 
+                                        fontSize="0.8rem" 
+                                        color="text.secondary"
+                                        sx={{
+                                            overflow: "hidden",
+                                            textOverflow: "ellipsis",
+                                            display: "-webkit-box",
+                                            WebkitLineClamp: "1",
+                                            WebkitBoxOrient: "vertical",
+                                        }}
+                                    >
+                                        {parseSerpAddress(shop.address, "street")}
                                     </Typography>
                                 </CardContent>
                             </Box>

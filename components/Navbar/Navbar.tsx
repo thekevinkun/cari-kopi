@@ -36,19 +36,28 @@ const Navbar = () => {
         
         {!loading &&
         <>
-          <Typography 
-            component="h1" 
-            variant={isMobile ? "body2" : "body1"} 
-            sx={{ 
-              marginLeft: isMobile ? "auto" : "unset",
-              paddingRight: isMobile ? 1.5 : 0
-            }} 
-          > 
-            {greeting},{" "} 
-            <Typography component="span" variant={isMobile ? "body2" : "body1"} sx={{ fontWeight: 700 }}>
-              {firstName}
+          {user &&
+            <Typography 
+              component="h1" 
+              variant={isMobile ? "body2" : "body1"} 
+              sx={{ 
+                marginLeft: isMobile ? "auto" : "unset",
+                paddingRight: isMobile ? 1.5 : 0
+              }} 
+            > 
+              {greeting},{" "} 
+              <Typography 
+                component="span" 
+                variant={isMobile ? "body2" : "body1"} 
+                sx={{ 
+                  fontWeight: 700, 
+                  display: isMobile ? "block" : "inline" 
+                }}
+              >
+                {firstName}
+              </Typography>
             </Typography>
-          </Typography>
+          }
           
           <Box display="flex">
             {user ? 

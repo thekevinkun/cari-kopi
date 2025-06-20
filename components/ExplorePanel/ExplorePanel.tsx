@@ -23,7 +23,8 @@ const ExplorePanel = ({
   onNextPage,
   onShowLessPage 
 }: ExplorePanelProps) => {
-  const isMobile= useMediaQuery("(max-width: 600px)");
+  const isTablet = useMediaQuery("(max-width: 900px)");
+  const isMobile = useMediaQuery("(max-width: 600px)");
   
   const [isShowMoreHovered, setIsShowMoreHovered] = useState(false);
   const [isShowLessHovered, setIsShowLessHovered] = useState(false);
@@ -35,7 +36,8 @@ const ExplorePanel = ({
       px={1}
       sx={{
         alignItems: {
-          xs: "center",
+          xs: "unset",
+          sm: "center",
           md: "unset"
         }
       }}
@@ -173,12 +175,16 @@ const ExplorePanel = ({
               }}
               onClick={currentPage < totalPages ? onNextPage : onShowLessPage}
               onMouseEnter={() => {
+                if (isTablet) return;
+
                 if (currentPage < totalPages)
                   setIsShowMoreHovered(true);
                 else
                   setIsShowLessHovered(true);
               }}
               onMouseLeave={() => {
+                if (isTablet) return;
+
                 if (currentPage < totalPages)
                   setIsShowMoreHovered(false);
                 else
