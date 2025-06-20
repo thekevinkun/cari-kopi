@@ -13,13 +13,17 @@ import MapIcon from "@mui/icons-material/Map";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
 import { ImageWithSkeleton } from "@/components";
-import type { SerpShopDetail } from "@/types";
+import type { MinimapProps, SerpShopDetail } from "@/types";
 
 import { verifyToken } from "@/lib/db/auth";
 import { cardVariants } from "@/utils/motion";
 import { parseSerpAddress } from "@/utils/helpers";
 
 const ShopDetail = dynamic(() => import("@/components/ShopDetail/ShopDetail"), {
+  ssr: false
+});
+
+const Minimap = dynamic(() => import("@/components/Map/Minimap"), {
   ssr: false
 });
 
@@ -54,6 +58,8 @@ const FavoritesPage = () => {
   const [showShopDetail, setShowShopDetail] = useState(false);
   const [selectedShop, setSelectedShop] = useState<SerpShopDetail | null>(null);
 
+  const [minimapShop, setMinimapShop] = useState<{ title: string, lat: number, lng: number } | null>(null);
+
   const firstName = user?.name?.split(" ")[0];
 
   const handleShowShopDetail = (shop: SerpShopDetail) => {
@@ -62,6 +68,14 @@ const FavoritesPage = () => {
       setShowShopDetail(true);
     }
   }
+
+  const handleViewOnMap = (shop: SerpShopDetail) => {
+    setMinimapShop({
+      title: shop.title,
+      lat: shop.gps_coordinates.latitude,
+      lng: shop.gps_coordinates.longitude
+    });
+  };
 
   const refreshFavorites = async () => {
     try {
@@ -136,7 +150,7 @@ const FavoritesPage = () => {
         <Box px={2} py={3}>
             <Typography variant="h6" mb={2} sx={{ fontStyle: favorites && favorites.length > 0 ? "normal" : "italic" }}>
                 {   isDesktop ?
-                    "The favorites page is only available on mobile."
+                    "The favorites page is only available on mobile screen."
                     :
                     loading ?
                     "Collecting your favorites..."
@@ -265,7 +279,7 @@ const FavoritesPage = () => {
                                     startIcon={viewedId === shop.place_id ? null :
                                         <MapIcon sx={{ color: "rgba(0,0,0,0.75)" }} />
                                     }
-                                    onClick={() => {}}
+                                    onClick={() => handleViewOnMap(shop)}
                                     disabled={viewedId === shop.place_id}
                                 >
                                     {viewedId === shop.place_id ?
@@ -297,6 +311,13 @@ const FavoritesPage = () => {
                 onFavoriteUpdate={refreshFavorites}
             />
         }
+
+        {minimapShop && (
+          <Minimap
+            shop={minimapShop}
+            onClose={() => setMinimapShop(null)}
+          />
+        )}
     </>
   )
 }

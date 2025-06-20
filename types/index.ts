@@ -192,6 +192,15 @@ export type MapProps = {
   targetShop?: TargetShop | null;
 }
 
+export type MinimapProps = {
+  shop: { 
+    title: string, 
+    lat: number, 
+    lng: number 
+  },
+  onClose: () => void
+}
+
 export type ShopDetailProps = {
   shop: SerpShopDetail;
   showShopDetail: boolean;
