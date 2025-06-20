@@ -1,4 +1,3 @@
-import "@/styles/utilities.css";
 import "leaflet/dist/leaflet.css";
 
 import { useEffect } from "react";

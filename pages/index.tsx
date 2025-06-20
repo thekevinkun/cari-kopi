@@ -297,15 +297,23 @@ const Home = () => {
     return () => observer.disconnect();
   }, [isTablet]);
 
+  // hide jump scrollbar only on /
+  useEffect(() => {
+    document.body.style.overflow = "hidden"; 
+    
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+  
   return (
     <Grid 
       container 
-      spacing={1} 
+      spacing={isTablet? 0 : 1} 
       flexDirection={isTablet ? "column-reverse" : "row"}
       style={{ 
         width: "100%", 
         height: isTablet ? "100%" : mapHeight,
-        overflow: "hidden" 
       }}
     >
       <Grid 
