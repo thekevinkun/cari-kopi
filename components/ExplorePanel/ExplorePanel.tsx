@@ -29,7 +29,17 @@ const ExplorePanel = ({
   const [isShowLessHovered, setIsShowLessHovered] = useState(false);
 
   return (
-    <Stack spacing={2} py={2} px={1}>
+    <Stack 
+      spacing={2} 
+      py={2} 
+      px={1}
+      sx={{
+        alignItems: {
+          xs: "center",
+          md: "unset"
+        }
+      }}
+    >
       {locationStatus === "fetching" ? (
         <Box display="flex">
           <LocationOnIcon 
@@ -205,19 +215,17 @@ const ExplorePanel = ({
         </Box>
       }
 
-      {locationStatus !== "fetching" &&
-        <Search>
-          <SearchIconWrapper>
-            <SearchIcon 
-              style={{
-                width: "1em",
-                height: "1em",
-              }}
-            />
-          </SearchIconWrapper>
-          <StyledInputBase  placeholder="Search..." />
-        </Search>
-      }
+      <Search>
+        <SearchIconWrapper>
+          <SearchIcon 
+            style={{
+              width: isMobile ? "0.95em" : "1em",
+              height: isMobile ? "0.95em" : "1em",
+            }}
+          />
+        </SearchIconWrapper>
+        <StyledInputBase  placeholder="Search..." />
+      </Search>
     </Stack>
   );
 };

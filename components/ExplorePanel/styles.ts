@@ -57,7 +57,7 @@ export const StyledInputBase = styled(InputBase)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     fontSize: "16px",
     "& .MuiInputBase-input": {
-      padding: theme.spacing(0.65, 0),
+      padding: theme.spacing(0.5, 0),
     },
   }
 }));
