@@ -49,13 +49,13 @@ const UserReviews = ({ reviews }: { reviews : SerpReviewItemProps[] }) => {
                     <Grid container spacing={1} mt={4}>
                         {review.images.map((image, i) => (
                             <Grid 
-                                key={`${review.username} photo ${i + 1}`}
+                                key={`${review.username}-photo-${i + 1}`}
                                 size={{ xs: 3, md: 4, lg: 3 }}
                                 sx={{ height: {xs: 125, md: 115} }}
                             >
                                 <ImageWithSkeleton 
                                     src={`/api/image-proxy?url=${encodeURIComponent(image.thumbnail ?? "")}`} 
-                                    alt={`${review.username} photo ${i + 1}`}
+                                    alt={`${review.username}-photo-${i + 1}`}
                                     height="100%"
                                     style={{
                                         borderRadius: 8,

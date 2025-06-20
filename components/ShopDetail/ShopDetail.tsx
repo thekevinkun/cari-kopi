@@ -2,8 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Box, Button, Card, CardContent, CircularProgress, Grid, useMediaQuery } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import { Box, Button, Card, CardContent, CircularProgress, Grid, useMediaQuery } from "@mui/material";import CloseIcon from "@mui/icons-material/Close";
 import NearMeIcon from "@mui/icons-material/NearMe";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -65,6 +64,36 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail, onFavoriteUpdate 
     }
   }; 
 
+  const handleRemoveFavorite = async () => {
+    setLoading(true);
+
+    const placeId = shop?.place_id;
+    
+    try {
+      const res = await fetch("/api/favorites/remove", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ placeId }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error);
+      } else {
+        setIsFavorite(false);
+        onFavoriteUpdate?.();
+        alert(data.message);
+      }
+
+    } catch (error) {
+      alert("Failed to remove shop. Try again later.");
+      console.error("Failed to remove shop", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const checkFavoriteStatus = async () => {
       if (!shop?.place_id) return;
@@ -106,10 +135,23 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail, onFavoriteUpdate 
 
     return () => observer.disconnect();
   }, [isTablet, isMobile]);
+
+  useEffect(() => {
+    if (showShopDetail && isTablet) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showShopDetail]);
   
   return (
     <AnimatePresence>
       <MotionStyledStack
+        key={shop.place_id}
         variants={parentCardDetailVariants(0.15)}
         initial="hidden"
         animate="show"
@@ -118,7 +160,7 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail, onFavoriteUpdate 
         sx={{
           pb: 1,
           px: 1,
-          height: isTablet ? "75svh" : shopDetailHeight,
+          height: isTablet ? "80svh" : shopDetailHeight,
         }}
       >
         <MotionCard 
@@ -153,6 +195,7 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail, onFavoriteUpdate 
               address={shop.address ?? ""} 
               price={shop.price ?? ""}
               phone={shop.phone ?? ""}
+              website={shop.website ?? ""}
               webLink={shop.web_results_link}
             />
 
@@ -167,19 +210,19 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail, onFavoriteUpdate 
                 gap: 2
               }}
             >
-              <Box sx={{ flex: "1 1 250px", maxWidth: "183px" }}>
+              <Box sx={{ flex: "1 1 250px", maxWidth: isTablet && !isMobile ? "180px" : "183px" }}>
                 <Button variant="contained" sx={{ fontSize: 12, width: "100%" }}>
                   <NearMeIcon fontSize="small" sx={{ mr: 0.75 }}/> Start Directions
                 </Button>
               </Box>
               
-              <Box sx={{ flex: "1 1 250px", maxWidth: "183px" }}>
+              <Box sx={{ flex: "1 1 250px", maxWidth: isTablet && !isMobile ? "180px" : "183px" }}>
                 <Button 
                   title={isFavorite ? "Remove from favorites?" : "Add to favorites?"}
                   variant="outlined" 
                   sx={{ fontSize: 12, width: "100%" }}
                   disabled={loading}
-                  onClick={handleAddFavorite}
+                  onClick={isFavorite ? handleRemoveFavorite : handleAddFavorite}
                 >
                   {loading || checkingFavorite ? 
                     <Box

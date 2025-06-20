@@ -27,7 +27,7 @@ const ExtensionList = ({ extensions }: { extensions: ExtensionGroup[] }) => {
             <Stack direction="row" flexWrap="wrap" gap={1}>
               {values.map((value, i) => (
                 <Chip
-                  key={value}
+                  key={`${value} - ${key}`}
                   label={`${getEmoji(value,  _unsupported)} ${value}`}
                   variant="outlined"
                   size="small"

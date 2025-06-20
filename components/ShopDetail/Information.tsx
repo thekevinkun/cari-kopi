@@ -1,11 +1,12 @@
 import { Link as MUILink, Typography } from "@mui/material";
+import TagIcon from "@mui/icons-material/Tag";
 import PhoneIcon from "@mui/icons-material/Phone";
-import LanguageIcon from '@mui/icons-material/Language';
+import LanguageIcon from "@mui/icons-material/Language";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 
-const Information = ({ address, price, phone, webLink }: 
-    { address: string, price: string, phone: string, webLink: string }) => {
+const Information = ({ address, price, phone, webLink, website }: 
+    { address: string, price: string, phone: string, webLink: string, website: string }) => {
 
   return (
     <>
@@ -64,7 +65,7 @@ const Information = ({ address, price, phone, webLink }:
             </Typography>
         }
         
-        {webLink &&
+        {website &&
             <Typography 
                 variant="body2" 
                 color="textSecondary" 
@@ -80,7 +81,27 @@ const Information = ({ address, price, phone, webLink }:
             >
                 <LanguageIcon /> 
                 
-                <MUILink href={webLink}>Web Link</MUILink>
+                <MUILink href={website}>Website</MUILink>
+            </Typography>
+        }
+
+        {webLink &&
+            <Typography 
+                variant="body2" 
+                color="textSecondary" 
+                fontStyle="normal"
+                sx={{
+                    mt: 1.5,
+                    textAlign: "right",
+                    display: "flex", 
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 7
+                }}
+            >
+                <TagIcon /> 
+                
+                <MUILink href={webLink}>Social Media Website</MUILink>
             </Typography>
         }
     </>

@@ -38,7 +38,7 @@ export const CloseButton = styled(Button)(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
       position: "absolute",
       top: 0,
-      right: -65,
+      right: -50,
       marginLeft: 0,
       marginBottom: 0,
   },
