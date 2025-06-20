@@ -148,6 +148,7 @@ export interface SerpShopDetail {
   price?: string;
   phone?: string;
   address: string;
+  website?: string;
   open_state?: string;
   gps_coordinates: {
     latitude: number,
