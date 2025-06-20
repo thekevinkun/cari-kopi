@@ -19,13 +19,13 @@ export const StyledStack = styled(Stack)(({ theme }) => ({
 }));
 
 export const StyledBoxImage = styled(Box)(({ theme }) => ({
-   height: 245,
+   height: 225,
    width: "100%",
    borderTopLeftRadius: theme.shape.borderRadius,
    borderTopRightRadius: theme.shape.borderRadius,
    overflow: "hidden",
    [theme.breakpoints.down('md')]: {
-      height: 265,  
+      height: 255,  
    }
 }));
 
@@ -47,3 +47,19 @@ export const CloseButton = styled(Button)(({ theme }) => ({
       right: 10, 
   }
 }));
+
+export const scrollStyle = {
+  overflowY: "auto",
+  scrollbarWidth: "thin",
+  scrollbarColor: "#804A26 transparent",
+  "&::-webkit-scrollbar": {
+    width: "6px",
+  },
+  "&::-webkit-scrollbar-thumb": {
+    backgroundColor: "#804A26",
+    borderRadius: "4px",
+  },
+  "&::-webkit-scrollbar-track": {
+    backgroundColor: "transparent",
+  },
+}

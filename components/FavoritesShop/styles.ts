@@ -1,8 +1,15 @@
-import { Box, Button, Stack } from "@mui/material";
-import { styled } from "@mui/material/styles";
-
-export const StyledStack = styled(Stack)(({ theme }) => ({
-    [theme.breakpoints.up('md')]: {
-        display: "none"
-    }
-}));
+export const scrollStyle = {
+  overflowY: "auto",
+  scrollbarWidth: "thin",
+  scrollbarColor: "#804A26 transparent",
+  "&::-webkit-scrollbar": {
+    width: "6px",
+  },
+  "&::-webkit-scrollbar-thumb": {
+    backgroundColor: "#804A26",
+    borderRadius: "4px",
+  },
+  "&::-webkit-scrollbar-track": {
+    backgroundColor: "transparent",
+  },
+}

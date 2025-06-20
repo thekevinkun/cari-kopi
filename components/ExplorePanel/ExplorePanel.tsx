@@ -1,7 +1,11 @@
-import { Box, Button, CircularProgress, Stack, Typography } from "@mui/material";
+import { useState } from "react";
+import { Box, Button, CircularProgress, Stack, Typography, useMediaQuery } from "@mui/material";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import SearchIcon from "@mui/icons-material/Search";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import RestartAltIcon from "@mui/icons-material/RestartAlt";
+import CachedIcon from "@mui/icons-material/Cached";
 
 import type { ExplorePanelProps } from "@/types";
 
@@ -19,7 +23,11 @@ const ExplorePanel = ({
   onNextPage,
   onShowLessPage 
 }: ExplorePanelProps) => {
- 
+  const isMobile= useMediaQuery("(max-width: 600px)");
+  
+  const [isShowMoreHovered, setIsShowMoreHovered] = useState(false);
+  const [isShowLessHovered, setIsShowLessHovered] = useState(false);
+
   return (
     <Stack spacing={2} py={2} px={1}>
       {locationStatus === "fetching" ? (
@@ -78,14 +86,14 @@ const ExplorePanel = ({
         </Box>
       ) : null}
 
-      {totalPages && totalPages > 1 &&
+      {locationStatus === "fetching" ?
         <Box 
           display="flex" 
           alignItems="center" 
           justifyContent="flex-end" 
-          gap={1}
           sx={(theme) => ({
               marginTop: "10px !important",
+              marginRight: "8px !important",
               [theme.breakpoints.down('md')]: {
                 maxWidth: 640,
               },
@@ -96,7 +104,37 @@ const ExplorePanel = ({
             variant="body2" 
             color="textSecondary"
             sx={(theme) => ({
-                fontSize: "0.775rem",
+                fontSize: "0.75rem",
+                fontStyle: "italic",   
+                [theme.breakpoints.down('sm')]: {
+                  fontSize: "0.715rem",  
+                },
+              })
+            }
+          >
+            Showing results...
+          </Typography>
+        </Box>
+      : locationStatus === "success" && (totalPages && totalPages > 1) &&
+        <Box 
+          display="flex" 
+          alignItems="center" 
+          justifyContent="flex-end" 
+          gap={0.75}
+          sx={(theme) => ({
+              marginTop: "10px !important",
+              marginRight: "8px !important",
+              [theme.breakpoints.down('md')]: {
+                maxWidth: 640,
+              },
+            })
+          }
+        >
+          <Typography 
+            variant="body2" 
+            color="textSecondary"
+            sx={(theme) => ({
+                fontSize: "0.75rem",
                 fontStyle: "italic",   
                 [theme.breakpoints.down('sm')]: {
                   fontSize: "0.715rem",  
@@ -109,49 +147,75 @@ const ExplorePanel = ({
 
           {(currentPage && totalPages)  && 
             <Button 
-              variant="outlined"
-              size="small"
-              sx={(theme) => ({
-                  minWidth: 40,
-                  padding: "4px",
-                  fontSize: "0.55rem",
+              variant="text"
+              sx={{
+                  minWidth: "fit-content",
+                  padding: "2px",
                   fontWeight: "bold",
-                  border: `2px solid ${isLoadNextPage ? "rgba(128, 74, 38, 0.55)" : "rgba(0, 0, 0, 0.55)"}`,
                   borderRadius: "unset",
                   color: "#121212",
                   pointerEvents: isLoadNextPage ? "none" : "auto",
                   "&:hover": {
-                    background: "rgba(128, 74, 38, 0.85)",
-                    borderColor: "rgba(0, 0, 0, 0.55)"
-                  },  
-                  [theme.breakpoints.down('sm')]: {
-                    minWidth: 36,
-                    padding: "2px"
-                  },
-                })
-              }
+                    backgroundColor: "transparent"
+                  }
+              }}
               onClick={currentPage < totalPages ? onNextPage : onShowLessPage}
+              onMouseEnter={() => {
+                if (currentPage < totalPages)
+                  setIsShowMoreHovered(true);
+                else
+                  setIsShowLessHovered(true);
+              }}
+              onMouseLeave={() => {
+                if (currentPage < totalPages)
+                  setIsShowMoreHovered(false);
+                else
+                  setIsShowLessHovered(false);
+              }}
             >
-              {isLoadNextPage ? 
-                <CircularProgress size={16} sx={{ color: "rgba(128, 74, 38, 0.85)" }}/> 
-                : currentPage < totalPages ? <AutorenewIcon sx={{ fontSize: 16 }} /> : "Show less"
-              }
+              {isLoadNextPage ? (
+                <CircularProgress size={isMobile ? 18 : 20} sx={{ color: "rgba(128, 74, 38, 0.85)" }} />
+              ) : currentPage < totalPages ? (
+                isShowMoreHovered ? (
+                  <RefreshIcon
+                    titleAccess="Show more"
+                    sx={{ fontSize: {xs: 18, sm: 20}, position: "relative", bottom: {xs: "0px", sm: "1px"} }}
+                  />
+                ) : (
+                  <AutorenewIcon
+                    titleAccess="Show more"
+                    sx={{ fontSize: {xs: 18, sm: 20}, position: "relative", bottom: {xs: "0px", sm: "1px"} }}
+                  />
+                )
+              ) : isShowLessHovered ? (
+                <CachedIcon
+                  titleAccess="Show less"
+                  sx={{ fontSize: {xs: 18, sm: 20}, position: "relative", bottom: {xs: "0px", sm: "1px"} }}
+                />
+              ) : (
+                <RestartAltIcon
+                  titleAccess="Show less"
+                  sx={{ fontSize: {xs: 18, sm: 20}, position: "relative", bottom: {xs: "0px", sm: "1px"} }}
+                />
+              )}
             </Button>
           }
         </Box>
       }
 
-      <Search>
-        <SearchIconWrapper>
-          <SearchIcon 
-            style={{
-              width: "1em",
-              height: "1em",
-            }}
-          />
-        </SearchIconWrapper>
-        <StyledInputBase  placeholder="Search..." />
-      </Search>
+      {locationStatus !== "fetching" &&
+        <Search>
+          <SearchIconWrapper>
+            <SearchIcon 
+              style={{
+                width: "1em",
+                height: "1em",
+              }}
+            />
+          </SearchIconWrapper>
+          <StyledInputBase  placeholder="Search..." />
+        </Search>
+      }
     </Stack>
   );
 };

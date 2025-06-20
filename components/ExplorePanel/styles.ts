@@ -31,7 +31,7 @@ export const Search = styled("div")(({ theme }) => ({
     maxWidth: 640,
   },
   [theme.breakpoints.down('sm')]: {
-    padding: theme.spacing(0.15, 1.25),
+    padding: theme.spacing(0.25, 1.25),
     maxWidth: "100%"
   }
 }));
@@ -52,12 +52,12 @@ export const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: theme.palette.text.primary,
   fontSize: "16px",
   "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 0),
+    padding: theme.spacing(0.75, 0),
   },
   [theme.breakpoints.down('sm')]: {
     fontSize: "16px",
     "& .MuiInputBase-input": {
-      padding: theme.spacing(0.75, 0),
+      padding: theme.spacing(0.65, 0),
     },
   }
 }));

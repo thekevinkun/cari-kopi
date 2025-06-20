@@ -13,7 +13,7 @@ import {
   Information, ExtensionList, UserReviews 
 } from "@/components";
 
-import { StyledStack, CloseButton } from "./styles";
+import { StyledStack, CloseButton, scrollStyle } from "./styles";
 import { convertSerpApiHoursToWeekdayText, mergeExtensionsWithUnsupported } from "@/utils/helpers";
 import { parentCardDetailVariants, cardDetailVariants } from "@/utils/motion";
 import type { ShopDetailProps } from "@/types";
@@ -128,11 +128,11 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail, onFavoriteUpdate 
           exit="exit"
           elevation={6} 
           sx={{ 
+            ...scrollStyle,
             marginTop: {
               xs: "auto",
               md: "unset"
             },
-            overflow: "auto" 
           }}
         >
           {/* SHOP PHOTOS */}

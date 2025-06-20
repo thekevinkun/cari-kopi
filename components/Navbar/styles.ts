@@ -8,6 +8,7 @@ export const StyledAppBar = styled(AppBar)(() => ({
 export const StyledToolbar = styled(Toolbar)(() => ({
   display: "flex",
   justifyContent: "space-between",
+  alignItems: "center"
 }));
 
 export const StyledTitleTypography = styled(Typography)(({ theme }) => ({

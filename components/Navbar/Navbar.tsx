@@ -2,20 +2,29 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useUser } from "@/contexts/UserContext";
-import { Box, CardActions, CardContent, ClickAwayListener, Divider, Link as MUILink, Typography } from "@mui/material";
+import { Box, CardActions, CardContent, ClickAwayListener, 
+  Divider, Link as MUILink, Typography, useMediaQuery } 
+from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 
 import { StyledAppBar, StyledToolbar, StyledTitleTypography,
   MenuButton, MenuBox, MenuCard, WhiteOutlinedButton } from "./styles";
+
+import { getGreeting } from "@/utils/helpers";
 
 const Navbar = () => {
   const router = useRouter();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const { user, loading, refreshUser } = useUser();
   const [toggleMenu, setToggleMenu] = useState(false);
+
+  const isTablet = useMediaQuery("(max-width: 900px)");
+  const isMobile = useMediaQuery("(max-width: 600px)");
   
   const firstName = user?.name?.split(" ")[0];
-  const lastName = user?.name?.split(" ")[1]
+  const lastName = user?.name?.split(" ")[1];
+
+  const greeting = getGreeting(new Date().getHours());
 
   return (
     <StyledAppBar position="static">
@@ -25,6 +34,21 @@ const Navbar = () => {
         </StyledTitleTypography>
 
         {!loading &&
+        <>
+          <Typography 
+            component="h1" 
+            variant={isMobile ? "body2" : "body1"} 
+            sx={{ 
+              marginLeft: isMobile ? "auto" : "unset",
+              paddingRight: isMobile ? 1.5 : 0
+            }} 
+          > 
+            {greeting},{" "} 
+            <Typography component="span" variant={isMobile ? "body2" : "body1"} sx={{ fontWeight: 700 }}>
+              {firstName}
+            </Typography>
+          </Typography>
+          
           <Box display="flex">
             {user ? 
               <Box display="flex" alignItems="center" gap={1}>
@@ -33,7 +57,7 @@ const Navbar = () => {
                   variant="outlined"
                   onClick={() => setToggleMenu((prev) => !prev)}
                 >
-                  <PersonIcon sx={{ fontSize: "1.75rem" }}/>
+                  <PersonIcon sx={{ fontSize: isMobile ? "1.55rem" : "1.75rem" }}/>
                 </MenuButton> 
               </Box>
             :
@@ -44,6 +68,7 @@ const Navbar = () => {
               </Link>
             }
           </Box>
+        </>
         }
 
         {(user && toggleMenu) &&
@@ -95,34 +120,36 @@ const Navbar = () => {
                       padding: theme.spacing(1, 0)
                     })}
                   >
-                    <MUILink
-                      href="/favorites"
-                      underline="none"
-                      sx={(theme) => ({
-                        display: "flex",
-                        padding: theme.spacing(1.25, 2),
-                        alignItems: "center",
-                        color: router.pathname.startsWith("/favorites") ? "#804A26" : "inherit",
-                        pointerEvents: router.pathname.startsWith("/favorites") ? "none" : "auto",
-                        transition: "all 0.2s ease",
-                        "&:hover": {
-                          backgroundColor: "rgba(128, 74, 38, 0.75)",
-                          "& .hover-text": {
-                            fontWeight: "bold",
-                          }
-                        },
-                      })}
-                      onClick={() => setToggleMenu((prev) => !prev)}
-                    >
-                      <Typography 
-                        variant="body1" 
-                        fontWeight={`${router.pathname.startsWith("/favorites") ? "bold" : "normal"}`}
-                        className="hover-text"
+                    {isTablet &&
+                      <MUILink
+                        href="/favorites"
+                        underline="none"
+                        sx={(theme) => ({
+                          display: "flex",
+                          padding: theme.spacing(1.25, 2),
+                          alignItems: "center",
+                          color: router.pathname.startsWith("/favorites") ? "#804A26" : "inherit",
+                          pointerEvents: router.pathname.startsWith("/favorites") ? "none" : "auto",
+                          transition: "all 0.2s ease",
+                          "&:hover": {
+                            backgroundColor: "rgba(128, 74, 38, 0.75)",
+                            "& .hover-text": {
+                              fontWeight: "bold",
+                            }
+                          },
+                        })}
+                        onClick={() => setToggleMenu((prev) => !prev)}
                       >
-                        Favorites
-                      </Typography>
-                    </MUILink>
-                    
+                        <Typography 
+                          variant="body1" 
+                          fontWeight={`${router.pathname.startsWith("/favorites") ? "bold" : "normal"}`}
+                          className="hover-text"
+                        >
+                          Favorites
+                        </Typography>
+                      </MUILink>
+                    }
+
                     <MUILink
                       href="/account"
                       underline="none"
