@@ -1,11 +1,10 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { useUser } from "@/contexts/UserContext";
 import { Box, CardActions, CardContent, ClickAwayListener, 
   Divider, Link as MUILink, Typography, useMediaQuery } 
 from "@mui/material";
-import PersonIcon from '@mui/icons-material/Person';
+import PersonIcon from "@mui/icons-material/Person";
 
 import { StyledAppBar, StyledToolbar, StyledTitleTypography,
   MenuButton, MenuBox, MenuCard, WhiteOutlinedButton } from "./styles";
@@ -15,7 +14,7 @@ import { getGreeting } from "@/utils/helpers";
 const Navbar = () => {
   const router = useRouter();
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const { user, loading, refreshUser } = useUser();
+  const { user, loading } = useUser();
   const [toggleMenu, setToggleMenu] = useState(false);
 
   const isTablet = useMediaQuery("(max-width: 900px)");
@@ -29,10 +28,12 @@ const Navbar = () => {
   return (
     <StyledAppBar position="static">
       <StyledToolbar>
-        <StyledTitleTypography variant="h5">
-          Carikopi
-        </StyledTitleTypography>
-
+        <MUILink href="/" underline="none" sx={{ color: "inherit" }}>
+          <StyledTitleTypography variant="h5">
+            Carikopi
+          </StyledTitleTypography>
+        </MUILink>
+        
         {!loading &&
         <>
           <Typography 
@@ -61,11 +62,11 @@ const Navbar = () => {
                 </MenuButton> 
               </Box>
             :
-              <Link href="/login">
+              <MUILink href="/login">
                 <WhiteOutlinedButton variant="outlined">
                   Login
                 </WhiteOutlinedButton>
-              </Link>
+              </MUILink>
             }
           </Box>
         </>
