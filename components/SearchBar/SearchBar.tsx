@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { debounce } from "lodash";
 import { v4 as uuidv4 } from "uuid";
 
@@ -18,7 +18,7 @@ const SearchBar = ({ onSelectSearchResult }: SearchBarProps) => {
   const [sessionToken, setSessionToken] = useState<string | null>(null);
 
   // Debounced autocomplete fetch
-  const fetchSuggestions = debounce(async (query: string) => {
+  const fetchSuggestions = useMemo(() => debounce(async (query: string) => {
     if (!query || query.length < 3) {
         setResults([]);
         return;
@@ -26,19 +26,22 @@ const SearchBar = ({ onSelectSearchResult }: SearchBarProps) => {
 
     setLoading(true);
     try {
-      const res = await fetch(`
-        /api/autocomplete?query=${encodeURIComponent(query)}&sessiontoken=${sessionToken}`
-      );
-
-      const data: { predictions: AutocompletePrediction[] } = await res.json();
-      console.log("search results: ", data);
-      setResults(data.predictions || []);
+        const res = await fetch(`/api/autocomplete?query=${encodeURIComponent(query)}&sessiontoken=${sessionToken}`);
+        const data: { predictions: AutocompletePrediction[] } = await res.json();
+        setResults(data.predictions || []);
     } catch (err) {
-      console.error("Autocomplete error:", err);
+        console.error("Autocomplete error:", err);
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  }, 1000);
+  }, 800), [sessionToken]);
+
+  // Clean up the debounce on unmount
+  useEffect(() => {
+    return () => {
+        fetchSuggestions.cancel();
+    };
+  }, [fetchSuggestions]);
 
   useEffect(() => {
     setSessionToken(uuidv4()); // Reset token each time component mounts
@@ -58,6 +61,13 @@ const SearchBar = ({ onSelectSearchResult }: SearchBarProps) => {
     setResults([]);
     setSessionToken(uuidv4()); // new token for next search
   };
+
+  const handleRemoveInput = () => {
+    setInput("");
+    setInputAfterSelected(false);
+    setResults([]);
+    setSessionToken(uuidv4());
+  }
   
   return (
     <Box sx={{ position: "relative" }}>
@@ -103,11 +113,7 @@ const SearchBar = ({ onSelectSearchResult }: SearchBarProps) => {
                 padding: 0,
                 minWidth: 0,
             }}
-            onClick={() => {
-                setInput("");
-                setInputAfterSelected(false);
-                setResults([]);
-            }}
+            onClick={handleRemoveInput}
         >
             <CloseIcon fontSize="small" sx={{ color: "rgba(211,47,47)" }}/>
         </Button>
