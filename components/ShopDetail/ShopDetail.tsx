@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Box, Button, Card, CardContent, CircularProgress, Grid, useMediaQuery } from "@mui/material";import CloseIcon from "@mui/icons-material/Close";
+import { Box, Button, Card, CardContent, CircularProgress, Grid, useMediaQuery } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import NearMeIcon from "@mui/icons-material/NearMe";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";

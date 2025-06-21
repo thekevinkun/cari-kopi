@@ -1,15 +1,19 @@
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { Box, Button, CircularProgress, Stack, Typography, useMediaQuery } from "@mui/material";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import SearchIcon from "@mui/icons-material/Search";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import CachedIcon from "@mui/icons-material/Cached";
 
 import type { ExplorePanelProps } from "@/types";
 
-import { Search, StyledAddress, SearchIconWrapper, StyledInputBase } from "./styles";
+import { StyledAddress } from "./styles";
+
+const SearchBar = dynamic(() => import('@/components/SearchBar/SearchBar'), {
+  ssr: false,
+});
 
 const ExplorePanel = ({ 
   address, 
@@ -28,6 +32,11 @@ const ExplorePanel = ({
   
   const [isShowMoreHovered, setIsShowMoreHovered] = useState(false);
   const [isShowLessHovered, setIsShowLessHovered] = useState(false);
+
+  const handlePlaceSelect = async (placeId: string, description: string) => {
+    // Here, fetch Google `/details` using sessionToken if needed, and center map
+    console.log("Selected place:", description, placeId);
+  };
 
   return (
     <Stack 
@@ -221,17 +230,7 @@ const ExplorePanel = ({
         </Box>
       }
 
-      <Search>
-        <SearchIconWrapper>
-          <SearchIcon 
-            style={{
-              width: isMobile ? "0.95em" : "1em",
-              height: isMobile ? "0.95em" : "1em",
-            }}
-          />
-        </SearchIconWrapper>
-        <StyledInputBase  placeholder="Search..." />
-      </Search>
+      <SearchBar onPlaceSelect={handlePlaceSelect}/>
     </Stack>
   );
 };
