@@ -239,6 +239,7 @@ export type FavoritesShopProps = {
 }
 
 export type TargetShop = {
+  placeId: string;
   lat: number;
   lng: number;
 }

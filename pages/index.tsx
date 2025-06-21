@@ -165,12 +165,13 @@ const Home = () => {
   }
 
   const handleViewOnMap = (shop: SerpShopDetail) => {
+    const placeId = shop.place_id;
     const lat = shop.gps_coordinates.latitude;
     const lng = shop.gps_coordinates.longitude;
 
     // Convert SerpShopDetail to Shop and store in temp if not already present
     const converted: Shop = {
-      placeId: shop.place_id,
+      placeId: placeId,
       name: shop.title,
       rating: shop.rating,
       thumbnail: shop.images ? shop.images[0].serpapi_thumbnail : "/no-coffee-image.jpg",
@@ -179,13 +180,15 @@ const Home = () => {
       }
     }
 
-    setTempShops(prev => {
-      const exists = prev.some(s => s.placeId === shop.place_id) || shops.some(s => s.placeId === shop.place_id);
-      return exists ? prev : [...prev, converted];
-    });
-
     // Fly to the shop
-    setTargetShop({ lat, lng });
+    setTargetShop({ placeId, lat, lng });
+    
+    setTimeout(() => {
+      setTempShops(prev => {
+        const exists = prev.some(s => s.placeId === shop.place_id) || shops.some(s => s.placeId === shop.place_id);
+        return exists ? prev : [...prev, converted];
+      });
+    }, 9500);
   }
 
   const handleSelectSearchResult = async (placeId: string) => {
@@ -197,7 +200,7 @@ const Home = () => {
       return;
     }
 
-    const lat = data.gps_coordinates.latitude;
+    const lat = data.gps_coordinates.latitude;  
     const lng = data.gps_coordinates.longitude;
 
     const converted: Shop = {
@@ -212,11 +215,14 @@ const Home = () => {
       }
     };
 
-    setTargetShop({ lat, lng });
-    setTempShops(prev => {
-      const exists = prev.some(s => s.placeId === data.place_id) || shops.some(s => s.placeId === data.place_id);
-      return exists ? prev : [...prev, converted];
-    });
+    setTargetShop({ placeId, lat, lng });
+
+    setTimeout(() => {
+      setTempShops(prev => {
+        const exists = prev.some(s => s.placeId === data.place_id) || shops.some(s => s.placeId === data.place_id);
+        return exists ? prev : [...prev, converted];
+      });
+    }, 9500);
   };
 
   const tryGetLocation = async (): Promise<GeolocationPosition | null> => {
@@ -346,6 +352,7 @@ const Home = () => {
       style={{ 
         width: "100%", 
         height: isTablet ? "100%" : mapHeight,
+        overflow: "hidden"
       }}
     >
       <Grid 

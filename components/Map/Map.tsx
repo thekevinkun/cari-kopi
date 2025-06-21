@@ -53,6 +53,18 @@ const MapFlyTo = ({ userLocation, onFlyEnd }: { userLocation: Coordinates | null
   return null; // This component doesn't render anything visually
 };
 
+const CaptureMapInstance = ({ mapRef }: { mapRef: React.MutableRefObject<L.Map | null> }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!mapRef.current) {
+      mapRef.current = map;
+    }
+  }, [map]);
+
+  return null;
+};
+
 const Map = ({ userLocation, shops, tempShops, onSelectShop, targetShop }: MapProps) => {
   // Default map center if user location is unavailable (e.g. global view)
   const defaultCenter: [number, number] = [20, 0]; // Near the equator
@@ -73,25 +85,59 @@ const Map = ({ userLocation, shops, tempShops, onSelectShop, targetShop }: MapPr
     )
   }, [shops, isMobile])
 
-  const CaptureMapInstance = () => {
-    const map = useMap();
-    useEffect(() => {
-      mapRef.current = map;
-    }, [map]);
-    return null;
-  }
+  // Render regular shops (no re-render on tempShop change)
+  const shopMarkers = useMemo(() => {
+    return showMarker 
+      ? shops.map((shop: Shop, index) => (
+          <Marker
+            key={shop.placeId}
+            position={[shop.geometry.location.lat, shop.geometry.location.lng]}
+            icon={markerIcon[index]}
+            eventHandlers={{
+              click: () => onSelectShop(shop),
+            }}
+          />
+      ))
+    : null;
+  }, [shops, showMarker, isMobile])
+
+  // Render temp shops (just one or few, appear instantly)
+  const tempShopMarkers = useMemo(() => {
+    return showMarker
+      ? tempShops.map((shop) => (
+          <Marker
+            key={"temp-" + shop.placeId}
+            position={[shop.geometry.location.lat, shop.geometry.location.lng]}
+            icon={createShopMarkerIcon(shop, isMobile, 0)}
+            eventHandlers={{ click: () => onSelectShop(shop) }}
+          />
+        ))
+      : null;
+  }, [tempShops, showMarker, isMobile]);
 
   const mapRef = useRef<L.Map | null>(null);
+  const hasFlownToTarget = useRef<string | null>(null);
 
-// Handle flyTo when targetShop is set
+  // reset hasFlownToTarget if targetShop becomes null
+  useEffect(() => {
+    if (!targetShop) {
+      hasFlownToTarget.current = null;
+    }
+  }, [targetShop]);
+
+  // Handle flyTo when targetShop is set
   useEffect(() => {
     if (targetShop && mapRef.current) {
+      if (hasFlownToTarget.current === targetShop.placeId) return;
+
+      hasFlownToTarget.current = targetShop.placeId;
+      
       mapRef.current.flyTo([targetShop.lat, targetShop.lng], 17, {
         duration: 9,
       });
     }
   }, [targetShop]);
-
+  
   return (
     <MapContainer
       center={mapCenter}
@@ -101,7 +147,7 @@ const Map = ({ userLocation, shops, tempShops, onSelectShop, targetShop }: MapPr
     >
       <MapReady />
 
-      <CaptureMapInstance />
+      <CaptureMapInstance mapRef={mapRef}/>
       
       <TileLayer
         attribution="&copy; OpenStreetMap contributors"
@@ -119,29 +165,9 @@ const Map = ({ userLocation, shops, tempShops, onSelectShop, targetShop }: MapPr
         </>
       )}
 
-      {/* Render regular shops (no re-render on tempShop change) */}
-      {showMarker &&
-        shops.map((shop: Shop, index) => (
-        <Marker
-          key={shop.placeId}
-          position={[shop.geometry.location.lat, shop.geometry.location.lng]}
-          icon={markerIcon[index]}
-          eventHandlers={{
-            click: () => onSelectShop(shop),
-          }}
-        />
-      ))}
-
-      {/* Render temp shops (just one or few, appear instantly) */}
-      {showMarker &&
-        tempShops.map((shop: Shop) => (
-          <Marker
-            key={"temp-" + shop.placeId}
-            position={[shop.geometry.location.lat, shop.geometry.location.lng]}
-            icon={createShopMarkerIcon(shop, isMobile, 0)} // No animation delay
-            eventHandlers={{ click: () => onSelectShop(shop) }}
-          />
-      ))}
+      {shopMarkers}
+      
+      {tempShopMarkers}
     </MapContainer>
   )
 }
