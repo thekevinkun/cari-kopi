@@ -38,10 +38,11 @@ const Home = () => {
   const [nearbyData, setNearbyData] = useState<NearbyData | null>(null);
   const [shops, setShops] = useState<Shop[]>([]);
   const [tempShops, setTempShops] = useState<Shop[]>([]);
+  const [targetShop, setTargetShop] = useState<TargetShop | null>(null);
+
   const [showShopDetail, setShowShopDetail] = useState(false);
   const [selectedShop, setSelectedShop] = useState<SerpShopDetail | null>(null);
   const [favorites, setFavorites] = useState<SerpShopDetail[] | null>(null);
-  const [targetShop, setTargetShop] = useState<TargetShop | null>(null);
   
   const [loadingNextPage, setLoadingNextPage] = useState(false);
 
@@ -77,41 +78,6 @@ const Home = () => {
     } catch (error) {
       console.error("Failed to fetch nearby coffe: ", error);
     }
-  }
-
-  const handleNextPage = async () => {
-    if (!nearbyData || !location || !shortAddress) return;
-
-    const nextPage = nearbyData.page + 1;
-    if (nextPage > nearbyData.totalPages) return;
-
-    setLoadingNextPage(true);
-
-    const nextData = await getNearbyCoffee(location.lat, location.lng, shortAddress, nextPage);
-    if (nextData) {
-      setNearbyData(nextData);
-      setShops((prev) => [...prev, ...nextData.results]);
-      setTempShops([]);
-    }
-
-    setLoadingNextPage(false);
-  }
-
-  const handleShowLessPage = async () => {
-    if (!nearbyData || !location || !shortAddress) return;
-
-    const nextPage = 1;
-
-    setLoadingNextPage(true);
-
-    const nextData = await getNearbyCoffee(location.lat, location.lng, shortAddress, nextPage);
-    if (nextData) {
-      setNearbyData(nextData);
-      setShops(nextData.results);
-      setTempShops([]);
-    }
-
-    setLoadingNextPage(false);
   }
 
   const getShopDetail = async (placeId: string) => {
@@ -163,6 +129,41 @@ const Home = () => {
     }
   }
 
+  const handleNextPage = async () => {
+    if (!nearbyData || !location || !shortAddress) return;
+
+    const nextPage = nearbyData.page + 1;
+    if (nextPage > nearbyData.totalPages) return;
+
+    setLoadingNextPage(true);
+
+    const nextData = await getNearbyCoffee(location.lat, location.lng, shortAddress, nextPage);
+    if (nextData) {
+      setNearbyData(nextData);
+      setShops((prev) => [...prev, ...nextData.results]);
+      setTempShops([]);
+    }
+
+    setLoadingNextPage(false);
+  }
+
+  const handleShowLessPage = async () => {
+    if (!nearbyData || !location || !shortAddress) return;
+
+    const nextPage = 1;
+
+    setLoadingNextPage(true);
+
+    const nextData = await getNearbyCoffee(location.lat, location.lng, shortAddress, nextPage);
+    if (nextData) {
+      setNearbyData(nextData);
+      setShops(nextData.results);
+      setTempShops([]);
+    }
+
+    setLoadingNextPage(false);
+  }
+
   const handleViewOnMap = (shop: SerpShopDetail) => {
     const lat = shop.gps_coordinates.latitude;
     const lng = shop.gps_coordinates.longitude;
@@ -186,6 +187,37 @@ const Home = () => {
     // Fly to the shop
     setTargetShop({ lat, lng });
   }
+
+  const handleSelectSearchResult = async (placeId: string) => {
+    const res = await fetch(`/api/detailSerp?placeId=${placeId}`);
+    const { data } = await res.json();
+    
+    if (!res.ok) {
+      console.error("Failed to get shop detail: ", data.error);
+      return;
+    }
+
+    const lat = data.gps_coordinates.latitude;
+    const lng = data.gps_coordinates.longitude;
+
+    const converted: Shop = {
+      placeId: data.place_id,
+      name: data.title,
+      rating: data.rating,
+      thumbnail: data.images ? data.images[0].serpapi_thumbnail : "/no-coffee-image.jpg",
+      geometry: {
+        location: { 
+          lat: lat, 
+          lng: lng },
+      }
+    };
+
+    setTargetShop({ lat, lng });
+    setTempShops(prev => {
+      const exists = prev.some(s => s.placeId === data.place_id) || shops.some(s => s.placeId === data.place_id);
+      return exists ? prev : [...prev, converted];
+    });
+  };
 
   const tryGetLocation = async (): Promise<GeolocationPosition | null> => {
     return new Promise((resolve) => {
@@ -345,6 +377,7 @@ const Home = () => {
             isLoadNextPage={loadingNextPage}
             onNextPage={handleNextPage}
             onShowLessPage={handleShowLessPage}
+            onSelectSearchResult={handleSelectSearchResult}
           />
 
           {showShopDetail && selectedShop ? 

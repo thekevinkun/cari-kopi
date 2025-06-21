@@ -86,8 +86,8 @@ const Map = ({ userLocation, shops, tempShops, onSelectShop, targetShop }: MapPr
 // Handle flyTo when targetShop is set
   useEffect(() => {
     if (targetShop && mapRef.current) {
-      mapRef.current.flyTo([targetShop.lat, targetShop.lng], 18, {
-        duration: 1.25,
+      mapRef.current.flyTo([targetShop.lat, targetShop.lng], 17, {
+        duration: 9,
       });
     }
   }, [targetShop]);

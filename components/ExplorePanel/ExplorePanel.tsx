@@ -25,18 +25,14 @@ const ExplorePanel = ({
   onRequestLocation, 
   isLoadNextPage, 
   onNextPage,
-  onShowLessPage 
+  onShowLessPage,
+  onSelectSearchResult
 }: ExplorePanelProps) => {
   const isTablet = useMediaQuery("(max-width: 900px)");
   const isMobile = useMediaQuery("(max-width: 600px)");
   
   const [isShowMoreHovered, setIsShowMoreHovered] = useState(false);
   const [isShowLessHovered, setIsShowLessHovered] = useState(false);
-
-  const handlePlaceSelect = async (placeId: string, description: string) => {
-    // Here, fetch Google `/details` using sessionToken if needed, and center map
-    console.log("Selected place:", description, placeId);
-  };
 
   return (
     <Stack 
@@ -230,7 +226,9 @@ const ExplorePanel = ({
         </Box>
       }
 
-      <SearchBar onPlaceSelect={handlePlaceSelect}/>
+      <SearchBar 
+        onSelectSearchResult={onSelectSearchResult}
+      />
     </Stack>
   );
 };

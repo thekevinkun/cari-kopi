@@ -7,13 +7,14 @@ import RoomIcon from "@mui/icons-material/Room";
 import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "@mui/icons-material/Search";
 
-import type { AutocompletePrediction } from "@/types";
+import type { AutocompletePrediction, SearchBarProps } from "@/types";
 import { Search, SearchIconWrapper, StyledInputBase, scrollStyle } from "./styles";
 
-const SearchBar = ({ onPlaceSelect }: { onPlaceSelect: (placeId: string, description: string) => void }) => {
+const SearchBar = ({ onSelectSearchResult }: SearchBarProps) => {
   const [input, setInput] = useState("");
   const [results, setResults] = useState<AutocompletePrediction[]>([]);
   const [loading, setLoading] = useState(false);
+  const [inputAfterSelected, setInputAfterSelected] = useState(false);
   const [sessionToken, setSessionToken] = useState<string | null>(null);
 
   // Debounced autocomplete fetch
@@ -45,13 +46,15 @@ const SearchBar = ({ onPlaceSelect }: { onPlaceSelect: (placeId: string, descrip
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+    setInputAfterSelected(false);
     setInput(value);
     fetchSuggestions(value);
   };
 
   const handleSelect = (placeId: string, description: string) => {
-    onPlaceSelect(placeId, description);
+    onSelectSearchResult(placeId);
     setInput(description);
+    setInputAfterSelected(true);
     setResults([]);
     setSessionToken(uuidv4()); // new token for next search
   };
@@ -78,6 +81,9 @@ const SearchBar = ({ onPlaceSelect }: { onPlaceSelect: (placeId: string, descrip
                 placeholder="Search for coffee shop..."
                 value={input}
                 onChange={handleChange}
+                sx={{
+                    opacity: inputAfterSelected ? 0.45 : 1
+                }}
             />
       </Search>
 
@@ -87,7 +93,7 @@ const SearchBar = ({ onPlaceSelect }: { onPlaceSelect: (placeId: string, descrip
         </Box>
       )}
 
-      {(!loading && results.length > 0) && (
+      {(!loading && results.length > 0) || (!loading && input) && (
         <Button 
             variant="text"
             sx={{ 
@@ -99,6 +105,7 @@ const SearchBar = ({ onPlaceSelect }: { onPlaceSelect: (placeId: string, descrip
             }}
             onClick={() => {
                 setInput("");
+                setInputAfterSelected(false);
                 setResults([]);
             }}
         >

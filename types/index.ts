@@ -263,6 +263,11 @@ export type ExplorePanelProps = {
   isLoadNextPage: boolean;
   onNextPage: () => void;
   onShowLessPage: () => void;
+  onSelectSearchResult: (placeId: string) => void;
+}
+
+export type SearchBarProps = {
+  onSelectSearchResult: (placeId: string) => void;
 }
 
 export type OSMAddress = {
