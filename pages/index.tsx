@@ -1,9 +1,11 @@
 import { useEffect, useState, useRef } from "react";
+import polyline from "@mapbox/polyline";
 import dynamic from "next/dynamic";
-import { Alert, Box, Grid, useMediaQuery } from "@mui/material";
+import { Box, Grid, useMediaQuery } from "@mui/material";
 
 import { CenteredLoader } from "@/components";
 
+import type { LatLngExpression } from "leaflet";
 import type { Coordinates, NearbyData, Shop, SerpShopDetail, TargetShop  } from "@/types";
 import { getLocationPermissionInstructions } from "@/utils/helpers";
 
@@ -27,6 +29,11 @@ const ShopDetail = dynamic(() => import("@/components/ShopDetail/ShopDetail"), {
   loading: () => <CenteredLoader height="50%" sx={{ display: { xs: "none", md: "flex" }}}/>,
 });
 
+const DirectionInfo = dynamic(() => import("@/components/DirectionInfo/DirectionInfo"), {
+  ssr: false,
+  loading: () => <CenteredLoader height="50%" sx={{ display: { xs: "none", md: "flex" }}}/>,
+});
+
 const Home = () => {
   const triedInitialLocation = useRef(false);
   const [location, setLocation] = useState<Coordinates | null>(null);
@@ -44,6 +51,15 @@ const Home = () => {
   const [selectedShop, setSelectedShop] = useState<SerpShopDetail | null>(null);
   const [favorites, setFavorites] = useState<SerpShopDetail[] | null>(null);
   
+  const [directionLine, setDirectionLine] = useState<LatLngExpression[] | null>(null);
+  const [directionInfo, setDirectionInfo] = useState<{
+    driving?: { duration: string; distance: string };
+    walking?: { duration: string; distance: string };
+    transit?: { duration: string; distance: string };
+    bicycling?: { duration: string; distance: string };
+  }>({});
+  const [destinationShop, setDestinationShop] = useState<Shop | null>(null);
+
   const [loadingNextPage, setLoadingNextPage] = useState(false);
 
   const getAddress = async (lat: number, lng: number) => {
@@ -127,6 +143,73 @@ const Home = () => {
     } catch (error) {
       console.error("Failed to refresh user favorites list", error);
     }
+  }
+
+  const getDirections = async (shop: SerpShopDetail) => {
+    if (!location) return;
+
+    const lat = shop.gps_coordinates.latitude;
+    const lng = shop.gps_coordinates.longitude;
+
+    const originStr = `${location.lat},${location.lng}`;
+    const destStr = `${lat},${lng}`;
+    
+    const res = await fetch(`/api/directions?origin=${originStr}&destination=${destStr}`);
+    const { polyline: encodedPolyline, modes }: {
+      polyline: string | null;
+      modes: Array<{
+        mode: "driving" | "walking" | "transit" | "bicycling";
+        duration: string;
+        distance: string;
+      }>;
+    } = await res.json();
+
+    console.log("polyline: ", polyline);
+    console.log("modes: ", modes);
+
+    if (!encodedPolyline) {
+      console.warn("No polyline available for driving route");
+      return;
+    }
+    
+     // Decode polyline into LatLng array
+    const decoded = polyline.decode(encodedPolyline);
+    const latLngs = decoded.map(([lat, lng]) => [lat, lng]) as LatLngExpression[]
+
+    setDirectionLine(latLngs);
+
+    // Convert the array of modes into a keyed object
+    const modeMap: {
+      [key in "driving" | "walking" | "transit" | "bicycling"]?: {
+        duration: string;
+        distance: string;
+      };
+    } = {};
+
+    modes.forEach(({ mode, duration, distance }) => {
+      if (duration && distance) {
+        modeMap[mode] = { duration, distance };
+      }
+    });
+
+    setDirectionInfo(modeMap);
+
+    setDestinationShop({
+      placeId: shop.place_id,
+      name: shop.title,
+      address: shop.address,
+      rating: shop.rating,
+      thumbnail: shop.images ? shop.images[0].serpapi_thumbnail : "/no-coffee-image.jpg",
+      geometry: {
+        location: { lat, lng },
+      }
+    });
+  }
+
+  const handleStopDirections = () => {
+    setDirectionLine(null);
+    setDirectionInfo({});
+    setDestinationShop(null);
   }
 
   const handleNextPage = async () => {
@@ -214,6 +297,10 @@ const Home = () => {
           lng: lng },
       }
     };
+
+    if (directionLine || directionInfo || destinationShop) {
+      handleStopDirections();
+    }
 
     setTargetShop({ placeId, lat, lng });
 
@@ -368,6 +455,8 @@ const Home = () => {
           tempShops={tempShops}
           onSelectShop={(shop: Shop) => getShopDetail(shop.placeId)}
           targetShop={targetShop}
+          directionLine={directionLine}
+          destinationShop={destinationShop}
         />
       </Grid>
       
@@ -387,14 +476,22 @@ const Home = () => {
             onSelectSearchResult={handleSelectSearchResult}
           />
 
-          {showShopDetail && selectedShop ? 
+          { directionLine && directionInfo && destinationShop ?
+            <DirectionInfo 
+              originAddress={address ?? "Your location"}
+              destinationAddress={destinationShop?.address ?? "Shop location"}
+              directionInfo={directionInfo}
+              onCloseDirections={handleStopDirections}
+            />
+          : showShopDetail && selectedShop ? 
             <ShopDetail 
               shop={selectedShop}
               showShopDetail={showShopDetail}
               onCloseShopDetail={() => setShowShopDetail(false)}  
               onFavoriteUpdate={refreshFavorites}
+              onStartDirections={(shop: SerpShopDetail) => getDirections(shop)}
             />
-          : (locationStatus === "success" && favorites) &&
+          : locationStatus === "success" && favorites &&
             <FavoritesShop 
               favorites={favorites}
               onSelectShop={(shop: SerpShopDetail) => getShopDetail(shop.place_id)}

@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useMemo } from "react";
 import { useMediaQuery } from "@mui/material";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import { useMap } from "react-leaflet";
+import { useMap, Polyline } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -12,11 +12,14 @@ import { createShopMarkerIcon } from "@/components/ShopMarker/ShopMarker";
 import type { Coordinates, MapProps, Shop } from "@/types";
 
 // Set up default marker icons
-delete (L.Icon.Default as any).prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon-2x.png',
-  iconUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
+const brownIcon = new L.Icon({
+  iconUrl: "/icons/marker-icon-orange.png",
+  iconRetinaUrl: "/icons/marker-icon-2x-orange.png",
+  shadowUrl: "/icons/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
 });
 
 // Re-calculate the layout once the transition is done.
@@ -65,7 +68,7 @@ const CaptureMapInstance = ({ mapRef }: { mapRef: React.MutableRefObject<L.Map |
   return null;
 };
 
-const Map = ({ userLocation, shops, tempShops, onSelectShop, targetShop }: MapProps) => {
+const Map = ({ userLocation, shops, tempShops, onSelectShop, targetShop, directionLine, destinationShop }: MapProps) => {
   // Default map center if user location is unavailable (e.g. global view)
   const defaultCenter: [number, number] = [20, 0]; // Near the equator
 
@@ -115,6 +118,22 @@ const Map = ({ userLocation, shops, tempShops, onSelectShop, targetShop }: MapPr
       : null;
   }, [tempShops, showMarker, isMobile]);
 
+  const destinationShopMarker = useMemo(() => {
+    return destinationShop
+      ? <Marker
+          key={"destination-" + destinationShop.placeId}
+          position={[
+            destinationShop.geometry.location.lat,
+            destinationShop.geometry.location.lng,
+          ]}
+          icon={createShopMarkerIcon(destinationShop, isMobile, 0)}
+          eventHandlers={{
+            click: () => onSelectShop(destinationShop),
+          }}
+        />
+      : null;
+  }, [destinationShop, isMobile]);
+
   const mapRef = useRef<L.Map | null>(null);
   const hasFlownToTarget = useRef<string | null>(null);
 
@@ -157,17 +176,34 @@ const Map = ({ userLocation, shops, tempShops, onSelectShop, targetShop }: MapPr
       {userLocation && (
         <>
           {/* Show user marker if location available */}
-          <Marker position={[userLocation.lat, userLocation.lng]}>
+          <Marker position={[userLocation.lat, userLocation.lng]} icon={brownIcon}>
             <Popup>You are here</Popup>
           </Marker>
+
           {/* Jump to location after find it */}
           <MapFlyTo userLocation={userLocation} onFlyEnd={() => setShowMarker(true)}/>
         </>
       )}
 
-      {shopMarkers}
-      
-      {tempShopMarkers}
+      {!directionLine &&
+        <>
+          {shopMarkers}
+          {tempShopMarkers}
+        </>
+      }
+
+      {directionLine && 
+        <>
+          {destinationShopMarker}
+        </>
+      }
+
+      {directionLine && (
+        <Polyline 
+          positions={directionLine} 
+          pathOptions={{ color: "#804a26", weight: 9 }} 
+        />
+      )}
     </MapContainer>
   )
 }

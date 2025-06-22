@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb";
+import type { LatLngExpression } from "leaflet";
 export interface User {
   _id?: ObjectId;
   name: string;
@@ -31,7 +32,6 @@ export type UserContextType = {
   refreshUser: () => Promise<void>;
 }
 
-
 export type Coordinates = {
   lat: number;
   lng: number;
@@ -48,6 +48,7 @@ export type NearbyData = {
 export type Shop = {
   placeId: string;
   name: string;
+  address?: string | "";
   rating: number;
   thumbnail: string;
   geometry: {
@@ -213,6 +214,8 @@ export type MapProps = {
   tempShops: Shop[];
   onSelectShop: (shop: Shop) => void;
   targetShop?: TargetShop | null;
+  directionLine?: LatLngExpression[] | null;
+  destinationShop?: Shop | null;
 }
 
 export type MinimapProps = {
@@ -229,6 +232,7 @@ export type ShopDetailProps = {
   showShopDetail: boolean;
   onCloseShopDetail: () => void;
   onFavoriteUpdate: () => void;
+  onStartDirections: (shop: SerpShopDetail) => void;
 }
 
 export type FavoritesShopProps = {
@@ -236,6 +240,20 @@ export type FavoritesShopProps = {
   onSelectShop: (shop: SerpShopDetail) => void;
   onFavoriteUpdate: () => void;
   onViewOnMap: (shop: SerpShopDetail) => void;
+}
+
+type TravelInfo = {
+  duration: string;
+  distance: string;
+};
+
+export type Mode = "driving" | "walking" | "bicycling" | "transit";
+
+export type DirectionInfoProps = {
+  originAddress: string;
+  destinationAddress: string;
+  directionInfo: Partial<Record<Mode, TravelInfo>>;
+  onCloseDirections: () => void;
 }
 
 export type TargetShop = {

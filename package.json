@@ -11,6 +11,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@mapbox/polyline": "^1.2.1",
     "@mui/icons-material": "^7.1.0",
     "@mui/lab": "^7.0.0-beta.12",
     "@mui/material": "^7.1.0",
@@ -38,6 +39,7 @@
     "@types/jsonwebtoken": "^9.0.9",
     "@types/leaflet": "^1.9.18",
     "@types/lodash": "^4.17.18",
+    "@types/mapbox__polyline": "^1.0.5",
     "@types/node": "^20",
     "@types/nodemailer": "^6.4.17",
     "@types/react": "^19",

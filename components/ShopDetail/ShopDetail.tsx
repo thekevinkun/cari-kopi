@@ -21,10 +21,13 @@ import type { ShopDetailProps } from "@/types";
 const MotionStyledStack = motion.create(StyledStack);
 const MotionCard = motion.create(Card);
 
-const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail, onFavoriteUpdate }: ShopDetailProps) => {
+const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail, 
+  onFavoriteUpdate, onStartDirections }: ShopDetailProps) => {
+
   const [isFavorite, setIsFavorite] = useState(false);
   const [checkingFavorite, setCheckingFavorite] = useState(true);
-  const [loading, setLoading] = useState(false);
+  const [loadingFavorite, setLoadingFavorite] = useState(false);
+  const [loadingDirections, setLoadingDirections] = useState(false);
 
   const isTablet = useMediaQuery("(max-width: 900px)");
   const isMobile = useMediaQuery("(max-width: 600px)");
@@ -36,7 +39,7 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail, onFavoriteUpdate 
   const mergedExtensions = mergeExtensionsWithUnsupported(shop.extensions || [], shop.unsupported_extensions || []);
 
   const handleAddFavorite = async () => {
-    setLoading(true);
+    setLoadingFavorite(true);
 
     const placeId = shop?.place_id;
 
@@ -61,12 +64,12 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail, onFavoriteUpdate 
       alert("Failed to add shop. Try again later.");
       console.error("Failed to add shop", error);
     } finally {
-      setLoading(false);
+      setLoadingFavorite(false);
     }
   }; 
 
   const handleRemoveFavorite = async () => {
-    setLoading(true);
+    setLoadingFavorite(true);
 
     const placeId = shop?.place_id;
     
@@ -91,9 +94,15 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail, onFavoriteUpdate 
       alert("Failed to remove shop. Try again later.");
       console.error("Failed to remove shop", error);
     } finally {
-      setLoading(false);
+      setLoadingFavorite(false);
     }
   };
+
+  const handleStartDirections = async () => {
+    setLoadingDirections(true);
+    await onStartDirections(shop);
+    setLoadingDirections(false);
+  }
 
   useEffect(() => {
     const checkFavoriteStatus = async () => {
@@ -153,7 +162,7 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail, onFavoriteUpdate 
     <AnimatePresence>
       <MotionStyledStack
         key={shop.place_id}
-        variants={parentCardDetailVariants(0.15)}
+        variants={parentCardDetailVariants(0.5)}
         initial="hidden"
         animate="show"
         exit="exit"
@@ -212,8 +221,27 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail, onFavoriteUpdate 
               }}
             >
               <Box sx={{ flex: "1 1 250px", maxWidth: isTablet && !isMobile ? "180px" : "183px" }}>
-                <Button variant="contained" sx={{ fontSize: 12, width: "100%" }}>
-                  <NearMeIcon fontSize="small" sx={{ mr: 0.75 }}/> Start Directions
+                <Button 
+                  variant="contained"
+                  sx={{ fontSize: 12, width: "100%" }}
+                  disabled={loadingFavorite}
+                  onClick={handleStartDirections}
+                >
+                  {loadingDirections ? 
+                    <Box
+                      display="flex" 
+                      alignItems="center" 
+                      justifyContent="center"
+                      width="100%"
+                    >
+                      <CircularProgress size={18} sx={{ color: "#1976d2"}} />  
+                    </Box>
+                  :
+                    <>
+                      <NearMeIcon fontSize="small" sx={{ mr: 0.75 }}/>
+                      Start Directions
+                    </>
+                  }
                 </Button>
               </Box>
               
@@ -222,10 +250,10 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail, onFavoriteUpdate 
                   title={isFavorite ? "Remove from favorites?" : "Add to favorites?"}
                   variant="outlined" 
                   sx={{ fontSize: 12, width: "100%" }}
-                  disabled={loading}
+                  disabled={loadingFavorite}
                   onClick={isFavorite ? handleRemoveFavorite : handleAddFavorite}
                 >
-                  {loading || checkingFavorite ? 
+                  {loadingFavorite || checkingFavorite ? 
                     <Box
                       display="flex" 
                       alignItems="center" 
@@ -255,7 +283,7 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail, onFavoriteUpdate 
             {/* SHOP REVIEWS */}
             {shop.user_reviews && shop.user_reviews?.most_relevant.length > 0 &&
               <UserReviews 
-                 reviews={shop.user_reviews.most_relevant}
+                reviews={shop.user_reviews.most_relevant}
               />
             }
           </CardContent>

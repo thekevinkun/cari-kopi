@@ -63,6 +63,32 @@ export const cardVariants = (delay?: number) => ({
   },
 });
 
+export const cardSlideVariants = (direction: String) => ({
+  hidden: {
+    opacity: 0,
+    x: direction === "left" ? "100%" : direction === "right" ? "-100%" : 0,
+    y: direction === "up" ? "100%" : direction === "down" ? "-100%" : 0,
+  },
+  show: {
+    opacity: 1,
+    x: 0,
+    y: 0,
+    transition: {
+      type: "spring",
+      ease: "easeInOut",
+    },
+  },
+  exit: {
+    opacity: 0,
+    x: direction === "left" ? "100%" : direction === "right" ? "-100%" : 0,
+    y: direction === "up" ? "100%" : direction === "down" ? "-100%" : 0,
+    transition: {
+      type: "spring",
+      ease: "easeInOut",
+    },
+  }
+});
+
 export const cardDetailVariants = (screen?: string | null) => ({
   hidden: {
     opacity: 0,
