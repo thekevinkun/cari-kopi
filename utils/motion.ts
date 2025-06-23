@@ -89,13 +89,13 @@ export const cardSlideVariants = (direction: String) => ({
   }
 });
 
-export const cardDetailVariants = (screen?: string | null) => ({
+export const cardDetailVariants = (screen?: "mobile" | "tablet" | "desktop" | null) => ({
   hidden: {
     opacity: 0,
-    scale: screen === "mobile" || screen === "tablet" ? 1 : 0.95,
+    scale: screen === "desktop" ? 0.95 : 1,
     x: screen === "tablet" ? "-100%" : 0,
     y: screen === "mobile" ? "100%" : 0
-  }, 
+  },
   show: {
     opacity: 1,
     scale: 1,
@@ -109,7 +109,7 @@ export const cardDetailVariants = (screen?: string | null) => ({
   },
   exit: {
     opacity: 0,
-    scale: screen === "mobile" || screen === "tablet" ? 1 : 0.95,
+    scale: screen === "desktop" ? 0.95 : 1,
     x: screen === "tablet" ? "-100%" : 0,
     y: screen === "mobile" ? "100%" : 0,
     transition: {

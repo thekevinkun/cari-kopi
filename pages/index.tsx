@@ -67,6 +67,7 @@ const Home = () => {
     }>
   >([]);
   const [destinationShop, setDestinationShop] = useState<Shop | null>(null);
+  const [visibleDirections, setVisibleDirections] = useState(false);
 
   const [loadingNextPage, setLoadingNextPage] = useState(false);
 
@@ -114,8 +115,15 @@ const Home = () => {
         return;
       }
 
-      setSelectedShop(data);
+      if (!data || !data.place_id) return;
+
       setShowShopDetail(true);
+      setSelectedShop(null); 
+      
+      setTimeout(() => {
+        setSelectedShop(data);
+      }, 250);
+      
     } catch (err) {
       console.error("Failed to get shop detail:", err);
     }
@@ -217,13 +225,19 @@ const Home = () => {
         location: { lat, lng },
       }
     });
+
+    setVisibleDirections(true);
   }
 
   const handleStopDirections = () => {
-    setDirectionLine(null);
-    setDirectionInfo({});
-    setDirectionSteps([]);
-    setDestinationShop(null);
+    setVisibleDirections(false);
+
+    setTimeout(() => {
+      setDirectionLine(null);
+      setDirectionInfo({});
+      setDirectionSteps([]);
+      setDestinationShop(null);
+    }, 500);
   }
 
   const handleNextPage = async () => {
@@ -494,29 +508,37 @@ const Home = () => {
             onSelectSearchResult={handleSelectSearchResult}
           />
 
-          { directionLine && directionInfo && directionSteps && destinationShop ?
+          { visibleDirections || (directionLine && directionInfo && directionSteps && destinationShop) ?
             <DirectionInfo 
+              visible={visibleDirections}
               originAddress={address ?? "Your location"}
               destinationAddress={destinationShop?.address ?? "Shop location"}
               directionInfo={directionInfo}
               directionSteps={directionSteps}
               onCloseDirections={handleStopDirections}
             />
-          : showShopDetail && selectedShop ? 
+          : selectedShop ? 
             <ShopDetail 
               shop={selectedShop}
               showShopDetail={showShopDetail}
-              onCloseShopDetail={() => setShowShopDetail(false)}  
+              onCloseShopDetail={() => {  
+                setShowShopDetail(false);
+
+                setTimeout(() => {
+                  setSelectedShop(null); 
+                }, 550);
+              }}  
               onFavoriteUpdate={refreshFavorites}
               onStartDirections={(shop: SerpShopDetail) => getDirections(shop)}
             />
-          : locationStatus === "success" && favorites &&
+          : locationStatus === "success" && favorites && !showShopDetail ?
             <FavoritesShop 
               favorites={favorites}
               onSelectShop={(shop: SerpShopDetail) => getShopDetail(shop.place_id)}
               onFavoriteUpdate={refreshFavorites}
               onViewOnMap={handleViewOnMap}
             />
+          : null
           }
         </Box>
       </Grid>

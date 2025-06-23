@@ -257,6 +257,7 @@ type TravelStep = {
 }
 
 export type DirectionInfoProps = {
+  visible: boolean;
   originAddress: string;
   destinationAddress: string;
   directionInfo: Partial<Record<Mode, TravelInfo>>;

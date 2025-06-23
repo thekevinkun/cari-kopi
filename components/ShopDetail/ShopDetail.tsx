@@ -123,31 +123,44 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail,
   }, [shop?.place_id]);
 
   useEffect(() => {
-    if (isTablet || isMobile || !shopDetailRef.current) return;
+    if (isTablet || isMobile) return;
 
-    const observer = new ResizeObserver(() => {
-      const topOffset = shopDetailRef.current!.getBoundingClientRect().top;
+    const timeout = setTimeout(() => {
+      const el = shopDetailRef.current;
+      if (!el) return;
+
+      const parentElement = el.parentNode as Element | null;
+      if (!parentElement) return;
+
+      const observer = new ResizeObserver(() => {
+        const currentEl = shopDetailRef.current;
+        if (!currentEl) return;
+
+        const topOffset = currentEl.getBoundingClientRect().top;
+        const height = window.innerHeight - topOffset;
+
+        setShopDetailHeight(`${height}px`);
+      });
+
+      observer.observe(parentElement);
+
+      // Initial measure
+      const topOffset = el.getBoundingClientRect().top;
       const height = window.innerHeight - topOffset;
-
       setShopDetailHeight(`${height}px`);
-    });
 
-    const parentElement = shopDetailRef.current?.parentNode as Element | null;
+      // Cleanup
+      return () => {
+        observer.disconnect();
+      };
+    }, 100); // Wait 100ms
 
-    if (parentElement)
-      observer.observe(parentElement)
-
-    // Run once on mount
-    const topOffset = shopDetailRef.current!.getBoundingClientRect().top;
-    const height = window.innerHeight - topOffset;
-
-    setShopDetailHeight(`${height}px`);
-
-    return () => observer.disconnect();
+    // Always clear timeout if unmounted early
+    return () => clearTimeout(timeout);
   }, [isTablet, isMobile]);
 
   useEffect(() => {
-    if (showShopDetail && isTablet) {
+    if (shop && isTablet) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
@@ -156,153 +169,157 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail,
     return () => {
       document.body.style.overflow = "";
     };
-  }, [showShopDetail]);
+  }, [shop]);
   
+  if (!shop || !shop.place_id) return null;
+
   return (
     <AnimatePresence>
-      <MotionStyledStack
-        key={shop.place_id}
-        variants={parentCardDetailVariants(0.75)}
-        initial="hidden"
-        animate="show"
-        exit="exit"
-        ref={shopDetailRef}
-        sx={{
-          pb: 1,
-          px: 1,
-          height: isTablet ? "80svh" : shopDetailHeight,
-        }}
-      >
-        <MotionCard 
-          variants={cardDetailVariants(isMobile ? "mobile" : isTablet ? "tablet" : null)}
+      {showShopDetail &&
+        <MotionStyledStack
+          key={shop.place_id}
+          variants={parentCardDetailVariants(0.25)}
           initial="hidden"
           animate="show"
           exit="exit"
-          elevation={6} 
-          sx={{ 
-            ...scrollStyle,
-            marginTop: {
-              xs: "auto",
-              md: "unset"
-            },
+          ref={shopDetailRef}
+          sx={{
+            pb: 1,
+            px: 1,
+            height: isTablet ? "80svh" : shopDetailHeight,
           }}
         >
-          {/* SHOP PHOTOS */}
-          <PhotoSlide photos={shop.images ?? []}/>
-          
-          {/* SHOP CONTENTS */}
-          <CardContent>
-            {/* SHOP TITLE AND RATING */}
-            <TitleRating title={shop.title} rating={shop.rating} reviews={shop.reviews}/>
-            
-            {/* SHOP OPENING HOURS */}
-            {(shop.hours && shop.hours?.length > 0) &&
-              <OpeningHours openState={shop.open_state || ""} weekdayText={weekdayText} />
-            }
-
-            {/* SHOP INFORMATION */}
-            <Information 
-              address={shop.address ?? ""} 
-              price={shop.price ?? ""}
-              phone={shop.phone ?? ""}
-              website={shop.website ?? ""}
-              webLink={shop.web_results_link}
-            />
-
-            {/* DIRECTION AND FAVORITES */}
-            <Box
-              sx={{
-                mt: 5,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexWrap: "wrap",
-                gap: 2
-              }}
-            >
-              <Box sx={{ flex: "1 1 250px", maxWidth: isTablet && !isMobile ? "180px" : "183px" }}>
-                <Button 
-                  variant="contained"
-                  sx={{ fontSize: 12, width: "100%" }}
-                  disabled={loadingFavorite}
-                  onClick={handleStartDirections}
-                >
-                  {loadingDirections ? 
-                    <Box
-                      display="flex" 
-                      alignItems="center" 
-                      justifyContent="center"
-                      width="100%"
-                    >
-                      <CircularProgress size={18} sx={{ color: "#1976d2"}} />  
-                    </Box>
-                  :
-                    <>
-                      <NearMeIcon fontSize="small" sx={{ mr: 0.75 }}/>
-                      Start Directions
-                    </>
-                  }
-                </Button>
-              </Box>
-              
-              <Box sx={{ flex: "1 1 250px", maxWidth: isTablet && !isMobile ? "180px" : "183px" }}>
-                <Button 
-                  title={isFavorite ? "Remove from favorites?" : "Add to favorites?"}
-                  variant="outlined" 
-                  sx={{ fontSize: 12, width: "100%" }}
-                  disabled={loadingFavorite}
-                  onClick={isFavorite ? handleRemoveFavorite : handleAddFavorite}
-                >
-                  {loadingFavorite || checkingFavorite ? 
-                    <Box
-                      display="flex" 
-                      alignItems="center" 
-                      justifyContent="center"
-                      width="100%"
-                    >
-                      <CircularProgress size={18} sx={{ color: "#1976d2"}} />  
-                    </Box>
-                  :
-                    <>
-                      {isFavorite ?
-                        <FavoriteIcon fontSize="small" sx={{ mr: 0.75, color: "#ba0001" }} />
-                      :
-                        <FavoriteBorderIcon fontSize="small" sx={{ mr: 0.75, color: "#ba0001" }} />  
-                      }
-                      
-                      {isFavorite ? "In Favorites" : "Add to Favorites"}
-                    </>
-                  }
-                </Button>
-              </Box>
-            </Box>
-
-            {/* SHOP EXTENSIONS */}
-            {mergedExtensions && <ExtensionList extensions={mergedExtensions} />}
-
-            {/* SHOP REVIEWS */}
-            {shop.user_reviews && shop.user_reviews?.most_relevant.length > 0 &&
-              <UserReviews 
-                reviews={shop.user_reviews.most_relevant}
-              />
-            }
-          </CardContent>
-        </MotionCard>
-
-        {/* Close shop detail */}
-        {showShopDetail && 
-          <CloseButton 
-            variant="contained" 
-            color="error"
-            onClick={onCloseShopDetail}
+          <MotionCard 
+            variants={cardDetailVariants(isMobile ? "mobile" : isTablet ? "tablet" : null)}
+            initial="hidden"
+            animate="show"
+            exit="exit"
+            elevation={6} 
+            sx={{ 
+              ...scrollStyle,
+              marginTop: {
+                xs: "auto",
+                md: "unset"
+              },
+            }}
           >
-            <CloseIcon />
-          </CloseButton>
-        }
-      </MotionStyledStack>
+            {/* SHOP PHOTOS */}
+            <PhotoSlide photos={shop.images ?? []}/>
+            
+            {/* SHOP CONTENTS */}
+            <CardContent>
+              {/* SHOP TITLE AND RATING */}
+              <TitleRating title={shop.title} rating={shop.rating} reviews={shop.reviews}/>
+              
+              {/* SHOP OPENING HOURS */}
+              {(shop.hours && shop.hours?.length > 0) &&
+                <OpeningHours openState={shop.open_state || ""} weekdayText={weekdayText} />
+              }
+
+              {/* SHOP INFORMATION */}
+              <Information 
+                address={shop.address ?? ""} 
+                price={shop.price ?? ""}
+                phone={shop.phone ?? ""}
+                website={shop.website ?? ""}
+                webLink={shop.web_results_link}
+              />
+
+              {/* DIRECTION AND FAVORITES */}
+              <Box
+                sx={{
+                  mt: 5,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexWrap: "wrap",
+                  gap: 2
+                }}
+              >
+                <Box sx={{ flex: "1 1 250px", maxWidth: isTablet && !isMobile ? "180px" : "183px" }}>
+                  <Button 
+                    variant="contained"
+                    sx={{ fontSize: 12, width: "100%" }}
+                    disabled={loadingFavorite}
+                    onClick={handleStartDirections}
+                  >
+                    {loadingDirections ? 
+                      <Box
+                        display="flex" 
+                        alignItems="center" 
+                        justifyContent="center"
+                        width="100%"
+                      >
+                        <CircularProgress size={18} sx={{ color: "#1976d2"}} />  
+                      </Box>
+                    :
+                      <>
+                        <NearMeIcon fontSize="small" sx={{ mr: 0.75 }}/>
+                        Start Directions
+                      </>
+                    }
+                  </Button>
+                </Box>
+                
+                <Box sx={{ flex: "1 1 250px", maxWidth: isTablet && !isMobile ? "180px" : "183px" }}>
+                  <Button 
+                    title={isFavorite ? "Remove from favorites?" : "Add to favorites?"}
+                    variant="outlined" 
+                    sx={{ fontSize: 12, width: "100%" }}
+                    disabled={loadingFavorite}
+                    onClick={isFavorite ? handleRemoveFavorite : handleAddFavorite}
+                  >
+                    {loadingFavorite || checkingFavorite ? 
+                      <Box
+                        display="flex" 
+                        alignItems="center" 
+                        justifyContent="center"
+                        width="100%"
+                      >
+                        <CircularProgress size={18} sx={{ color: "#1976d2"}} />  
+                      </Box>
+                    :
+                      <>
+                        {isFavorite ?
+                          <FavoriteIcon fontSize="small" sx={{ mr: 0.75, color: "#ba0001" }} />
+                        :
+                          <FavoriteBorderIcon fontSize="small" sx={{ mr: 0.75, color: "#ba0001" }} />  
+                        }
+                        
+                        {isFavorite ? "In Favorites" : "Add to Favorites"}
+                      </>
+                    }
+                  </Button>
+                </Box>
+              </Box>
+
+              {/* SHOP EXTENSIONS */}
+              {mergedExtensions && <ExtensionList extensions={mergedExtensions} />}
+
+              {/* SHOP REVIEWS */}
+              {shop.user_reviews && shop.user_reviews?.most_relevant.length > 0 &&
+                <UserReviews 
+                  reviews={shop.user_reviews.most_relevant}
+                />
+              }
+            </CardContent>
+          </MotionCard>
+
+          {/* Close shop detail */}
+          {shop && 
+            <CloseButton 
+              variant="contained" 
+              color="error"
+              onClick={onCloseShopDetail}
+            >
+              <CloseIcon />
+            </CloseButton>
+          }
+        </MotionStyledStack>
+      }
 
       {/* Blurred background */}
-      {(isTablet && showShopDetail) &&
+      {(isTablet && shop) &&
         <motion.div
           variants={parentCardDetailVariants()}
           initial="hidden"
