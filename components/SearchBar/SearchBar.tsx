@@ -106,19 +106,22 @@ const SearchBar = ({ onSelectSearchResult }: SearchBarProps) => {
         </Box>
       )}
 
-      {(!loading && results.length > 0) || (!loading && input) && (
+      {(!loading && input) && (
         <Button 
             variant="text"
             sx={{ 
                 position: "absolute", 
-                top: "11px", 
-                right: "12px",
+                top: {
+                   xs: "7px",
+                   sm: "9px"
+                }, 
+                right: "10px",
                 padding: 0,
                 minWidth: 0,
             }}
             onClick={handleRemoveInput}
         >
-            <CloseIcon fontSize="small" sx={{ color: "rgba(211,47,47)" }}/>
+            <CloseIcon fontSize="medium" sx={{ color: "rgba(211,47,47)" }}/>
         </Button>
       )}
 

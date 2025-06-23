@@ -15,7 +15,7 @@ export const StyledStack = styled(Stack)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     top: 0,
     bottom: "unset",
-    height: 195,
+    height: 200,
     width: "100%",
     maxWidth: "100%",
   }

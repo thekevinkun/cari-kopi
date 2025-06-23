@@ -127,9 +127,6 @@ const Map = ({ userLocation, shops, tempShops, onSelectShop, targetShop, directi
             destinationShop.geometry.location.lng,
           ]}
           icon={createShopMarkerIcon(destinationShop, isMobile, 0)}
-          eventHandlers={{
-            click: () => onSelectShop(destinationShop),
-          }}
         />
       : null;
   }, [destinationShop, isMobile]);

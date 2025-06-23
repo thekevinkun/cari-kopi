@@ -34,6 +34,10 @@ const DirectionInfo = dynamic(() => import("@/components/DirectionInfo/Direction
   loading: () => <CenteredLoader height="50%" sx={{ display: { xs: "none", md: "flex" }}}/>,
 });
 
+function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 const Home = () => {
   const triedInitialLocation = useRef(false);
   const [location, setLocation] = useState<Coordinates | null>(null);
@@ -190,8 +194,8 @@ const Home = () => {
       console.warn("No polyline available for driving route");
       return;
     }
-    
-     // Decode polyline into LatLng array
+
+    // Decode polyline into LatLng array
     const decoded = polyline.decode(encodedPolyline);
     const latLngs = decoded.map(([lat, lng]) => [lat, lng]) as LatLngExpression[]
 
@@ -275,7 +279,7 @@ const Home = () => {
     setLoadingNextPage(false);
   }
 
-  const handleViewOnMap = (shop: SerpShopDetail) => {
+  const handleViewOnMap = async (shop: SerpShopDetail) => {
     const placeId = shop.place_id;
     const lat = shop.gps_coordinates.latitude;
     const lng = shop.gps_coordinates.longitude;
@@ -294,12 +298,13 @@ const Home = () => {
     // Fly to the shop
     setTargetShop({ placeId, lat, lng });
     
-    setTimeout(() => {
-      setTempShops(prev => {
-        const exists = prev.some(s => s.placeId === shop.place_id) || shops.some(s => s.placeId === shop.place_id);
-        return exists ? prev : [...prev, converted];
-      });
-    }, 9500);
+    // Wait for fly animation (e.g. 9s)
+    await sleep(9500);
+
+    setTempShops(prev => {
+      const exists = prev.some(s => s.placeId === shop.place_id) || shops.some(s => s.placeId === shop.place_id);
+      return exists ? prev : [...prev, converted];
+    });
   }
 
   const handleSelectSearchResult = async (placeId: string) => {
@@ -326,22 +331,23 @@ const Home = () => {
       }
     };
 
-    if (directionLine || directionInfo || destinationShop) {
+    if (directionLine !== null || directionSteps.length > 0 ||
+      Object.keys(directionInfo).length > 0 || destinationShop !== null) {
       handleStopDirections();
+      
+      // Wait 5s before flying to new target
+      await sleep(2000);
+    } 
 
-      setTimeout(() => {
-        setTargetShop({ placeId, lat, lng });  
-      }, 5000);
-    } else {
-      setTargetShop({ placeId, lat, lng });
-    }
+    setTargetShop({ placeId, lat, lng });
 
-    setTimeout(() => {
-      setTempShops(prev => {
-        const exists = prev.some(s => s.placeId === data.place_id) || shops.some(s => s.placeId === data.place_id);
-        return exists ? prev : [...prev, converted];
-      });
-    }, 9500);
+    // Wait for fly animation (e.g. 9s)
+    await sleep(9500);
+
+    setTempShops(prev => {
+      const exists = prev.some(s => s.placeId === data.place_id) || shops.some(s => s.placeId === data.place_id);
+      return exists ? prev : [...prev, converted];
+    });
   };
 
   const tryGetLocation = async (): Promise<GeolocationPosition | null> => {
@@ -508,7 +514,7 @@ const Home = () => {
             onSelectSearchResult={handleSelectSearchResult}
           />
 
-          { visibleDirections || (directionLine && directionInfo && directionSteps && destinationShop) ?
+          { visibleDirections || (directionLine !== null && directionSteps.length > 0 && Object.keys(directionInfo).length > 0 && destinationShop !== null) ?
             <DirectionInfo 
               visible={visibleDirections}
               originAddress={address ?? "Your location"}
