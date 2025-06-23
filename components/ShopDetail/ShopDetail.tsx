@@ -162,7 +162,7 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail,
     <AnimatePresence>
       <MotionStyledStack
         key={shop.place_id}
-        variants={parentCardDetailVariants(0.5)}
+        variants={parentCardDetailVariants(0.75)}
         initial="hidden"
         animate="show"
         exit="exit"

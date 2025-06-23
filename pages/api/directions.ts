@@ -27,7 +27,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             })
         );
 
-        const defaultPolyline = responses[0].route?.overview_polyline?.points || null;
+        const defaultResponse = responses[0];
+        const defaultPolyline = defaultResponse.route?.overview_polyline?.points || null;
+
+        const steps = defaultResponse.route?.legs?.[0]?.steps?.map((step: any) => ({
+            instruction: step.html_instructions,
+            distance: step.distance?.text || null,
+            duration: step.duration?.text || null,
+            maneuver: step.maneuver || null,
+        })) || [];
 
         return res.status(200).json({
             polyline: defaultPolyline,
@@ -36,6 +44,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 duration,
                 distance
             })),
+            steps
         });
     } catch (error) {
         console.error("Directions fetch error:", error);

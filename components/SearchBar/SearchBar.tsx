@@ -70,7 +70,10 @@ const SearchBar = ({ onSelectSearchResult }: SearchBarProps) => {
   }
   
   return (
-    <Box sx={{ position: "relative" }}>
+    <Box sx={{ 
+        position: "relative",
+        width: "100%"
+    }}>
         <Search>
             <SearchIconWrapper>
                 <SearchIcon 

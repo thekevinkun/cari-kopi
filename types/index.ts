@@ -249,10 +249,18 @@ type TravelInfo = {
 
 export type Mode = "driving" | "walking" | "bicycling" | "transit";
 
+type TravelStep = {
+  instruction: string;
+  duration: string | null;
+  distance: string | null;
+  maneuver: string | null;
+}
+
 export type DirectionInfoProps = {
   originAddress: string;
   destinationAddress: string;
   directionInfo: Partial<Record<Mode, TravelInfo>>;
+  directionSteps: TravelStep[];
   onCloseDirections: () => void;
 }
 

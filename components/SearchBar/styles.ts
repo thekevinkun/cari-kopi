@@ -12,6 +12,7 @@ export const Search = styled("div")(({ theme }) => ({
   width: "100%",
   [theme.breakpoints.down('md')]: {
     maxWidth: 640,
+    margin: "auto"
   },
   [theme.breakpoints.down('sm')]: {
     padding: theme.spacing(0.25, 1.25),

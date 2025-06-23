@@ -58,6 +58,14 @@ const Home = () => {
     transit?: { duration: string; distance: string };
     bicycling?: { duration: string; distance: string };
   }>({});
+  const [directionSteps, setDirectionSteps] = useState<
+    Array<{
+      instruction: string;
+      duration: string | null;
+      distance: string | null;
+      maneuver: string | null;
+    }>
+  >([]);
   const [destinationShop, setDestinationShop] = useState<Shop | null>(null);
 
   const [loadingNextPage, setLoadingNextPage] = useState(false);
@@ -155,17 +163,20 @@ const Home = () => {
     const destStr = `${lat},${lng}`;
     
     const res = await fetch(`/api/directions?origin=${originStr}&destination=${destStr}`);
-    const { polyline: encodedPolyline, modes }: {
+    const { polyline: encodedPolyline, modes, steps  }: {
       polyline: string | null;
       modes: Array<{
         mode: "driving" | "walking" | "transit" | "bicycling";
         duration: string;
         distance: string;
       }>;
+      steps: Array<{
+        instruction: string;
+        duration: string | null;
+        distance: string | null;
+        maneuver: string | null;
+      }>;
     } = await res.json();
-
-    console.log("polyline: ", polyline);
-    console.log("modes: ", modes);
 
     if (!encodedPolyline) {
       console.warn("No polyline available for driving route");
@@ -194,6 +205,8 @@ const Home = () => {
 
     setDirectionInfo(modeMap);
 
+    setDirectionSteps(steps); 
+
     setDestinationShop({
       placeId: shop.place_id,
       name: shop.title,
@@ -209,6 +222,7 @@ const Home = () => {
   const handleStopDirections = () => {
     setDirectionLine(null);
     setDirectionInfo({});
+    setDirectionSteps([]);
     setDestinationShop(null);
   }
 
@@ -300,9 +314,13 @@ const Home = () => {
 
     if (directionLine || directionInfo || destinationShop) {
       handleStopDirections();
-    }
 
-    setTargetShop({ placeId, lat, lng });
+      setTimeout(() => {
+        setTargetShop({ placeId, lat, lng });  
+      }, 5000);
+    } else {
+      setTargetShop({ placeId, lat, lng });
+    }
 
     setTimeout(() => {
       setTempShops(prev => {
@@ -476,11 +494,12 @@ const Home = () => {
             onSelectSearchResult={handleSelectSearchResult}
           />
 
-          { directionLine && directionInfo && destinationShop ?
+          { directionLine && directionInfo && directionSteps && destinationShop ?
             <DirectionInfo 
               originAddress={address ?? "Your location"}
               destinationAddress={destinationShop?.address ?? "Shop location"}
               directionInfo={directionInfo}
+              directionSteps={directionSteps}
               onCloseDirections={handleStopDirections}
             />
           : showShopDetail && selectedShop ? 
