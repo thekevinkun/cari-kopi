@@ -1,4 +1,4 @@
-import { styled, Typography } from "@mui/material";
+import { styled, alpha, Typography } from "@mui/material";
 
 export const StyledAddress = styled(Typography)(({ theme }) => ({
   overflow: "hidden",
@@ -8,6 +8,11 @@ export const StyledAddress = styled(Typography)(({ theme }) => ({
   WebkitBoxOrient: "vertical",
   fontSize: "0.725rem",
   fontWeight: "bold",
+  transition: "text-shadow .075s ease-in",
+  "&:hover": {
+    cursor: "pointer",
+    textShadow: "1px 1px 2px rgba(128, 74, 38, 0.35)"
+  },
   [theme.breakpoints.down('md')]: {
     maxWidth: 640,
     fontSize: "0.75rem",

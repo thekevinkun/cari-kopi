@@ -210,10 +210,12 @@ export interface AutocompletePrediction {
 
 export type MapProps = {
   userLocation: Coordinates | null;
+  locationBackTo: Coordinates | null;
   shops: Shop[];
   tempShops: Shop[];
   onSelectShop: (shop: Shop) => void;
   targetShop?: TargetShop | null;
+  suppressMarkers?: boolean; 
   directionLine?: LatLngExpression[] | null;
   destinationShop?: Shop | null;
 }
@@ -288,6 +290,7 @@ export type ExplorePanelProps = {
   totalPages?: number | null;
   locationStatus: "idle" | "fetching" | "success" | "failed";
   onRequestLocation: () => void;
+  onBackToLocation: () => void;
   isLoadNextPage: boolean;
   onNextPage: () => void;
   onShowLessPage: () => void;

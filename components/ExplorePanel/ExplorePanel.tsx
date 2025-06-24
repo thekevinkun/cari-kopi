@@ -23,6 +23,7 @@ const ExplorePanel = ({
   totalPages,
   locationStatus, 
   onRequestLocation, 
+  onBackToLocation,
   isLoadNextPage, 
   onNextPage,
   onShowLessPage,
@@ -88,16 +89,26 @@ const ExplorePanel = ({
       ) : address ? (
         <Box display="flex">
           <LocationOnIcon 
+            titleAccess="Back to location?"
             sx={{
               fontSize: {
                 xs: "1.15rem",
                 sm: "1.25rem"
               },
               color: "#1976d2",
-              marginRight: "3px"
+              marginRight: "3px",
+              "&:hover": {
+                cursor: "pointer"
+              }
             }}
+            onClick={onBackToLocation}
           />
-          <StyledAddress variant="body1" color="textSecondary">
+          <StyledAddress 
+            title="Back to location?" 
+            variant="body1" 
+            color="textSecondary"
+            onClick={onBackToLocation}
+          >
             {address}
           </StyledAddress>
         </Box>
