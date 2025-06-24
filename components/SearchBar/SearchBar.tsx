@@ -2,7 +2,8 @@ import React, { useEffect, useState, useMemo } from "react";
 import { debounce } from "lodash";
 import { v4 as uuidv4 } from "uuid";
 
-import { Box, List, ListItemButton, ListItemText, CircularProgress, Typography, useMediaQuery, Button } from "@mui/material";
+import { Box, IconButton, List, ListItemButton, 
+    ListItemText, CircularProgress, Typography } from "@mui/material";
 import RoomIcon from "@mui/icons-material/Room";
 import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "@mui/icons-material/Search";
@@ -78,14 +79,8 @@ const SearchBar = ({ onSelectSearchResult }: SearchBarProps) => {
             <SearchIconWrapper>
                 <SearchIcon 
                     sx={{
-                        width: {
-                            xs: "0.85em",
-                            sm: "0.95em"
-                        },
-                        height: {
-                            xs: "0.85em",
-                            sm: "0.95em"
-                        }
+                        width: "0.95em",
+                        height: "0.95em"
                     }}
                 />
             </SearchIconWrapper>
@@ -107,22 +102,30 @@ const SearchBar = ({ onSelectSearchResult }: SearchBarProps) => {
       )}
 
       {(!loading && input) && (
-        <Button 
-            variant="text"
-            sx={{ 
-                position: "absolute", 
+        <IconButton 
+            sx={{
+                position: "absolute",
                 top: {
-                   xs: "7px",
-                   sm: "9px"
+                    xs: 7,
+                    sm: 9.5
                 }, 
-                right: "10px",
-                padding: 0,
-                minWidth: 0,
+                right: 9,
+                bgcolor: "rgba(0,0,0,0.30)",
+                color: "#fff",
+                boxShadow: "0 2px 6px rgba(0,0,0,0.25)",
+                "&:hover": {
+                    bgcolor: "rgba(0,0,0,0.5)",
+                },
+                backdropFilter: "blur(1.5px)",
+                borderRadius: "50%",
+                width: 22,
+                height: 22,
+                zIndex: 1300,
             }}
             onClick={handleRemoveInput}
         >
-            <CloseIcon fontSize="medium" sx={{ color: "rgba(211,47,47)" }}/>
-        </Button>
+            <CloseIcon sx={{ fontSize: "1.15rem" }} />
+        </IconButton>
       )}
 
        {results.length > 0 && (

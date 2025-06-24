@@ -2,7 +2,7 @@ import { Stack } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 export const StyledStack = styled(Stack)(({ theme }) => ({
-  height: 280,
+  height: 275,
   [theme.breakpoints.down('md')]: {
     position: "absolute",
     right: 0,
