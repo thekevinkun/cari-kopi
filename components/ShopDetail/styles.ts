@@ -1,4 +1,4 @@
-import { Box, Button, Stack } from "@mui/material";
+import { Box, Button, IconButton, Stack } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 export const StyledStack = styled(Stack)(({ theme }) => ({
@@ -27,25 +27,6 @@ export const StyledBoxImage = styled(Box)(({ theme }) => ({
    [theme.breakpoints.down('md')]: {
       height: 255,  
    }
-}));
-
-export const CloseButton = styled(Button)(({ theme }) => ({
-  width: "fit-content",
-  minWidth: 0,
-  marginLeft: "auto",
-  marginBottom: "0.5rem",
-  padding: "0.325rem 0.45rem",
-  [theme.breakpoints.down('md')]: {
-      position: "absolute",
-      top: 0,
-      right: -50,
-      marginLeft: 0,
-      marginBottom: 0,
-  },
-  [theme.breakpoints.down('sm')]: {
-      top: -45,
-      right: 10, 
-  }
 }));
 
 export const scrollStyle = {

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Box, Button, Card, CardContent, CircularProgress, Grid, useMediaQuery } from "@mui/material";
+import { Box, Button, Card, CardContent, CircularProgress, IconButton, useMediaQuery } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import NearMeIcon from "@mui/icons-material/NearMe";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -13,7 +13,7 @@ import {
   Information, ExtensionList, UserReviews 
 } from "@/components";
 
-import { StyledStack, CloseButton, scrollStyle } from "./styles";
+import { StyledStack, scrollStyle } from "./styles";
 import { convertSerpApiHoursToWeekdayText, mergeExtensionsWithUnsupported } from "@/utils/helpers";
 import { parentCardDetailVariants, cardDetailVariants } from "@/utils/motion";
 import type { ShopDetailProps } from "@/types";
@@ -184,7 +184,8 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail,
           exit="exit"
           ref={shopDetailRef}
           sx={{
-            pb: 1,
+            pt: 2,
+            pb: 1.5,
             px: 1,
             height: isTablet ? "80svh" : shopDetailHeight,
           }}
@@ -197,6 +198,7 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail,
             elevation={6} 
             sx={{ 
               ...scrollStyle,
+              position: "relative",
               marginTop: {
                 xs: "auto",
                 md: "unset"
@@ -303,18 +305,33 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail,
                 />
               }
             </CardContent>
-          </MotionCard>
 
-          {/* Close shop detail */}
-          {shop && 
-            <CloseButton 
-              variant="contained" 
-              color="error"
-              onClick={onCloseShopDetail}
-            >
-              <CloseIcon />
-            </CloseButton>
-          }
+            {/* Close shop detail */}
+            {shop && 
+              <IconButton 
+                title="Close Shop Detail?"
+                onClick={onCloseShopDetail}
+                sx={{
+                  position: "absolute",
+                  top: 4,
+                  right: 4,
+                  zIndex: 1300,
+                  bgcolor: "rgba(0,0,0,0.35)",
+                  color: "#fff",
+                  boxShadow: "0 2px 6px rgba(0,0,0,0.35)",
+                  "&:hover": {
+                    bgcolor: "rgba(0,0,0,0.65)",
+                  },
+                  backdropFilter: "blur(2px)", // optional: adds a slight blur behind
+                  borderRadius: "50%",
+                  width: 40,
+                  height: 40,
+                }}    
+              >
+                <CloseIcon sx={{  fontSize: "1.75rem" }}/>
+              </IconButton>
+            }
+          </MotionCard>
         </MotionStyledStack>
       }
 

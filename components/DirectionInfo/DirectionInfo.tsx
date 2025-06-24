@@ -124,8 +124,18 @@ const DirectionInfo = ({ visible, originAddress, destinationAddress,
                             title="Close directions?"
                             sx={{
                                 position: "absolute",
-                                top: 0,
-                                right: 8,
+                                top: 5,
+                                right: 10,
+                                bgcolor: "rgba(0,0,0,0.35)",
+                                color: "#fff",
+                                boxShadow: "0 2px 6px rgba(0,0,0,0.35)",
+                                "&:hover": {
+                                    bgcolor: "rgba(0,0,0,0.65)",
+                                },
+                                backdropFilter: "blur(2px)", // optional: adds a slight blur behind
+                                borderRadius: "50%",
+                                width: 35,
+                                height: 35,
                             }}
                             onClick={onCloseDirections}
                         >
