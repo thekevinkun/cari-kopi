@@ -68,7 +68,8 @@ const CaptureMapInstance = ({ mapRef }: { mapRef: React.MutableRefObject<L.Map |
   return null;
 };
 
-const Map = ({ userLocation, shops, tempShops, onSelectShop, targetShop, directionLine, destinationShop }: MapProps) => {
+const Map = ({ userLocation, locationBackTo, shops, tempShops, onSelectShop, 
+  targetShop, suppressMarkers, directionLine, destinationShop }: MapProps) => {
   // Default map center if user location is unavailable (e.g. global view)
   const defaultCenter: [number, number] = [20, 0]; // Near the equator
 
@@ -90,7 +91,7 @@ const Map = ({ userLocation, shops, tempShops, onSelectShop, targetShop, directi
 
   // Render regular shops (no re-render on tempShop change)
   const shopMarkers = useMemo(() => {
-    return showMarker 
+    return !suppressMarkers && showMarker 
       ? shops.map((shop: Shop, index) => (
           <Marker
             key={shop.placeId}
@@ -102,11 +103,11 @@ const Map = ({ userLocation, shops, tempShops, onSelectShop, targetShop, directi
           />
       ))
     : null;
-  }, [shops, showMarker, isMobile])
+  }, [shops, suppressMarkers, showMarker, isMobile])
 
   // Render temp shops (just one or few, appear instantly)
   const tempShopMarkers = useMemo(() => {
-    return showMarker
+    return !suppressMarkers && showMarker
       ? tempShops.map((shop) => (
           <Marker
             key={"temp-" + shop.placeId}
@@ -116,7 +117,7 @@ const Map = ({ userLocation, shops, tempShops, onSelectShop, targetShop, directi
           />
         ))
       : null;
-  }, [tempShops, showMarker, isMobile]);
+  }, [tempShops, suppressMarkers, showMarker, isMobile]);
 
   const destinationShopMarker = useMemo(() => {
     return destinationShop
@@ -134,12 +135,21 @@ const Map = ({ userLocation, shops, tempShops, onSelectShop, targetShop, directi
   const mapRef = useRef<L.Map | null>(null);
   const hasFlownToTarget = useRef<string | null>(null);
 
-  // reset hasFlownToTarget if targetShop becomes null
+  // reset hasFlownToTarget
   useEffect(() => {
     if (!targetShop) {
       hasFlownToTarget.current = null;
     }
   }, [targetShop]);
+
+  // Handle flyTo user back to location
+  useEffect(() => {
+    if (locationBackTo && mapRef.current) {
+      mapRef.current.flyTo([locationBackTo.lat, locationBackTo.lng], 15, {
+        duration: 2,
+      });
+    }
+  }, [locationBackTo]);
 
   // Handle flyTo when targetShop is set
   useEffect(() => {

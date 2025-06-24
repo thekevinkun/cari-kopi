@@ -41,6 +41,7 @@ function sleep(ms: number) {
 const Home = () => {
   const triedInitialLocation = useRef(false);
   const [location, setLocation] = useState<Coordinates | null>(null);
+  const [locationBackTo, setLocationBackTo] = useState<Coordinates | null>(null);
   const [locationStatus, setLocationStatus] = useState<"idle" | "fetching" | "success" | "failed">("idle");
 
   const [address, setAddress] = useState<string | null>(null);
@@ -50,6 +51,7 @@ const Home = () => {
   const [shops, setShops] = useState<Shop[]>([]);
   const [tempShops, setTempShops] = useState<Shop[]>([]);
   const [targetShop, setTargetShop] = useState<TargetShop | null>(null);
+  const [suppressMarkers, setSuppressMarkers] = useState(false);
 
   const [showShopDetail, setShowShopDetail] = useState(false);
   const [selectedShop, setSelectedShop] = useState<SerpShopDetail | null>(null);
@@ -334,21 +336,43 @@ const Home = () => {
     if (directionLine !== null || directionSteps.length > 0 ||
       Object.keys(directionInfo).length > 0 || destinationShop !== null) {
       handleStopDirections();
+      setSuppressMarkers(true);
+
+      // Wait 1s before flying to new target
+      await sleep(1500);
+
+      setTargetShop({ placeId, lat, lng });
+      await sleep(9500);
       
-      // Wait 5s before flying to new target
-      await sleep(2000);
-    } 
+      // Re-enable all shop markers
+      setSuppressMarkers(false);
+      await sleep(500);
+      
+      setTempShops(prev => {
+        const exists = prev.some(s => s.placeId === data.place_id) || shops.some(s => s.placeId === data.place_id);
+        return exists ? prev : [...prev, converted];
+      });
+    } else {
+      setTargetShop({ placeId, lat, lng });
 
-    setTargetShop({ placeId, lat, lng });
+      // Wait for fly animation (e.g. 9s)
+      await sleep(9500);
 
-    // Wait for fly animation (e.g. 9s)
-    await sleep(9500);
-
-    setTempShops(prev => {
-      const exists = prev.some(s => s.placeId === data.place_id) || shops.some(s => s.placeId === data.place_id);
-      return exists ? prev : [...prev, converted];
-    });
+      setTempShops(prev => {
+        const exists = prev.some(s => s.placeId === data.place_id) || shops.some(s => s.placeId === data.place_id);
+        return exists ? prev : [...prev, converted];
+      });
+    }
   };
+
+  const handleRestartLocation = async () => {
+    if (!location) return;
+    setLocationBackTo(location);
+
+    await sleep(2500);
+
+    setLocationBackTo(null);
+  }
 
   const tryGetLocation = async (): Promise<GeolocationPosition | null> => {
     return new Promise((resolve) => {
@@ -489,10 +513,12 @@ const Home = () => {
       >
         <Map 
           userLocation={location} 
+          locationBackTo={locationBackTo}
           shops={shops}
           tempShops={tempShops}
           onSelectShop={(shop: Shop) => getShopDetail(shop.placeId)}
           targetShop={targetShop}
+          suppressMarkers={suppressMarkers}
           directionLine={directionLine}
           destinationShop={destinationShop}
         />
@@ -508,6 +534,7 @@ const Home = () => {
             totalPages={nearbyData?.totalPages ?? null}
             locationStatus={locationStatus}
             onRequestLocation={onFindLocationClick}
+            onBackToLocation={handleRestartLocation}
             isLoadNextPage={loadingNextPage}
             onNextPage={handleNextPage}
             onShowLessPage={handleShowLessPage}
