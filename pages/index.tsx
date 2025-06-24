@@ -235,15 +235,17 @@ const Home = () => {
     setVisibleDirections(true);
   }
 
-  const handleStopDirections = () => {
+  const handleStopDirections = async () => {
     setVisibleDirections(false);
 
-    setTimeout(() => {
-      setDirectionLine(null);
-      setDirectionInfo({});
-      setDirectionSteps([]);
-      setDestinationShop(null);
-    }, 500);
+    await sleep(500);
+
+    setDirectionLine(null);
+    setDirectionInfo({});
+    setDirectionSteps([]);
+    setDestinationShop(null);
+
+    setShowShopDetail(true);
   }
 
   const handleNextPage = async () => {
@@ -307,6 +309,10 @@ const Home = () => {
       const exists = prev.some(s => s.placeId === shop.place_id) || shops.some(s => s.placeId === shop.place_id);
       return exists ? prev : [...prev, converted];
     });
+
+    await sleep(200);
+
+    setTargetShop(null);
   }
 
   const handleSelectSearchResult = async (placeId: string) => {
@@ -363,13 +369,17 @@ const Home = () => {
         return exists ? prev : [...prev, converted];
       });
     }
+
+    await sleep(200);
+
+    setTargetShop(null);
   };
 
   const handleRestartLocation = async () => {
     if (!location) return;
     setLocationBackTo(location);
 
-    await sleep(2500);
+    await sleep(1500);
 
     setLocationBackTo(null);
   }
@@ -562,7 +572,13 @@ const Home = () => {
                 }, 550);
               }}  
               onFavoriteUpdate={refreshFavorites}
-              onStartDirections={(shop: SerpShopDetail) => getDirections(shop)}
+              onStartDirections={(shop: SerpShopDetail) => {
+                setShowShopDetail(false);
+
+                setTimeout(() => {
+                  getDirections(shop);
+                }, 200);
+              }}
             />
           : locationStatus === "success" && favorites && !showShopDetail ?
             <FavoritesShop 
