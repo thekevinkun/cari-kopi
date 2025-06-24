@@ -146,7 +146,7 @@ const Map = ({ userLocation, locationBackTo, shops, tempShops, onSelectShop,
   useEffect(() => {
     if (locationBackTo && mapRef.current) {
       mapRef.current.flyTo([locationBackTo.lat, locationBackTo.lng], 15, {
-        duration: 2,
+        duration: 1,
       });
     }
   }, [locationBackTo]);
