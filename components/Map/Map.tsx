@@ -68,7 +68,7 @@ const CaptureMapInstance = ({ mapRef }: { mapRef: React.MutableRefObject<L.Map |
   return null;
 };
 
-const Map = ({ userLocation, locationBackTo, shops, tempShops, onSelectShop, 
+const Map = ({ userLocation, backToLocation, shops, tempShops, onSelectShop, 
   targetShop, suppressMarkers, directionLine, destinationShop }: MapProps) => {
   // Default map center if user location is unavailable (e.g. global view)
   const defaultCenter: [number, number] = [20, 0]; // Near the equator
@@ -142,14 +142,27 @@ const Map = ({ userLocation, locationBackTo, shops, tempShops, onSelectShop,
     }
   }, [targetShop]);
 
-  // Handle flyTo user back to location
+  // Handle flyTo back to location when user start directions
   useEffect(() => {
-    if (locationBackTo && mapRef.current) {
-      mapRef.current.flyTo([locationBackTo.lat, locationBackTo.lng], 15, {
+    if (!userLocation) return;
+
+    if (directionLine !== null && mapRef.current) {
+      mapRef.current.flyTo([userLocation.lat, userLocation.lng], 13, {
         duration: 1,
       });
     }
-  }, [locationBackTo]);
+  }, [directionLine]);
+
+  // Handle flyTo user back to location
+  useEffect(() => {
+    if (!userLocation) return;
+    
+    if (backToLocation && mapRef.current) {
+      mapRef.current.flyTo([userLocation.lat, userLocation.lng], 15, {
+        duration: 1,
+      });
+    }
+  }, [backToLocation]);
 
   // Handle flyTo when targetShop is set
   useEffect(() => {

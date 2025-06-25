@@ -41,8 +41,8 @@ function sleep(ms: number) {
 const Home = () => {
   const triedInitialLocation = useRef(false);
   const [location, setLocation] = useState<Coordinates | null>(null);
-  const [locationBackTo, setLocationBackTo] = useState<Coordinates | null>(null);
   const [locationStatus, setLocationStatus] = useState<"idle" | "fetching" | "success" | "failed">("idle");
+  const [backToLocation, setBackToLocation] = useState(false);
 
   const [address, setAddress] = useState<string | null>(null);
   const [shortAddress, setShortAddress] = useState<string | null>(null);
@@ -375,13 +375,13 @@ const Home = () => {
     setTargetShop(null);
   };
 
-  const handleRestartLocation = async () => {
+  const handleBackToLocation = async () => {
     if (!location) return;
-    setLocationBackTo(location);
+    setBackToLocation(true);
 
     await sleep(1500);
 
-    setLocationBackTo(null);
+    setBackToLocation(false);
   }
 
   const tryGetLocation = async (): Promise<GeolocationPosition | null> => {
@@ -523,7 +523,7 @@ const Home = () => {
       >
         <Map 
           userLocation={location} 
-          locationBackTo={locationBackTo}
+          backToLocation={backToLocation}
           shops={shops}
           tempShops={tempShops}
           onSelectShop={(shop: Shop) => getShopDetail(shop.placeId)}
@@ -544,7 +544,7 @@ const Home = () => {
             totalPages={nearbyData?.totalPages ?? null}
             locationStatus={locationStatus}
             onRequestLocation={onFindLocationClick}
-            onBackToLocation={handleRestartLocation}
+            onBackToLocation={handleBackToLocation}
             isLoadNextPage={loadingNextPage}
             onNextPage={handleNextPage}
             onShowLessPage={handleShowLessPage}

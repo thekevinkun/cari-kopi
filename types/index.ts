@@ -210,7 +210,7 @@ export interface AutocompletePrediction {
 
 export type MapProps = {
   userLocation: Coordinates | null;
-  locationBackTo: Coordinates | null;
+  backToLocation: boolean;
   shops: Shop[];
   tempShops: Shop[];
   onSelectShop: (shop: Shop) => void;
