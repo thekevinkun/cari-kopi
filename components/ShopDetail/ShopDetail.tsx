@@ -160,7 +160,7 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail,
   }, [isTablet, isMobile]);
 
   useEffect(() => {
-    if (shop && isTablet) {
+    if (showShopDetail && isTablet) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
@@ -169,7 +169,7 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail,
     return () => {
       document.body.style.overflow = "";
     };
-  }, [shop]);
+  }, [showShopDetail]);
   
   if (!shop || !shop.place_id) return null;
 
@@ -336,7 +336,7 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail,
       }
 
       {/* Blurred background */}
-      {(isTablet && shop) &&
+      {(isTablet && showShopDetail) &&
         <motion.div
           variants={parentCardDetailVariants()}
           initial="hidden"
