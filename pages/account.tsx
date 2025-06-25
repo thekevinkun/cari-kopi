@@ -6,6 +6,14 @@ import { Box, Typography, Button, TextField, Divider, Link } from "@mui/material
 import EditIcon from "@mui/icons-material/Edit";
 
 import { verifyToken } from "@/lib/db/auth";
+import { validateEmailFormat, validateName } from "@/lib/db/validation";
+import { UserLogin } from "@/types";
+
+const checkEmailAvailable = async (email: string) => {
+  const res = await fetch(`/api/auth/check-email?email=${encodeURIComponent(email)}`);
+  const data = await res.json();
+  return data.available;
+};
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const token = ctx.req.cookies.token;
@@ -27,8 +35,12 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 type Field = "fullName" | "email";
 
 export default function Account() {
-  const { user } = useUser();
-  const name = user?.name?.split(" ")[0] || "Your";
+  const { user, setUser } = useUser();
+  const id = user?.id || "";
+  const accountName = user?.name?.split(" ")[0] || "Your";
+
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const [editField, setEditField] = useState<Field | null>(null);
   const [formData, setFormData] = useState<Record<Field, string>>({
@@ -36,7 +48,9 @@ export default function Account() {
     email: "",
   });
   const [tempValue, setTempValue] = useState("");
-  const [deleteConfirm, setDeleteConfirm] = useState(""); 
+
+  const [deleteConfirmValue, setDeleteConfirmValue] = useState(""); 
+  const [tempValueDelete, setTempValueDelete] = useState("");
 
   const handleEdit = (field: Field) => {
     setEditField(field);
@@ -44,16 +58,130 @@ export default function Account() {
   };
 
   const handleCancel = () => {
+    if (editField === "fullName") {
+      setErrors((prev) => ({
+        ...prev,
+        fullName: "",
+      }));
+    }
+
+    if (editField === "email") {
+      setErrors((prev) => ({
+        ...prev,
+        email: "",
+      }));
+    }
+
     setEditField(null);
     setTempValue("");
   };
 
-  const handleSave = () => {
-    if (editField) {
-      setFormData({ ...formData, [editField]: tempValue });
-      setEditField(null);
+  const handleSave = async () => {
+    if (editField === "fullName") {
+      const name = tempValue;
+
+      // Validate name
+      const invalidName = validateName(name);
+      if (invalidName) {
+        setErrors((prev) => ({
+          ...prev,
+          fullName: invalidName,
+        }));
+
+        return;
+      }
+
+      setLoading(true);
+
+      try {
+        const res = await fetch("/api/auth/update-name", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id, name }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          alert(data.error || "Failed to update your name. Please try again.");
+        } else {
+          alert(data.message);
+
+          setFormData({ ...formData, [editField]: name });
+          setEditField(null);
+
+          setUser(data.user);
+        }
+      } catch (err) {
+        alert("Something went wrong. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (editField === "email") {
+      const email = tempValue;
+
+      // Validate email
+      const formatEmail = validateEmailFormat(email);
+      if (formatEmail) {
+        setErrors((prev) => ({
+          ...prev,
+          email: formatEmail,
+        }));
+
+        return;
+      }
+
+      const available = await checkEmailAvailable(email);
+      if (!available) {
+        setErrors((prev) => ({
+          ...prev,
+          email: "Email already registered",
+        }));
+
+        return;
+      }
+
+      setLoading(true);
+
+      try {
+        const res = await fetch("/api/auth/update-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id, email }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          alert(data.error || "Failed to update your email. Please try again.");
+        } else {
+          alert(data.message);
+
+          setFormData({ ...formData, [editField]: email });
+          setEditField(null);
+
+          setUser(data.user);
+        }
+      } catch (err) {
+        alert("Something went wrong. Please try again.");
+      } finally {
+        setLoading(false);
+      }
     }
   };
+
+  const handleDeleteAccount = () => {
+    if (tempValueDelete !== deleteConfirmValue) {
+      setErrors((prev) => ({
+        ...prev,
+        delete: "Please type correctly.",
+      }));
+
+      return;
+    }
+  }
 
   useEffect(() => {
     if (user) {
@@ -62,7 +190,7 @@ export default function Account() {
         email: user.email ?? "",
       });
 
-      setDeleteConfirm(user.email);
+      setDeleteConfirmValue(user.email);
     }
   }, [user]);
   
@@ -71,7 +199,7 @@ export default function Account() {
   return (
     <>
       <Head>
-        <title>{name}'s Account | Carikopi</title>
+        <title>{accountName}'s Account | Carikopi</title>
         <meta name="description" content="User account information" />
       </Head>
 
@@ -88,11 +216,21 @@ export default function Account() {
           field="fullName"
           editField={editField}
           value={formData.fullName ?? ""}
+          loading={loading}
+          error={errors.fullName}
           tempValue={tempValue}
           onEdit={handleEdit}
           onCancel={handleCancel}
           onSave={handleSave}
-          onChange={(e) => setTempValue(e.target.value)}
+          onChange={(e) => {
+            if (errors.fullName) {
+              setErrors((prev) => ({
+                ...prev,
+                fullName: "",
+              }));
+            }
+            setTempValue(e.target.value)
+          }}
           description="The name that is appears on your screen."
         />
 
@@ -102,11 +240,21 @@ export default function Account() {
           field="email"
           editField={editField}
           value={formData.email ?? ""}
+          loading={loading}
+          error={errors.email}
           tempValue={tempValue}
           onEdit={handleEdit}
           onCancel={handleCancel}
           onSave={handleSave}
-          onChange={(e) => setTempValue(e.target.value)}
+          onChange={(e) => {
+            if (errors.email) {
+              setErrors((prev) => ({
+                ...prev,
+                email: "",
+              }));
+            }
+            setTempValue(e.target.value)
+          }}
           description="You receive messages from carikopi at this address."
         />
 
@@ -120,8 +268,19 @@ export default function Account() {
         {/* Delete Account */}
         <DeleteSection
           label="Delete My Account"
-          deleteConfirm={deleteConfirm}
-          onDelete={() => {}}
+          deleteConfirmValue={deleteConfirmValue}
+          tempValueDelete={tempValueDelete}
+          error={errors.delete}
+          onChange={(e) => {
+            if (errors.delete) {
+              setErrors((prev) => ({
+                ...prev,
+                delete: "",
+              }));
+            }
+            setTempValueDelete(e.target.value);
+          }}
+          onDelete={handleDeleteAccount}
         />
       </Box>
     </>
@@ -145,12 +304,14 @@ const Section = ({ label, value, description }:
 }
 
 const EditableSection = ({
-  label, field, value, tempValue,
+  label, field, value, loading, error, tempValue,
   editField, onEdit, onCancel, onSave, onChange, description
 }: {
   label: string;
   field: Field;
   value: string;
+  loading: boolean;
+  error: string;
   tempValue: string;
   editField: Field | null;
   onEdit: (field: Field) => void;
@@ -184,17 +345,37 @@ const EditableSection = ({
       {isEditing ? (
         <>
           <TextField
+            autoComplete="off"
             fullWidth
             variant="outlined"
             size="small"
             value={tempValue}
+            error={!!error}
+            helperText={error}
             onChange={onChange}
             sx={{ my: 1 }}
           />
 
           <Box display="flex" gap={1} mb={2}>
-            <Button variant="contained" onClick={onSave}>Save</Button>
-            <Button variant="outlined" onClick={onCancel}>Cancel</Button>
+            <Button 
+              variant="contained"
+              disabled={loading} 
+              onClick={onSave}
+              sx={{
+                pointerEvents: !tempValue || error || tempValue === value ? "none" : "auto",
+                opacity: !tempValue || error || tempValue === value ? 0.65 : 1
+              }}
+            >
+              {loading ? "Saving..." : "Save"}
+            </Button>
+
+            <Button 
+              variant="outlined" 
+              disabled={loading}
+              onClick={onCancel}
+            >
+              Cancel
+            </Button>
           </Box>
         </>
       ) : (
@@ -211,9 +392,15 @@ const EditableSection = ({
 }
 
 const DeleteSection = ({
-  label, deleteConfirm, onDelete,
-}: { label: string; deleteConfirm: string; onDelete: () => void; }) => {
-
+  label, deleteConfirmValue, tempValueDelete, error, onChange, onDelete,
+}: { 
+  label: string; 
+  deleteConfirmValue: string; 
+  tempValueDelete: string;
+  error: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onDelete: () => void; 
+}) => {
   return (
     <Box mb={3}>
       <Typography 
@@ -239,17 +426,21 @@ const DeleteSection = ({
       </Typography>
 
       <TextField
+        autoComplete="off"
         color="error"
         variant="outlined"
         size="small"
-        placeholder={`Type "${deleteConfirm}" to confirm`}
+        placeholder={`Type "${deleteConfirmValue}" to confirm`}
+        value={tempValueDelete}
+        error={!!error}
+        helperText={error}
         sx={{ 
           width: "100%",
           maxWidth: 420,
           mt: 3, 
           "& .MuiInputBase-root": {
             fontSize: "0.875rem",
-            fontWeight: "700"
+            fontWeight: "700",
           },
           "& .MuiOutlinedInput-notchedOutline": {
             borderColor: "rgba(211, 47, 47, 0.5)",
@@ -257,10 +448,25 @@ const DeleteSection = ({
           "&:hover .MuiOutlinedInput-notchedOutline": {
             borderColor: "#d32f2f",
           },
+          "& .MuiOutlinedInput-root": {
+            "&:hover fieldset": {
+              borderColor:  "#d32f2f", // on hover
+            },
+          },
         }}
+        onChange={onChange}
       />
 
-      <Button variant="outlined" color="error" sx={{ mt: 2 }} onClick={onDelete}>
+      <Button 
+        variant="outlined" 
+        color="error" 
+        sx={{ 
+          mt: 2,
+          pointerEvents: !tempValueDelete || error ? "none" : "auto",
+          opacity: !tempValueDelete || error ? 0.65 : 1
+        }}
+        onClick={onDelete}
+      >
         {label}
       </Button>
     </Box>

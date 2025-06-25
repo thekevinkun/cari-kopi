@@ -28,6 +28,7 @@ export type UserLogin = {
 
 export type UserContextType = {
   user: UserLogin | null;
+  setUser: (user: UserLogin | null) => void;
   loading: boolean;
   refreshUser: () => Promise<void>;
 }

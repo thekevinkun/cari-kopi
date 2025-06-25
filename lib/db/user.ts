@@ -1,8 +1,15 @@
+import { ObjectId } from "mongodb";
+
 import { getCollection } from "./db";
 import type { User } from "@/types";
 
 async function getUsersCollection() {
     return await getCollection<User>("users");
+}
+
+export async function findUserById(id: string) {
+    const users = await getUsersCollection();
+    return await users.findOne({ _id: new ObjectId(id) });
 }
 
 export async function findUserByEmail(email: string) {
@@ -34,6 +41,22 @@ export async function markUserAsVerified(email: string) {
   );
 }
 
+export async function updateName(id: string, name: string) {
+  const users = await getUsersCollection();
+  return await users.updateOne(
+    { _id: new ObjectId(id) },
+    { $set: { name: name } }
+  );
+}
+
+export async function updateEmail(id: string, email: string) {
+  const users = await getUsersCollection();
+  return await users.updateOne(
+    { _id: new ObjectId(id) },
+    { $set: { email: email } }
+  );
+}
+
 export async function updateNewCode(email: string, newCode: string, expiresAt: Date) {
   const users = await getUsersCollection();
   return await users.updateOne(
@@ -41,7 +64,6 @@ export async function updateNewCode(email: string, newCode: string, expiresAt: D
     { $set: { verificationCode: newCode, verificationExpires: expiresAt } }
   );
 }
-
 
 export async function updateToken(email: string, generatedToken: string, expiresAt: Date) {
   const users = await getUsersCollection();

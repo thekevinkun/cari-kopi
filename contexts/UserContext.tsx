@@ -1,9 +1,10 @@
 import { createContext, useState, useEffect, useContext } from "react";
 
-import type { UserLogin, UserContextType } from "@/types";
+import type { User, UserLogin, UserContextType } from "@/types";
 
 const UserContext = createContext<UserContextType>({
   user: null,
+  setUser: () => {},
   loading: true,
   refreshUser: async () => {},
 });
@@ -34,7 +35,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, loading, refreshUser: fetchUser }}>
+    <UserContext.Provider value={{ user, setUser, loading, refreshUser: fetchUser }}>
       {children}
     </UserContext.Provider>
   );
