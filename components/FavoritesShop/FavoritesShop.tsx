@@ -100,7 +100,10 @@ const FavoritesShop = ({ favorites, onSelectShop, onFavoriteUpdate, onViewOnMap 
           <FavoriteIcon fontSize="small" sx={{ color: "#ba0001" }} />
 
           <Typography variant="body1" fontWeight="bold">
-            {favorites && favorites.length > 0 ? "Your Favorites" : "You don’t have any favorite yet"}
+            {favorites && favorites.length > 0 ? 
+            "Your Favorites" 
+            : 
+            "Ready to discover new favorites near you?"}
           </Typography>
         </Box>     
 
