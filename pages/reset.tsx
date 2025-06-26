@@ -11,9 +11,7 @@ import { validatePassword } from "@/lib/db/validation";
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const token = ctx.query.token as string;
 
-  const user = token ? await findUserByResetToken(token) : null;
-
-  if (!user) {
+  if (!token) {
     return {
       redirect: {
         destination: "/login",
@@ -21,6 +19,20 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       },
     };
   }
+
+  const user = await findUserByResetToken(token);
+
+  if (!user 
+      || !user.resetToken 
+      || !user.resetTokenExpires
+      || new Date(user.resetTokenExpires) < new Date()) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  } 
 
   return {
     props: { token },

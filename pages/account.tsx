@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
 import { useUser } from "@/contexts/UserContext";
-import { Box, Typography, Button, TextField, Divider, Link } from "@mui/material";
+import { Box, Typography, Button, TextField, Link, CircularProgress } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 
 import { verifyToken } from "@/lib/db/auth";
 import { validateEmailFormat, validateName } from "@/lib/db/validation";
-import { UserLogin } from "@/types";
 
 const checkEmailAvailable = async (email: string) => {
   const res = await fetch(`/api/auth/check-email?email=${encodeURIComponent(email)}`);
@@ -38,8 +38,12 @@ export default function Account() {
   const { user, setUser } = useUser();
   const id = user?.id || "";
   const accountName = user?.name?.split(" ")[0] || "Your";
+  const accountEmail = user?.email || "";
+
+  const router = useRouter();
 
   const [loading, setLoading] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const [editField, setEditField] = useState<Field | null>(null);
@@ -172,7 +176,29 @@ export default function Account() {
     }
   };
 
-  const handleDeleteAccount = () => {
+  const handleResetPassword = async () => {
+    if (!accountEmail) return;
+
+    try {
+      const res = await fetch("/api/auth/forgot-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: accountEmail }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || "Failed to send a link to your email.");
+      } else {
+        alert(data.message);
+      }
+    } catch (err) {
+      alert("Something went wrong. Please try again.");
+    }
+  }
+
+  const handleDeleteAccount = async () => {
     if (tempValueDelete !== deleteConfirmValue) {
       setErrors((prev) => ({
         ...prev,
@@ -180,6 +206,35 @@ export default function Account() {
       }));
 
       return;
+    }
+
+    setLoadingDelete(true);
+
+    try {
+      const res = await fetch("/api/auth/delete-account", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || "Failed to delete account.");
+        return;
+      }
+
+      alert(data.message);
+      setUser(null);
+
+      router.replace("/"); 
+    } catch(error) {
+      console.error("Delete error", error);
+      alert("Something went wrong.");
+    } finally {
+      setLoadingDelete(false);
     }
   }
 
@@ -261,7 +316,20 @@ export default function Account() {
         {/* Password (link only) */}
         <Section
           label="Password"
-          value={<Link href="#">Reset Password</Link>}
+          value={
+            <Button 
+              variant="text" 
+              sx={{
+                padding: 0,
+                "&:hover": {
+                  textDecoration: "underline"
+                }
+              }}
+              onClick={handleResetPassword}
+            >
+              Reset Password
+            </Button>
+          }
           description=""
         />
 
@@ -270,6 +338,7 @@ export default function Account() {
           label="Delete My Account"
           deleteConfirmValue={deleteConfirmValue}
           tempValueDelete={tempValueDelete}
+          loading={loadingDelete}
           error={errors.delete}
           onChange={(e) => {
             if (errors.delete) {
@@ -392,11 +461,12 @@ const EditableSection = ({
 }
 
 const DeleteSection = ({
-  label, deleteConfirmValue, tempValueDelete, error, onChange, onDelete,
+  label, deleteConfirmValue, tempValueDelete, loading, error, onChange, onDelete,
 }: { 
   label: string; 
   deleteConfirmValue: string; 
   tempValueDelete: string;
+  loading: boolean;
   error: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onDelete: () => void; 
@@ -460,14 +530,18 @@ const DeleteSection = ({
       <Button 
         variant="outlined" 
         color="error" 
+        disabled={loading}
         sx={{ 
           mt: 2,
+          minWidth: 192,
           pointerEvents: !tempValueDelete || error ? "none" : "auto",
           opacity: !tempValueDelete || error ? 0.65 : 1
         }}
         onClick={onDelete}
       >
-        {label}
+        {loading ? <CircularProgress size={24} color="inherit" />
+          : label
+        }
       </Button>
     </Box>
   )

@@ -3,12 +3,12 @@ import { getCollection } from "./db";
 import type { Favorite } from "@/types";
 
 async function getFavoritesCollection() {
-    return await getCollection<Favorite>("favorites");
+  return await getCollection<Favorite>("favorites");
 }
 
 export async function getFavoritesByUser(userId: string) {
-    const favorites = await getFavoritesCollection();
-    return await favorites.find({ userId: new ObjectId(userId) }).toArray();
+  const favorites = await getFavoritesCollection();
+  return await favorites.find({ userId: new ObjectId(userId) }).toArray();
 }
 
 export async function isFavorite(userId: string, placeId: string) {
@@ -22,9 +22,14 @@ export async function removeFavorite(userId: string, placeId: string) {
 }
 
 export async function addFavorite(favorite: Favorite) {
-    const favorites = await getFavoritesCollection();
-    const result = await favorites.insertOne(favorite);
+  const favorites = await getFavoritesCollection();
+  const result = await favorites.insertOne(favorite);
 
-    return result.insertedId;
+  return result.insertedId;
+}
+
+export async function deleteUserFavorites(userId: string) { 
+  const favorites = await getFavoritesCollection();
+  return await favorites.deleteMany({ userId: new ObjectId(userId) });
 }
 

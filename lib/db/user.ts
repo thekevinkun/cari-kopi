@@ -4,17 +4,17 @@ import { getCollection } from "./db";
 import type { User } from "@/types";
 
 async function getUsersCollection() {
-    return await getCollection<User>("users");
+  return await getCollection<User>("users");
 }
 
 export async function findUserById(id: string) {
-    const users = await getUsersCollection();
-    return await users.findOne({ _id: new ObjectId(id) });
+  const users = await getUsersCollection();
+  return await users.findOne({ _id: new ObjectId(id) });
 }
 
 export async function findUserByEmail(email: string) {
-    const users = await getUsersCollection();
-    return await users.findOne({ email });
+  const users = await getUsersCollection();
+  return await users.findOne({ email });
 }
 
 export async function findUserByEmailAndCode(email: string, code: string) {
@@ -87,12 +87,17 @@ export async function updatePassword(resetToken: string, hashedPassword: string)
 }
 
 export async function simulateSendEmailVerificationCode(email: string, verificationCode: string) {
-    console.log(`📧 Simulated: Sent verification code ${verificationCode} to ${email}`);
+  console.log(`📧 Simulated: Sent verification code ${verificationCode} to ${email}`);
 }
 
 export async function createUser(user: User) {
-    const users = await getUsersCollection();
-    const result = await users.insertOne(user);
+  const users = await getUsersCollection();
+  const result = await users.insertOne(user);
 
-    return result.insertedId;
+  return result.insertedId;
+}
+
+export async function deleteUserById(id: string) {
+  const users = await getUsersCollection();
+  return await users.deleteOne({ _id: new ObjectId(id) });
 }
