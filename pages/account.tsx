@@ -3,6 +3,7 @@ import Head from "next/head";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useUser } from "@/contexts/UserContext";
+import { useAlert } from "@/contexts/AlertContext";
 import { Box, Typography, Button, TextField, Link, CircularProgress } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 
@@ -40,6 +41,7 @@ export default function Account() {
   const accountName = user?.name?.split(" ")[0] || "Your";
   const accountEmail = user?.email || "";
 
+  const { showAlert } = useAlert();
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
@@ -107,9 +109,9 @@ export default function Account() {
         const data = await res.json();
 
         if (!res.ok) {
-          alert(data.error || "Failed to update your name. Please try again.");
+          showAlert(data.error || "Failed to update your name", "error");
         } else {
-          alert(data.message);
+          showAlert(data.message, "success");
 
           setFormData({ ...formData, [editField]: name });
           setEditField(null);
@@ -117,7 +119,7 @@ export default function Account() {
           setUser(data.user);
         }
       } catch (err) {
-        alert("Something went wrong. Please try again.");
+        showAlert("Something went wrong. Failed to update your name.", "error");
       } finally {
         setLoading(false);
       }
@@ -159,9 +161,9 @@ export default function Account() {
         const data = await res.json();
 
         if (!res.ok) {
-          alert(data.error || "Failed to update your email. Please try again.");
+          showAlert(data.error || "Failed to update your email", "error");
         } else {
-          alert(data.message);
+          showAlert(data.message, "success");
 
           setFormData({ ...formData, [editField]: email });
           setEditField(null);
@@ -169,7 +171,7 @@ export default function Account() {
           setUser(data.user);
         }
       } catch (err) {
-        alert("Something went wrong. Please try again.");
+        showAlert("Something went wrong. Failed to update your email.", "error");
       } finally {
         setLoading(false);
       }
@@ -189,12 +191,12 @@ export default function Account() {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.error || "Failed to send a link to your email.");
+        showAlert(data.error || "Failed to send a link to your email", "error");
       } else {
-        alert(data.message);
+        showAlert(data.message, "success");
       }
     } catch (err) {
-      alert("Something went wrong. Please try again.");
+      showAlert("Something went wrong. Failed to send a link to your email.", "error");
     }
   }
 
@@ -222,17 +224,16 @@ export default function Account() {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.error || "Failed to delete account.");
-        return;
+        showAlert(data.error || "Something went wrong. Failed to delete your account.", "error");
+      } else {
+        showAlert(data.message, "success");
+        setUser(null);
+
+        router.replace("/"); 
       }
-
-      alert(data.message);
-      setUser(null);
-
-      router.replace("/"); 
     } catch(error) {
       console.error("Delete error", error);
-      alert("Something went wrong.");
+      showAlert("Something went wrong. Failed to delete your account.", "error");
     } finally {
       setLoadingDelete(false);
     }

@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef } from "react";
-import polyline from "@mapbox/polyline";
 import dynamic from "next/dynamic";
+import polyline from "@mapbox/polyline";
+import { useAlert } from "@/contexts/AlertContext";
+
 import { Box, Grid, useMediaQuery } from "@mui/material";
 
 import { CenteredLoader } from "@/components";
@@ -39,6 +41,8 @@ function sleep(ms: number) {
 }
 
 const Home = () => {
+  const { showAlert } = useAlert();
+  
   const triedInitialLocation = useRef(false);
   const [location, setLocation] = useState<Coordinates | null>(null);
   const [locationStatus, setLocationStatus] = useState<"idle" | "fetching" | "success" | "failed">("idle");
@@ -101,12 +105,14 @@ const Home = () => {
       const data = await res.json();
 
       if (!res.ok) {
+        showAlert("Sorry, failed to get coffee shop near you", "error");
         console.error("Failed to fetch nearby coffee: ", data.error);
         return;
       }
 
       return data;
     } catch (error) {
+      showAlert("Sorry, failed to get coffee shop near you", "error");
       console.error("Failed to fetch nearby coffe: ", error);
     }
   }
@@ -117,6 +123,7 @@ const Home = () => {
       const { data } = await res.json();
       
       if (!res.ok) {
+        showAlert("Sorry, failed to get shop detail", "error");
         console.error("Failed to get shop detail: ", data.error);
         return;
       }
@@ -131,6 +138,7 @@ const Home = () => {
       }, 250);
       
     } catch (err) {
+      showAlert("Sorry, failed to get shop detail", "error");
       console.error("Failed to get shop detail:", err);
     }
   }
@@ -192,7 +200,13 @@ const Home = () => {
       }>;
     } = await res.json();
 
+    if (!res.ok) {
+      showAlert("Failed to start directions. Please try again later.", "error");
+      return;
+    }
+
     if (!encodedPolyline) {
+      showAlert("Failed to start directions. Please try again later.", "error");
       console.warn("No polyline available for driving route");
       return;
     }
@@ -320,6 +334,7 @@ const Home = () => {
     const { data } = await res.json();
     
     if (!res.ok) {
+      showAlert("Sorry, failed to get shop detail", "error");
       console.error("Failed to get shop detail: ", data.error);
       return;
     }
@@ -387,6 +402,7 @@ const Home = () => {
   const tryGetLocation = async (): Promise<GeolocationPosition | null> => {
     return new Promise((resolve) => {
       if (!navigator.geolocation) {
+        showAlert("Something went wrong. Failed to get your location.", "error");
         console.warn("Geolocation is not supported");
         return resolve(null);
       }
@@ -394,6 +410,7 @@ const Home = () => {
       navigator.geolocation.getCurrentPosition(
         (position) => resolve(position),
         (error) => {
+          showAlert("Something went wrong. Failed to get your current position.", "error");
           console.error("Geolocation error:", error);
           resolve(null);
         },

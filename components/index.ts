@@ -10,6 +10,7 @@ import OpeningHours from "./ShopDetail/OpeningHours";
 import Information from "./ShopDetail/Information";
 import ExtensionList from "./ShopDetail/ExtensionList";
 import UserReviews from "./ShopDetail/UserReviews";
+import TopAlert from "./TopAlert/TopAlert";
 
 export {
     AuthContainer,
@@ -23,5 +24,6 @@ export {
     OpeningHours,
     Information,
     ExtensionList,
-    UserReviews
+    UserReviews,
+    TopAlert
 }

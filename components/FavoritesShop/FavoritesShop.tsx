@@ -1,12 +1,13 @@
 "use client"
 
 import { useEffect, useState, useRef } from "react";
+import { useAlert } from "@/contexts/AlertContext";
 import { AnimatePresence, motion } from "framer-motion";
 import { Box, Button, Card, CardActions, CardContent, CardMedia, 
   CircularProgress, Grid, Rating, Stack, Typography, useMediaQuery 
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import MapIcon from '@mui/icons-material/Map';
+import MapIcon from "@mui/icons-material/Map";
 
 import { ImageWithSkeleton } from "@/components";
 import { FavoritesShopProps } from "@/types";
@@ -19,6 +20,8 @@ const MotionStack = motion.create(Stack);
 const MotionGrid = motion.create(Grid);
 
 const FavoritesShop = ({ favorites, onSelectShop, onFavoriteUpdate, onViewOnMap }: FavoritesShopProps) => {
+  const { showAlert } = useAlert();
+  
   const isTablet = useMediaQuery("(max-width: 900px)");
   const [unsavingId, setUnsavingId] = useState<string | null>(null);
   const favoriteShopRef = useRef<HTMLDivElement>(null);
@@ -37,14 +40,13 @@ const FavoritesShop = ({ favorites, onSelectShop, onFavoriteUpdate, onViewOnMap 
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.error);
+        showAlert(data.error, "error");
       } else {
         onFavoriteUpdate?.();
-        alert(data.message);
       }
 
     } catch (error) {
-      alert("Failed to remove shop. Try again later.");
+      showAlert("Failed to remove shop. Try again later.", "error");
       console.error("Failed to remove shop", error);
     } finally {
       setUnsavingId(null);

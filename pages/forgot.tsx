@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Head from "next/head";
+import { useAlert } from "@/contexts/AlertContext";
 
 import { Alert, Box, Button, Paper, Stack, TextField, Typography } from "@mui/material";
 
@@ -12,6 +13,7 @@ const checkEmailAvailable = async (email: string) => {
 };
 
 const ForgotPassword = () => {
+  const { showAlert } = useAlert();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -57,12 +59,14 @@ const ForgotPassword = () => {
         const data = await res.json();
 
         if (!res.ok) {
-            setErrorMessage(data.error || "Failed to send a link to your email.");
+            console.error(data.error);
+            showAlert(data.error || "Something went wrong. Failed to send a link to your email. Try again later.", "error");
         } else {
-            setMessage(data.message);
+            showAlert(data.message, "success");
         }
-    } catch (err) {
-        setErrorMessage("Something went wrong. Please try again.");
+    } catch (error) {
+        console.error(error);
+        showAlert("Something went wrong. Failed to send a link to your email. Try again later.", "error");
     } finally {
         setLoading(false);
     }

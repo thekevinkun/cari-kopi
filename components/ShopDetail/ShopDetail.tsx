@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState, useRef } from "react";
+import { useAlert } from "@/contexts/AlertContext";
 import { AnimatePresence, motion } from "framer-motion";
 import { Box, Button, Card, CardContent, CircularProgress, IconButton, useMediaQuery } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
@@ -10,7 +11,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 
 import { 
   PhotoSlide, TitleRating, OpeningHours, 
-  Information, ExtensionList, UserReviews 
+  Information, ExtensionList, UserReviews, TopAlert 
 } from "@/components";
 
 import { StyledStack, scrollStyle } from "./styles";
@@ -23,6 +24,8 @@ const MotionCard = motion.create(Card);
 
 const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail, 
   onFavoriteUpdate, onStartDirections }: ShopDetailProps) => {
+  
+  const { showAlert } = useAlert();
 
   const [isFavorite, setIsFavorite] = useState(false);
   const [checkingFavorite, setCheckingFavorite] = useState(true);
@@ -36,7 +39,7 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail,
   const [shopDetailHeight, setShopDetailHeight] = useState("100%");
 
   const weekdayText = convertSerpApiHoursToWeekdayText(shop.hours ?? []);
-  const mergedExtensions = mergeExtensionsWithUnsupported(shop.extensions || [], shop.unsupported_extensions || []);
+  const mergedExtensions = mergeExtensionsWithUnsupported(shop.extensions || [], shop.unsupported_extensions || []);  
 
   const handleAddFavorite = async () => {
     setLoadingFavorite(true);
@@ -53,16 +56,16 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail,
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.error);
+        showAlert(data.error, "error");
       } else {
         setIsFavorite(true);
         onFavoriteUpdate?.();
-        alert(data.message);
+        showAlert(data.message, "success");
       }
 
     } catch (error) {
-      alert("Failed to add shop. Try again later.");
-      console.error("Failed to add shop", error);
+      showAlert("Something went wrong. Failed to add shop to favorites.", "error");
+      console.error("Failed to add shop to favorites", error);
     } finally {
       setLoadingFavorite(false);
     }
@@ -83,15 +86,15 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail,
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.error);
+        showAlert(data.error, "error");
       } else {
         setIsFavorite(false);
         onFavoriteUpdate?.();
-        alert(data.message);
+        showAlert(data.message, "success");
       }
 
     } catch (error) {
-      alert("Failed to remove shop. Try again later.");
+      showAlert("Something went wrong. Failed to remove shop.", "error");
       console.error("Failed to remove shop", error);
     } finally {
       setLoadingFavorite(false);
@@ -242,7 +245,7 @@ const ShopDetail = ({ shop, showShopDetail, onCloseShopDetail,
                   <Button 
                     variant="contained"
                     sx={{ fontSize: 12, width: "100%" }}
-                    disabled={loadingFavorite}
+                    disabled={loadingDirections}
                     onClick={handleStartDirections}
                   >
                     {loadingDirections ? 

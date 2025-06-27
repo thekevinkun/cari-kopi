@@ -3,6 +3,7 @@ import { GetServerSideProps } from "next";
 import Head from "next/head";
 import dynamic from "next/dynamic";
 import { useUser } from "@/contexts/UserContext";
+import { useAlert } from "@/contexts/AlertContext";
 
 import { motion } from "framer-motion";
 import {
@@ -13,7 +14,7 @@ import MapIcon from "@mui/icons-material/Map";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
 import { ImageWithSkeleton } from "@/components";
-import type { MinimapProps, SerpShopDetail } from "@/types";
+import type { SerpShopDetail } from "@/types";
 
 import { verifyToken } from "@/lib/db/auth";
 import { cardVariants } from "@/utils/motion";
@@ -48,6 +49,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 const FavoritesPage = () => {
   const { user } = useUser();
+  const { showAlert } = useAlert();
 
   const isDesktop = useMediaQuery("(min-width:900px)");
 
@@ -106,14 +108,13 @@ const FavoritesPage = () => {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.error);
+        showAlert(data.error || "Failed to remove shop", "error");
       } else {
         setFavorites((prev) => prev.filter((s) => s.place_id !== placeId));
-        alert(data.message);
+        showAlert(data.message, "success");
       }
-
     } catch (error) {
-      alert("Failed to remove shop. Try again later.");
+      showAlert("Something went wrong. Failed to remove shop.");
       console.error("Failed to remove shop", error);
     } finally {
       setUnsavingId(null);
@@ -323,10 +324,11 @@ const FavoritesPage = () => {
 
         {(showShopDetail && selectedShop) &&
             <ShopDetail 
-                shop={selectedShop}
-                showShopDetail={showShopDetail}
-                onCloseShopDetail={() => setShowShopDetail(false)}  
-                onFavoriteUpdate={refreshFavorites}
+              shop={selectedShop}
+              showShopDetail={showShopDetail}
+              onCloseShopDetail={() => setShowShopDetail(false)}  
+              onFavoriteUpdate={refreshFavorites}
+              onStartDirections={() => {}}
             />
         }
 

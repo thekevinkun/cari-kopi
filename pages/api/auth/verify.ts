@@ -41,5 +41,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   res.setHeader("Set-Cookie", cookie);
 
-  return res.status(200).json({ message: "Your email has been verified. You can now log in." });
+  return res.status(200).json({ message: "Congratulations Your Account Successfully Created!" });
 }

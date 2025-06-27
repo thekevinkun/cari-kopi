@@ -4,6 +4,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 import { useUser } from "@/contexts/UserContext";
+import { useAlert } from "@/contexts/AlertContext";
 
 import { Alert, Box, Button, Paper, 
   Stack, TextField, Typography
@@ -48,6 +49,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 const VerifyPage = ({ email }: { email: string }) => {
   const router = useRouter();
   const { user, refreshUser } = useUser();
+  const { showAlert } = useAlert();
 
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [message, setMessage] = useState("");
@@ -92,13 +94,18 @@ const VerifyPage = ({ email }: { email: string }) => {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to resend");
 
-      setMessage("Verification code resent to your email.");
-      setCode(["", "", "", "", "", ""]);
-      setResendTimer(60); // Restart timer
-    } catch (err: any) {
-      setError(err.message);
+      if (!res.ok) {
+        console.error(data.error);
+        showAlert(data.error || "Something went wrong. Failed to resent verification code.", "error");
+      } else {
+        showAlert("Verification code resent to your email.", "success");
+        setCode(["", "", "", "", "", ""]);
+        setResendTimer(60); // Restart timer
+      }
+    } catch (error) {
+      console.error(error);
+      showAlert("Something went wrong. Failed to resent verification code.", "error");
     } finally {
       setResending(false);
     }
@@ -124,20 +131,24 @@ const VerifyPage = ({ email }: { email: string }) => {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Verification failed");
+      if (!res.ok) {
+        console.error(data.error);
+        showAlert(data.error || "Something went wrong. Failed to verified your account.", "error");
+      } else {
+        showAlert(data.message, "success");
 
-      setMessage("Email verified successfully!");
+        await refreshUser();
 
-      await refreshUser();
+        Cookies.remove("verify_email");
+        Cookies.set("greeting_access", "true", { expires: 1 / 92 });
 
-      Cookies.remove("verify_email");
-      Cookies.set("greeting_access", "true", { expires: 1 / 92 });
-
-      setTimeout(() => {
-        router.push("/greeting?welcome=true");
-      }, 1500);
-    } catch (err: any) {
-      setError(err.message);
+        setTimeout(() => {
+          router.push("/greeting?welcome=true");
+        }, 1500);
+      }
+    } catch (error) {
+      console.error(error);
+      showAlert("Something went wrong. Failed to verified your account.", "error");
     }
   };
 

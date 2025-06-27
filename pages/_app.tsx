@@ -7,7 +7,7 @@ import { useUser } from "@/contexts/UserContext";
 import Head from "next/head";
 import { CssBaseline } from "@mui/material";
 
-import { UserProvider } from "@/contexts";
+import { AlertProvider, UserProvider } from "@/contexts";
 import { Navbar } from "@/components";
 
 const App = ({ Component, pageProps }: AppProps) => {
@@ -33,10 +33,12 @@ const App = ({ Component, pageProps }: AppProps) => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <CssBaseline />
-      <UserProvider>
-        {!hideNavbar && <Navbar />}
-        <Component {...pageProps} />
-      </UserProvider> 
+      <AlertProvider>
+        <UserProvider>
+          {!hideNavbar && <Navbar />}
+          <Component {...pageProps} />
+        </UserProvider> 
+      </AlertProvider>
     </>
   )
 }

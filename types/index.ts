@@ -1,5 +1,8 @@
 import { ObjectId } from "mongodb";
 import type { LatLngExpression } from "leaflet";
+import { SyntheticEvent } from "react";
+import { SnackbarCloseReason } from '@mui/material/Snackbar';
+
 export interface User {
   _id?: ObjectId;
   name: string;
@@ -272,6 +275,19 @@ export type TargetShop = {
   placeId: string;
   lat: number;
   lng: number;
+}
+
+export type AlertType = "success" | "error";
+
+export type AlertContextType = {
+  showAlert: (message: string, type?: AlertType) => void;
+};
+
+export type TopAlertProps = {
+  open: boolean;
+  message: string;
+  type?: AlertType;
+  handleClose: (event?: React.SyntheticEvent | Event, reason?: SnackbarCloseReason,) => void;
 }
 
 export type SkeletonImageProps = {

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useAlert } from "@/contexts/AlertContext";
 
 import { Alert, Box, Button, CircularProgress, Paper, Stack, TextField, Typography } from "@mui/material";
 
@@ -41,12 +42,12 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 const ResetPassword = ({ token }: { token: string }) => {
   const router = useRouter();
+  const { showAlert } = useAlert();
 
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const [message, setMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
     
@@ -63,7 +64,7 @@ const ResetPassword = ({ token }: { token: string }) => {
     const newErrors: typeof errors = {};
 
     if (!token) {
-        setErrorMessage("Invalid token");
+        showAlert("Invalid token", "error");
         return;
     }
 
@@ -90,16 +91,18 @@ const ResetPassword = ({ token }: { token: string }) => {
         const data = await res.json();
 
         if (!res.ok) {
-            setErrorMessage(data.error || "Failed to reset your password. Please try again.");
+            console.error(data.error);
+            showAlert(data.error || "Something went wrong. Failed to reset your password. Please try again later.", "error");
         } else {
-            setMessage(data.message);
+            showAlert(data.message, "success");
 
             setTimeout(() => {
                 router.replace("/login");
             }, 1000);
         }
-    } catch (err) {
-        setErrorMessage("Something went wrong. Please try again.");
+    } catch (error) {
+        console.error(error);
+        showAlert("Something went wrong. Failed to reset your password. Please try again later.", "error");
     } finally {
         setLoading(false);
     }
@@ -194,12 +197,6 @@ const ResetPassword = ({ token }: { token: string }) => {
                 {errorMessage && (
                     <Alert severity="error" sx={{ mb: 2 }}>
                         {errorMessage}
-                    </Alert>
-                )}
-
-                {message && (
-                    <Alert severity="success" sx={{ mb: 2 }}>
-                        {message}
                     </Alert>
                 )}
 

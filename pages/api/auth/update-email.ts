@@ -49,7 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.setHeader("Set-Cookie", cookie);
 
     return res.status(200).json({
-        message: "Update email success.",
+        message: "Update email success",
         user: {
             id: updatedUser._id.toString(),
             name: updatedUser.name,
