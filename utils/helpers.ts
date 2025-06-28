@@ -13,7 +13,11 @@ export const getLocationPermissionInstructions = (): string => {
   const ua = navigator.userAgent.toLowerCase();
 
   if (/iphone|ipad|ipod/.test(ua)) {
-    if (ua.includes("safari") && !ua.includes("crios") && !ua.includes("fxios")) {
+    if (
+      ua.includes("safari") &&
+      !ua.includes("crios") &&
+      !ua.includes("fxios")
+    ) {
       return "Location permission is blocked.\n\nGo to Settings > Privacy & Security > Location Services > Safari Websites";
     }
     if (ua.includes("crios")) {
@@ -51,14 +55,16 @@ export const getLocationPermissionInstructions = (): string => {
 };
 
 export const formatShortAddress = (address: OSMAddress): string => {
-  const street = address.road || address.residential || address.pedestrian || "";
-  const suburb = address.suburb || address.neighbourhood || address.village || "";
+  const street =
+    address.road || address.residential || address.pedestrian || "";
+  const suburb =
+    address.suburb || address.neighbourhood || address.village || "";
   const city = address.city || address.town || address.county || "";
   const state = address.state || "";
   const country = address.country || "";
 
   return [street, suburb, city, state, country].filter(Boolean).join(", ");
-}
+};
 
 export const parseSerpAddress = (
   fullAddress: string,
@@ -73,7 +79,8 @@ export const parseSerpAddress = (
     let city = "";
     for (let i = parts.length - 2; i >= 0; i--) {
       const part = parts[i];
-      if (!/\d/.test(part)) { // skip parts with numbers like ZIP codes
+      if (!/\d/.test(part)) {
+        // skip parts with numbers like ZIP codes
         city = part;
         break;
       }
@@ -87,14 +94,24 @@ export const parseSerpAddress = (
   }
 
   return fullAddress;
-}
+};
 
 const capitalize = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
-}
+};
 
-export const convertSerpApiHoursToWeekdayText = (hours: { [key: string]: string }[]): string[] => {
-  const orderedDays = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+export const convertSerpApiHoursToWeekdayText = (
+  hours: { [key: string]: string }[]
+): string[] => {
+  const orderedDays = [
+    "sunday",
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+  ];
 
   const dayMap = hours.reduce((acc, obj) => {
     const [day, time] = Object.entries(obj)[0];
@@ -102,8 +119,8 @@ export const convertSerpApiHoursToWeekdayText = (hours: { [key: string]: string 
     return acc;
   }, {} as Record<string, string>);
 
-  return orderedDays.map(day => dayMap[day] || `${capitalize(day)}: Closed`);
-}
+  return orderedDays.map((day) => dayMap[day] || `${capitalize(day)}: Closed`);
+};
 
 export const mergeExtensionsWithUnsupported = (
   extensions: ExtensionData[],
@@ -136,7 +153,7 @@ export const mergeExtensionsWithUnsupported = (
   }
 
   return result;
-}
+};
 
 export const getStarsSVG = (rating: number, isMobile: boolean): string => {
   const fullStars = Math.floor(rating);
@@ -168,7 +185,7 @@ export const getStarsSVG = (rating: number, isMobile: boolean): string => {
   const empty = emptyStar.repeat(emptyStars);
 
   return `<div style="display:flex;align-items:center">${full}${half}${empty}</div>`;
-}
+};
 
 const emojiMap: { emoji: string; keywords: string[] }[] = [
   { emoji: "☕", keywords: ["coffee"] },
@@ -205,7 +222,7 @@ const emojiMap: { emoji: string; keywords: string[] }[] = [
 
   { emoji: "🎵", keywords: ["music", "live music"] },
   { emoji: "⚽️", keywords: ["sport", "football"] },
-  
+
   { emoji: "🎓", keywords: ["college", "student"] },
   { emoji: "👥", keywords: ["group", "groups"] },
   { emoji: "🧳", keywords: ["tourist"] },
@@ -235,27 +252,27 @@ export const getEmoji = (label: string, isUnsupported = false): string => {
   }
 
   return isUnsupported ? "❌" : "✔️";
-}
+};
 
 export const formatTitle = (key: string): string => {
   return key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-}
+};
 
 export const toTitleCase = (str: string): string => {
   return str
     .toLowerCase()
     .split(" ")
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
-}
+};
 
 export const generateVerificationCode = (): string => {
   return Math.floor(100000 + Math.random() * 900000).toString();
-}
+};
 
 export const getGreeting = (hour: number) => {
   if (hour >= 5 && hour < 12) return "Good Morning";
   if (hour >= 12 && hour < 17) return "Good Afternoon";
   if (hour >= 17 && hour < 23) return "Good Evening";
   return "You're up late";
-}
+};

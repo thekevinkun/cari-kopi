@@ -1,13 +1,27 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { useUser } from "@/contexts/UserContext";
-import { Box, CardActions, CardContent, ClickAwayListener, 
-  Divider, Link as MUILink, Typography, useMediaQuery } 
-from "@mui/material";
+import {
+  Box,
+  CardActions,
+  CardContent,
+  ClickAwayListener,
+  Divider,
+  Link as MUILink,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 
-import { StyledAppBar, StyledToolbar, StyledTitleTypography,
-  MenuButton, MenuBox, MenuCard, WhiteOutlinedButton } from "./styles";
+import {
+  StyledAppBar,
+  StyledToolbar,
+  StyledTitleTypography,
+  MenuButton,
+  MenuBox,
+  MenuCard,
+  WhiteOutlinedButton,
+} from "./styles";
 
 import { getGreeting } from "@/utils/helpers";
 
@@ -19,7 +33,7 @@ const Navbar = () => {
 
   const isTablet = useMediaQuery("(max-width: 900px)");
   const isMobile = useMediaQuery("(max-width: 600px)");
-  
+
   const firstName = user?.name?.split(" ")[0];
   const lastName = user?.name?.split(" ")[1];
 
@@ -29,60 +43,60 @@ const Navbar = () => {
     <StyledAppBar position="static">
       <StyledToolbar>
         <MUILink href="/" underline="none" sx={{ color: "inherit" }}>
-          <StyledTitleTypography variant="h5">
-            Carikopi
-          </StyledTitleTypography>
+          <StyledTitleTypography variant="h5">Carikopi</StyledTitleTypography>
         </MUILink>
-        
-        {!loading &&
-        <>
-          {user &&
-            <Typography 
-              component="h1" 
-              variant={isMobile ? "body2" : "body1"} 
-              sx={{ 
-                marginLeft: isMobile ? "auto" : "unset",
-                paddingRight: isMobile ? 1.5 : 0
-              }} 
-            > 
-              {greeting},{" "} 
-              <Typography 
-                component="span" 
-                variant={isMobile ? "body2" : "body1"} 
-                sx={{ 
-                  fontWeight: 700, 
-                  display: isMobile ? "block" : "inline" 
+
+        {!loading && (
+          <>
+            {user && (
+              <Typography
+                component="h1"
+                variant={isMobile ? "body2" : "body1"}
+                sx={{
+                  marginLeft: isMobile ? "auto" : "unset",
+                  paddingRight: isMobile ? 1.5 : 0,
                 }}
               >
-                {firstName}
-              </Typography>
-            </Typography>
-          }
-          
-          <Box display="flex">
-            {user ? 
-              <Box display="flex" alignItems="center" gap={1}>
-                <MenuButton 
-                  ref={buttonRef}
-                  variant="outlined"
-                  onClick={() => setToggleMenu((prev) => !prev)}
+                {greeting},{" "}
+                <Typography
+                  component="span"
+                  variant={isMobile ? "body2" : "body1"}
+                  sx={{
+                    fontWeight: 700,
+                    display: isMobile ? "block" : "inline",
+                  }}
                 >
-                  <PersonIcon sx={{ fontSize: isMobile ? "1.55rem" : "1.75rem" }}/>
-                </MenuButton> 
-              </Box>
-            :
-              <MUILink href="/login">
-                <WhiteOutlinedButton variant="outlined">
-                  Login
-                </WhiteOutlinedButton>
-              </MUILink>
-            }
-          </Box>
-        </>
-        }
+                  {firstName}
+                </Typography>
+              </Typography>
+            )}
 
-        {(user && toggleMenu) &&
-          <ClickAwayListener 
+            <Box display="flex">
+              {user ? (
+                <Box display="flex" alignItems="center" gap={1}>
+                  <MenuButton
+                    ref={buttonRef}
+                    variant="outlined"
+                    onClick={() => setToggleMenu((prev) => !prev)}
+                  >
+                    <PersonIcon
+                      sx={{ fontSize: isMobile ? "1.55rem" : "1.75rem" }}
+                    />
+                  </MenuButton>
+                </Box>
+              ) : (
+                <MUILink href="/login">
+                  <WhiteOutlinedButton variant="outlined">
+                    Login
+                  </WhiteOutlinedButton>
+                </MUILink>
+              )}
+            </Box>
+          </>
+        )}
+
+        {user && toggleMenu && (
+          <ClickAwayListener
             onClickAway={(event) => {
               if (
                 buttonRef.current &&
@@ -97,20 +111,25 @@ const Navbar = () => {
               <MenuCard>
                 <CardContent
                   sx={(theme) => ({
-                    padding: theme.spacing(0, 0)
+                    padding: theme.spacing(0, 0),
                   })}
-                > 
-                  <Box 
-                    display="flex" 
+                >
+                  <Box
+                    display="flex"
                     flexDirection="column"
                     sx={(theme) => ({
                       padding: theme.spacing(2, 4),
-                      [theme.breakpoints.down('sm')]: {
+                      [theme.breakpoints.down("sm")]: {
                         padding: theme.spacing(2, 3),
-                      }
+                      },
                     })}
                   >
-                    <Typography gutterBottom variant="body1" color="#804A26" fontWeight="bold">
+                    <Typography
+                      gutterBottom
+                      variant="body1"
+                      color="#804A26"
+                      fontWeight="bold"
+                    >
                       {firstName} {lastName}
                     </Typography>
 
@@ -119,18 +138,18 @@ const Navbar = () => {
                     </Typography>
                   </Box>
 
-                  <Divider 
-                    sx={{ 
+                  <Divider
+                    sx={{
                       borderColor: "#804A26",
                     }}
                   />
-                  
-                  <Box 
+
+                  <Box
                     sx={(theme) => ({
-                      padding: theme.spacing(1, 0)
+                      padding: theme.spacing(1, 0),
                     })}
                   >
-                    {isTablet &&
+                    {isTablet && (
                       <MUILink
                         href="/favorites"
                         underline="none"
@@ -138,27 +157,37 @@ const Navbar = () => {
                           display: "flex",
                           padding: theme.spacing(1.25, 2),
                           alignItems: "center",
-                          color: router.pathname.startsWith("/favorites") ? "#804A26" : "inherit",
-                          pointerEvents: router.pathname.startsWith("/favorites") ? "none" : "auto",
+                          color: router.pathname.startsWith("/favorites")
+                            ? "#804A26"
+                            : "inherit",
+                          pointerEvents: router.pathname.startsWith(
+                            "/favorites"
+                          )
+                            ? "none"
+                            : "auto",
                           transition: "all 0.2s ease",
                           "&:hover": {
                             backgroundColor: "rgba(128, 74, 38, 0.75)",
                             "& .hover-text": {
                               fontWeight: "bold",
-                            }
+                            },
                           },
                         })}
                         onClick={() => setToggleMenu((prev) => !prev)}
                       >
-                        <Typography 
-                          variant="body1" 
-                          fontWeight={`${router.pathname.startsWith("/favorites") ? "bold" : "normal"}`}
+                        <Typography
+                          variant="body1"
+                          fontWeight={`${
+                            router.pathname.startsWith("/favorites")
+                              ? "bold"
+                              : "normal"
+                          }`}
                           className="hover-text"
                         >
                           Favorites
                         </Typography>
                       </MUILink>
-                    }
+                    )}
 
                     <MUILink
                       href="/account"
@@ -167,21 +196,29 @@ const Navbar = () => {
                         display: "flex",
                         padding: theme.spacing(1.25, 2),
                         alignItems: "center",
-                        color: router.pathname.startsWith("/account") ? "#804A26" : "inherit",
-                        pointerEvents: router.pathname.startsWith("/account") ? "none" : "auto",
+                        color: router.pathname.startsWith("/account")
+                          ? "#804A26"
+                          : "inherit",
+                        pointerEvents: router.pathname.startsWith("/account")
+                          ? "none"
+                          : "auto",
                         transition: "all 0.2s ease",
                         "&:hover": {
                           backgroundColor: "rgba(128, 74, 38, 0.75)",
                           "& .hover-text": {
                             fontWeight: "bold",
-                          }
+                          },
                         },
                       })}
                       onClick={() => setToggleMenu((prev) => !prev)}
                     >
-                      <Typography 
+                      <Typography
                         variant="body1"
-                        fontWeight={`${router.pathname.startsWith("/account") ? "bold" : "normal"}`} 
+                        fontWeight={`${
+                          router.pathname.startsWith("/account")
+                            ? "bold"
+                            : "normal"
+                        }`}
                         className="hover-text"
                       >
                         Account
@@ -189,13 +226,13 @@ const Navbar = () => {
                     </MUILink>
                   </Box>
                 </CardContent>
-                  
+
                 <Divider />
-                
+
                 <CardActions
                   sx={(theme) => ({
                     display: "block",
-                    padding: theme.spacing(1, 0, 0, 0)
+                    padding: theme.spacing(1, 0, 0, 0),
                   })}
                 >
                   <MUILink
@@ -211,21 +248,23 @@ const Navbar = () => {
                         backgroundColor: "rgba(230, 230, 230, 0.5)",
                         "& .hover-text": {
                           fontWeight: "bold",
-                        }
+                        },
                       },
                     })}
                     onClick={() => setToggleMenu(false)}
                   >
-                    <Typography variant="body1" className="hover-text">Logout</Typography>
+                    <Typography variant="body1" className="hover-text">
+                      Logout
+                    </Typography>
                   </MUILink>
-                </CardActions> 
+                </CardActions>
               </MenuCard>
             </MenuBox>
           </ClickAwayListener>
-        }
+        )}
       </StyledToolbar>
     </StyledAppBar>
-  )
-}
+  );
+};
 
 export default Navbar;

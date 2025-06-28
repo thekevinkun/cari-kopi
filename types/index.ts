@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 import type { LatLngExpression } from "leaflet";
 import { SyntheticEvent } from "react";
-import { SnackbarCloseReason } from '@mui/material/Snackbar';
+import { SnackbarCloseReason } from "@mui/material/Snackbar";
 
 export interface User {
   _id?: ObjectId;
@@ -18,36 +18,36 @@ export interface User {
 
 export type Favorite = {
   _id?: ObjectId;
-  userId: ObjectId
+  userId: ObjectId;
   placeId: string;
   createdAt: Date;
-}
+};
 
 export type UserLogin = {
   id: string;
-  name: string
+  name: string;
   email: string;
-}
+};
 
 export type UserContextType = {
   user: UserLogin | null;
   setUser: (user: UserLogin | null) => void;
   loading: boolean;
   refreshUser: () => Promise<void>;
-}
+};
 
 export type Coordinates = {
   lat: number;
   lng: number;
-}
+};
 
 export type NearbyData = {
   fromCache: boolean;
   page: number;
-  totalPages: number,
-  totalResults: number,
-  results: Shop[],
-}
+  totalPages: number;
+  totalResults: number;
+  results: Shop[];
+};
 
 export type Shop = {
   placeId: string;
@@ -56,9 +56,9 @@ export type Shop = {
   rating: number;
   thumbnail: string;
   geometry: {
-    location: Coordinates
-  }
-}
+    location: Coordinates;
+  };
+};
 
 export type ShopMarkerProps = {
   shop: Shop;
@@ -75,13 +75,13 @@ export type GoogleReviewItemProps = {
   relative_time_description?: string;
   text: string;
   time: number;
-}
+};
 
 export type SerpPhotosProps = {
   title?: string;
   thumbnail?: string;
   serpapi_thumbnail?: string;
-}
+};
 
 export type SerpReviewItemProps = {
   username: string;
@@ -90,7 +90,7 @@ export type SerpReviewItemProps = {
   description: string;
   link: string;
   images?: SerpPhotosProps[];
-}
+};
 
 export type ExtensionData = {
   [category: string]: string[];
@@ -116,7 +116,7 @@ export type GoogleShopDetail = {
   price_level?: number;
   types?: string[];
   vicinity?: string;
-  
+
   address_components?: Array<{
     long_name: string;
     short_name: string;
@@ -143,7 +143,7 @@ export type GoogleShopDetail = {
   reviews?: GoogleReviewItemProps[];
 
   photos?: string[];
-}
+};
 
 export interface SerpShopDetail {
   place_id: string;
@@ -156,8 +156,8 @@ export interface SerpShopDetail {
   website?: string;
   open_state?: string;
   gps_coordinates: {
-    latitude: number,
-    longitude: number
+    latitude: number;
+    longitude: number;
   };
   hours?: { [day: string]: string }[];
   type?: string[];
@@ -170,8 +170,8 @@ export interface SerpShopDetail {
   }[];
   rating_summary?: { stars: number; amount: number }[];
   user_reviews?: {
-    summary: [],
-    most_relevant: SerpReviewItemProps[]
+    summary: [];
+    most_relevant: SerpReviewItemProps[];
   };
   popular_times?: {
     graph_results?: {
@@ -219,19 +219,21 @@ export type MapProps = {
   tempShops: Shop[];
   onSelectShop: (shop: Shop) => void;
   targetShop?: TargetShop | null;
-  suppressMarkers?: boolean; 
+  suppressMarkers?: boolean;
   directionLine?: LatLngExpression[] | null;
   destinationShop?: Shop | null;
-}
+};
 
 export type MinimapProps = {
-  shop: { 
-    title: string, 
-    lat: number, 
-    lng: number 
-  },
-  onClose: () => void
-}
+  userLocation: Coordinates | null;
+  shop: {
+    title: string;
+    lat: number;
+    lng: number;
+  };
+  directionLine?: LatLngExpression[] | null;
+  onClose: () => void;
+};
 
 export type ShopDetailProps = {
   shop: SerpShopDetail;
@@ -239,14 +241,14 @@ export type ShopDetailProps = {
   onCloseShopDetail: () => void;
   onFavoriteUpdate: () => void;
   onStartDirections: (shop: SerpShopDetail) => void;
-}
+};
 
 export type FavoritesShopProps = {
   favorites: SerpShopDetail[];
   onSelectShop: (shop: SerpShopDetail) => void;
   onFavoriteUpdate: () => void;
   onViewOnMap: (shop: SerpShopDetail) => void;
-}
+};
 
 type TravelInfo = {
   duration: string;
@@ -260,7 +262,7 @@ type TravelStep = {
   duration: string | null;
   distance: string | null;
   maneuver: string | null;
-}
+};
 
 export type DirectionInfoProps = {
   visible: boolean;
@@ -269,13 +271,13 @@ export type DirectionInfoProps = {
   directionInfo: Partial<Record<Mode, TravelInfo>>;
   directionSteps: TravelStep[];
   onCloseDirections: () => void;
-}
+};
 
 export type TargetShop = {
   placeId: string;
   lat: number;
   lng: number;
-}
+};
 
 export type AlertType = "success" | "error";
 
@@ -287,8 +289,11 @@ export type TopAlertProps = {
   open: boolean;
   message: string;
   type?: AlertType;
-  handleClose: (event?: React.SyntheticEvent | Event, reason?: SnackbarCloseReason,) => void;
-}
+  handleClose: (
+    event?: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason
+  ) => void;
+};
 
 export type SkeletonImageProps = {
   src: string;
@@ -312,11 +317,11 @@ export type ExplorePanelProps = {
   onNextPage: () => void;
   onShowLessPage: () => void;
   onSelectSearchResult: (placeId: string) => void;
-}
+};
 
 export type SearchBarProps = {
   onSelectSearchResult: (placeId: string) => void;
-}
+};
 
 export type OSMAddress = {
   road?: string;
@@ -348,4 +353,4 @@ export type PlaceResponse = {
     width: number;
     html_attributions: string[];
   }[];
-}
+};

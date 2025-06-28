@@ -3,15 +3,22 @@ import { Box, Skeleton } from "@mui/material";
 
 import type { SkeletonImageProps } from "@/types";
 
-const ImageWithSkeleton = ({ src, alt, width = "100%", height, style, onClickImage }: SkeletonImageProps) => {
+const ImageWithSkeleton = ({
+  src,
+  alt,
+  width = "100%",
+  height,
+  style,
+  onClickImage,
+}: SkeletonImageProps) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   return (
-    <Box 
-      position="relative" 
-      width={width} 
-      height={height} 
+    <Box
+      position="relative"
+      width={width}
+      height={height}
       sx={{ overflow: "hidden" }}
     >
       {loading && !error && (

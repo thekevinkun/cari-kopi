@@ -17,10 +17,10 @@ export const greetingVariants = {
 };
 
 export const textVariants = (direction?: string, delay?: number) => ({
-  hidden: { 
+  hidden: {
     opacity: 0,
     x: direction === "right" ? 20 : direction === "left" ? -20 : 0,
-    y: direction === "up" ? 20 : direction === "bottom" ? -20 : 0
+    y: direction === "up" ? 20 : direction === "bottom" ? -20 : 0,
   },
   show: {
     opacity: 1,
@@ -29,7 +29,7 @@ export const textVariants = (direction?: string, delay?: number) => ({
     transition: {
       type: "spring",
       duration: 1,
-      delay
+      delay,
     },
   },
 });
@@ -58,7 +58,7 @@ export const cardVariants = (delay?: number) => ({
     transition: {
       type: "spring",
       duration: 0.4,
-      delay
+      delay,
     },
   },
 });
@@ -86,15 +86,17 @@ export const cardSlideVariants = (direction: String) => ({
       type: "tween",
       ease: "easeInOut",
     },
-  }
+  },
 });
 
-export const cardDetailVariants = (screen?: "mobile" | "tablet" | "desktop" | null) => ({
+export const cardDetailVariants = (
+  screen?: "mobile" | "tablet" | "desktop" | null
+) => ({
   hidden: {
     opacity: 0,
     scale: screen === "desktop" ? 0.95 : 1,
     x: screen === "tablet" ? "-100%" : 0,
-    y: screen === "mobile" ? "100%" : 0
+    y: screen === "mobile" ? "100%" : 0,
   },
   show: {
     opacity: 1,

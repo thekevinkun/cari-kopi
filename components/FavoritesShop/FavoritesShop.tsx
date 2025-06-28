@@ -1,10 +1,21 @@
-"use client"
+"use client";
 
 import { useEffect, useState, useRef } from "react";
 import { useAlert } from "@/contexts/AlertContext";
 import { AnimatePresence, motion } from "framer-motion";
-import { Box, Button, Card, CardActions, CardContent, CardMedia, 
-  CircularProgress, Grid, Rating, Stack, Typography, useMediaQuery 
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+  CircularProgress,
+  Grid,
+  Rating,
+  Stack,
+  Typography,
+  useMediaQuery,
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import MapIcon from "@mui/icons-material/Map";
@@ -19,9 +30,14 @@ import { parseSerpAddress } from "@/utils/helpers";
 const MotionStack = motion.create(Stack);
 const MotionGrid = motion.create(Grid);
 
-const FavoritesShop = ({ favorites, onSelectShop, onFavoriteUpdate, onViewOnMap }: FavoritesShopProps) => {
+const FavoritesShop = ({
+  favorites,
+  onSelectShop,
+  onFavoriteUpdate,
+  onViewOnMap,
+}: FavoritesShopProps) => {
   const { showAlert } = useAlert();
-  
+
   const isTablet = useMediaQuery("(max-width: 900px)");
   const [unsavingId, setUnsavingId] = useState<string | null>(null);
   const favoriteShopRef = useRef<HTMLDivElement>(null);
@@ -44,14 +60,13 @@ const FavoritesShop = ({ favorites, onSelectShop, onFavoriteUpdate, onViewOnMap 
       } else {
         onFavoriteUpdate?.();
       }
-
     } catch (error) {
       showAlert("Failed to remove shop. Try again later.", "error");
       console.error("Failed to remove shop", error);
     } finally {
       setUnsavingId(null);
     }
-  }; 
+  };
 
   useEffect(() => {
     if (isTablet || !favoriteShopRef.current) return;
@@ -65,8 +80,7 @@ const FavoritesShop = ({ favorites, onSelectShop, onFavoriteUpdate, onViewOnMap 
 
     const parentElement = favoriteShopRef.current?.parentNode as Element | null;
 
-    if (parentElement)
-      observer.observe(parentElement)
+    if (parentElement) observer.observe(parentElement);
 
     // Run once on mount
     const topOffset = favoriteShopRef.current!.getBoundingClientRect().top;
@@ -86,40 +100,44 @@ const FavoritesShop = ({ favorites, onSelectShop, onFavoriteUpdate, onViewOnMap 
         exit="exit"
         ref={favoriteShopRef}
         sx={(theme) => ({
-            py: 1,
-            px: 1,
-            height: favoriteShopHeight,
-            overflow: "hidden",
-            display: "flex",
-            flexDirection: "column",
-            [theme.breakpoints.down('md')]: {
-              display: "none"
-            },
-          })
-        }
+          py: 1,
+          px: 1,
+          height: favoriteShopHeight,
+          overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
+          [theme.breakpoints.down("md")]: {
+            display: "none",
+          },
+        })}
       >
         <Box display="flex" alignItems="center" gap={0.5} mb={1}>
           <FavoriteIcon fontSize="small" sx={{ color: "#ba0001" }} />
 
           <Typography variant="body1" fontWeight="bold">
-            {favorites && favorites.length > 0 ? 
-            "Your Favorites" 
-            : 
-            "Ready to discover new favorites near you?"}
+            {favorites && favorites.length > 0
+              ? "Your Favorites"
+              : "Ready to discover new favorites near you?"}
           </Typography>
-        </Box>     
+        </Box>
 
-        {(favorites && favorites.length > 0) &&
-          <Box sx={{
+        {favorites && favorites.length > 0 && (
+          <Box
+            sx={{
               ...scrollStyle,
               flex: 1,
               overflowY: "auto",
               mt: 1,
             }}
           >
-            <Grid container rowSpacing={2} columnSpacing={1.5} sx={{ pb: 2, overflow: "hidden" }}>
+            <Grid
+              container
+              rowSpacing={2}
+              columnSpacing={1.5}
+              sx={{ pb: 2, overflow: "hidden" }}
+            >
               {favorites.map((shop, i) => (
-                <MotionGrid 
+                <MotionGrid
                   key={`favorite-${i + 1}`}
                   variants={cardVariants(0.25 * i)}
                   initial="hidden"
@@ -128,15 +146,26 @@ const FavoritesShop = ({ favorites, onSelectShop, onFavoriteUpdate, onViewOnMap 
                   sx={{ display: "flex" }}
                 >
                   <Card title={shop.title} elevation={4} sx={{ flexGrow: 1 }}>
-                    <CardMedia sx={{ cursor: "pointer" }} onClick={() => onSelectShop(shop)}>
+                    <CardMedia
+                      sx={{ cursor: "pointer" }}
+                      onClick={() => onSelectShop(shop)}
+                    >
                       <ImageWithSkeleton
-                        src={shop.images ? shop.images[0].serpapi_thumbnail : ""}
-                        alt={shop.images ? shop.images[0].title : `Image favorite ${i}`}
+                        src={
+                          shop.images ? shop.images[0].serpapi_thumbnail : ""
+                        }
+                        alt={
+                          shop.images
+                            ? shop.images[0].title
+                            : `Image favorite ${i}`
+                        }
                         height="108px"
                         style={{ objectPosition: "center center" }}
                       />
                     </CardMedia>
-                    <CardContent sx={{ padding: 1, "&:last-child": { paddingBottom: 2 } }}>
+                    <CardContent
+                      sx={{ padding: 1, "&:last-child": { paddingBottom: 2 } }}
+                    >
                       <Typography
                         gutterBottom
                         component="h3"
@@ -150,8 +179,8 @@ const FavoritesShop = ({ favorites, onSelectShop, onFavoriteUpdate, onViewOnMap 
                           fontWeight: "bold",
                           cursor: "pointer",
                           "&:hover": {
-                            color: "#804A26"
-                          }
+                            color: "#804A26",
+                          },
                         }}
                         onClick={() => onSelectShop(shop)}
                       >
@@ -159,32 +188,35 @@ const FavoritesShop = ({ favorites, onSelectShop, onFavoriteUpdate, onViewOnMap 
                       </Typography>
 
                       <Box display="flex" alignItems="center" gap={0.5}>
-                        <Rating 
-                          name="half-rating-read" 
-                          defaultValue={shop.rating} 
+                        <Rating
+                          name="half-rating-read"
+                          defaultValue={shop.rating}
                           precision={0.5}
-                          readOnly 
+                          readOnly
                           sx={{
-                            fontSize: "0.875rem"
+                            fontSize: "0.875rem",
                           }}
                         />
 
-                        <Typography component="span" sx={{ fontWeight: "bold", fontSize: "0.7rem"  }}>
+                        <Typography
+                          component="span"
+                          sx={{ fontWeight: "bold", fontSize: "0.7rem" }}
+                        >
                           ({shop.reviews})
                         </Typography>
                       </Box>
 
-                      <Typography 
+                      <Typography
                         title={parseSerpAddress(shop.address, "street")}
-                        component="span" 
-                        sx={{ 
+                        component="span"
+                        sx={{
                           fontSize: "0.675rem",
                           mt: 1,
                           display: "-webkit-box",
                           textOverflow: "ellipsis",
                           WebkitLineClamp: "1",
                           WebkitBoxOrient: "vertical",
-                          overflow: "hidden", 
+                          overflow: "hidden",
                         }}
                       >
                         {parseSerpAddress(shop.address, "street")}
@@ -197,15 +229,22 @@ const FavoritesShop = ({ favorites, onSelectShop, onFavoriteUpdate, onViewOnMap 
                         flexDirection: "column",
                         alignItems: "center",
                         justifyContent: "center",
-                        gap: 1
+                        gap: 1,
                       }}
                     >
                       <Button
                         title="Remove from favorites?"
                         fullWidth
                         variant="outlined"
-                        startIcon={unsavingId === shop.place_id ? null :
-                          <FavoriteIcon sx={{ color: "#ba0001", fontSize: "0.95rem !important" }} />
+                        startIcon={
+                          unsavingId === shop.place_id ? null : (
+                            <FavoriteIcon
+                              sx={{
+                                color: "#ba0001",
+                                fontSize: "0.95rem !important",
+                              }}
+                            />
+                          )
                         }
                         onClick={() => handleRemoveFavorite(shop.place_id)}
                         sx={{
@@ -215,29 +254,39 @@ const FavoritesShop = ({ favorites, onSelectShop, onFavoriteUpdate, onViewOnMap 
                           borderColor: "#ba7f57",
                           "&:hover": {
                             borderColor: "#804A26",
-                          }
+                          },
                         }}
                         disabled={unsavingId === shop.place_id}
                       >
-                        {unsavingId === shop.place_id ?
+                        {unsavingId === shop.place_id ? (
                           <Box
-                            display="flex" 
-                            alignItems="center" 
+                            display="flex"
+                            alignItems="center"
                             justifyContent="center"
                             width="100%"
                           >
-                            <CircularProgress size={17} sx={{ color: "#1976d2"}} />  
+                            <CircularProgress
+                              size={17}
+                              sx={{ color: "#1976d2" }}
+                            />
                           </Box>
-                        :
-                          "Remove"  
-                        }
+                        ) : (
+                          "Remove"
+                        )}
                       </Button>
 
                       <Button
                         title="View on map"
                         fullWidth
                         variant="outlined"
-                        startIcon={<MapIcon sx={{ color: "rgba(0,0,0,0.75)", fontSize: "0.95rem !important" }} />}
+                        startIcon={
+                          <MapIcon
+                            sx={{
+                              color: "rgba(0,0,0,0.75)",
+                              fontSize: "0.95rem !important",
+                            }}
+                          />
+                        }
                         sx={{
                           padding: "3px 9px",
                           fontSize: "0.625rem",
@@ -246,7 +295,7 @@ const FavoritesShop = ({ favorites, onSelectShop, onFavoriteUpdate, onViewOnMap 
                           borderColor: "#ba7f57",
                           "&:hover": {
                             borderColor: "#804A26",
-                          }
+                          },
                         }}
                         onClick={() => onViewOnMap(shop)}
                       >
@@ -258,10 +307,10 @@ const FavoritesShop = ({ favorites, onSelectShop, onFavoriteUpdate, onViewOnMap 
               ))}
             </Grid>
           </Box>
-        }
+        )}
       </MotionStack>
     </AnimatePresence>
-  )
-}
+  );
+};
 
 export default FavoritesShop;

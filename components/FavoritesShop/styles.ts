@@ -12,4 +12,4 @@ export const scrollStyle = {
   "&::-webkit-scrollbar-track": {
     backgroundColor: "transparent",
   },
-}
+};

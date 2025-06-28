@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import L from "leaflet";
 
@@ -6,7 +6,11 @@ import type { Shop } from "@/types";
 
 import { getStarsSVG } from "@/utils/helpers";
 
-export function createShopMarkerIcon(shop: Shop, isMobile: boolean, delay?: number): L.DivIcon {
+export function createShopMarkerIcon(
+  shop: Shop,
+  isMobile: boolean,
+  delay?: number
+): L.DivIcon {
   const fadeDuration = 0.3;
   const fadeDelay = delay?.toFixed(2);
 
@@ -43,11 +47,15 @@ export function createShopMarkerIcon(shop: Shop, isMobile: boolean, delay?: numb
         ${shop.name}
       </strong>
 
-      <div style="position: relative; width: 100%; height: ${isMobile ? 54 : 72}px; margin-bottom: ${isMobile ? 7 : 10}px;">
+      <div style="position: relative; width: 100%; height: ${
+        isMobile ? 54 : 72
+      }px; margin-bottom: ${isMobile ? 7 : 10}px;">
         <img
           src="${shop.thumbnail}"
           alt="${shop.name}"
-          style="width: 100%; height: ${isMobile ? 54 : 72}px; object-fit: cover; display: block;"
+          style="width: 100%; height: ${
+            isMobile ? 54 : 72
+          }px; object-fit: cover; display: block;"
           onload="if (this.nextElementSibling) this.nextElementSibling.style.display='none'"
           onerror="if (this.nextElementSibling) this.nextElementSibling.style.display='none'; this.src='/no-coffee-image.jpg'"
         />

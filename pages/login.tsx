@@ -4,10 +4,20 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 import { useUser } from "@/contexts/UserContext";
-import { Alert, Box, Button, Checkbox, FormControlLabel, 
-  Divider, FormLabel, FormControl, 
-  Link as MUILink, TextField, Typography } from "@mui/material";
-  
+import {
+  Alert,
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Divider,
+  FormLabel,
+  FormControl,
+  Link as MUILink,
+  TextField,
+  Typography,
+} from "@mui/material";
+
 import { AuthContainer, AuthCard } from "@/components";
 
 import { verifyToken } from "@/lib/db/auth";
@@ -27,7 +37,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   }
 
   return { props: {} };
-}
+};
 
 const Login = () => {
   const router = useRouter();
@@ -75,14 +85,14 @@ const Login = () => {
         <title>Log in | Carikopi</title>
         <meta name="description" content="Login to your Carikopi account" />
       </Head>
-    
+
       <AuthContainer direction="column" justifyContent="space-between">
         <AuthCard variant="outlined">
           <Typography
-              component="h1"
-              variant="h4"
-              sx={{ width: "100%", fontSize: "clamp(1.5rem, 10vw, 2rem)", }}
-            >
+            component="h1"
+            variant="h4"
+            sx={{ width: "100%", fontSize: "clamp(1.5rem, 10vw, 2rem)" }}
+          >
             Carikopi
           </Typography>
 
@@ -98,7 +108,9 @@ const Login = () => {
             }}
           >
             <FormControl>
-              <FormLabel htmlFor="email" sx={{ color: "#fff" }}>Email</FormLabel>
+              <FormLabel htmlFor="email" sx={{ color: "#fff" }}>
+                Email
+              </FormLabel>
 
               <TextField
                 id="email"
@@ -154,7 +166,9 @@ const Login = () => {
             </FormControl>
 
             <FormControl>
-              <FormLabel htmlFor="password" sx={{ color: "#fff" }}>Password</FormLabel>
+              <FormLabel htmlFor="password" sx={{ color: "#fff" }}>
+                Password
+              </FormLabel>
 
               <TextField
                 name="password"
@@ -209,9 +223,9 @@ const Login = () => {
 
             <FormControlLabel
               control={
-                <Checkbox 
-                  value="remember" 
-                  color="primary" 
+                <Checkbox
+                  value="remember"
+                  color="primary"
                   checked={remember}
                   onChange={(e) => setRemember(e.target.checked)}
                   sx={{
@@ -222,16 +236,12 @@ const Login = () => {
               label="Remember me"
               sx={{
                 width: "fit-content",
-                borderColor: "#fff"
+                borderColor: "#fff",
               }}
             />
 
-            {error && (
-              <Alert severity="error">
-                {error}
-              </Alert>
-            )}
-          
+            {error && <Alert severity="error">{error}</Alert>}
+
             <Button
               type="submit"
               fullWidth
@@ -251,26 +261,26 @@ const Login = () => {
             <MUILink
               href="/forgot"
               variant="body2"
-              sx={{ 
+              sx={{
                 alignSelf: "center",
-                color: "#fff", 
-                textDecoration: "none", 
+                color: "#fff",
+                textDecoration: "none",
                 "&:hover": {
                   textDecoration: "underline",
-                }
+                },
               }}
             >
               Forgot your password?
             </MUILink>
           </Box>
 
-          <Divider 
-            sx={{ 
+          <Divider
+            sx={{
               borderColor: "#fff",
               color: "#fff",
               "&::before, &::after": {
-                borderColor: "#fff"
-              }
+                borderColor: "#fff",
+              },
             }}
           >
             or
@@ -281,12 +291,12 @@ const Login = () => {
             <MUILink
               href="/register"
               variant="body2"
-              sx={{ 
+              sx={{
                 alignSelf: "center",
                 textDecoration: "none",
                 "&:hover": {
-                  textDecoration: "underline"
-                }
+                  textDecoration: "underline",
+                },
               }}
             >
               Create
@@ -296,6 +306,6 @@ const Login = () => {
       </AuthContainer>
     </>
   );
-}
+};
 
 export default Login;

@@ -5,7 +5,10 @@ import { serialize } from "cookie";
 import { signToken } from "@/lib/db/auth";
 import { findUserByEmail } from "@/lib/db/user";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -43,9 +46,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     sameSite: "strict",
     path: "/",
     maxAge: remember ? 60 * 60 * 24 * 30 : 60 * 60, // 30d or 1h
-  })
+  });
 
   res.setHeader("Set-Cookie", cookie);
-  
+
   return res.status(200).json({ message: "Login successful" });
 }

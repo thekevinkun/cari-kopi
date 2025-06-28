@@ -9,7 +9,7 @@ export const validateName = (name: string): string | null => {
   }
 
   return null;
-}
+};
 
 export const validateEmailFormat = (email: string): string | null => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
@@ -18,15 +18,16 @@ export const validateEmailFormat = (email: string): string | null => {
   if (!emailRegex.test(email)) return "Please enter a valid email address";
 
   return null;
-}
+};
 
 export const validatePassword = (password: string): string | null => {
-  if (password.length <= 5) return "Password must be at least more than 5 characters";
+  if (password.length <= 5)
+    return "Password must be at least more than 5 characters";
 
   const lowPasswordPatterns = [
-    /^([a-zA-Z])\1+$/,             // aaaa, bbbb
-    /^([0-9])\1+$/,                // 1111, 2222
-    /^(.+)\1+$/,                   // ababab, xyzxyz
+    /^([a-zA-Z])\1+$/, // aaaa, bbbb
+    /^([0-9])\1+$/, // 1111, 2222
+    /^(.+)\1+$/, // ababab, xyzxyz
     /^(123456|abcdef|qwerty|letmein|password|admin)$/i, // common passwords
   ];
 
@@ -35,4 +36,4 @@ export const validatePassword = (password: string): string | null => {
   }
 
   return null; // ✅ Password is good
-}
+};

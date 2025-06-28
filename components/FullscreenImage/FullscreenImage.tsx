@@ -8,18 +8,25 @@ import CloseIcon from "@mui/icons-material/Close";
 
 import type { SerpPhotosProps } from "@/types";
 
-const FullscreenImage = ({ photos, startIndex, type, onClose }: {
+const FullscreenImage = ({
+  photos,
+  startIndex,
+  type,
+  onClose,
+}: {
   photos: SerpPhotosProps[];
-startIndex: number;
+  startIndex: number;
   type?: string;
   onClose: () => void;
 }) => {
   const swiperRef = useRef<any>(null);
-  
+
   useEffect(() => {
     document.body.style.overflow = "hidden";
-    
-    return () => { document.body.style.overflow = "" };
+
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, []);
 
   return (
@@ -35,7 +42,7 @@ startIndex: number;
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        zIndex: 1300
+        zIndex: 1300,
       }}
     >
       <Swiper
@@ -57,10 +64,12 @@ startIndex: number;
               }}
             >
               <img
-                src={type === "review" ? 
-                    `/api/image-proxy?url=${encodeURIComponent(photo.thumbnail ?? "")}`
-                :
-                    photo.serpapi_thumbnail
+                src={
+                  type === "review"
+                    ? `/api/image-proxy?url=${encodeURIComponent(
+                        photo.thumbnail ?? ""
+                      )}`
+                    : photo.serpapi_thumbnail
                 }
                 alt={photo.title || ""}
                 style={{
@@ -69,7 +78,7 @@ startIndex: number;
                   objectFit: "contain",
                   boxShadow: "0 0 12px rgba(255, 255, 255, 0.2)",
                   cursor: "default",
-                  userSelect: "none"
+                  userSelect: "none",
                 }}
               />
             </Box>
@@ -90,26 +99,28 @@ startIndex: number;
         <CloseIcon />
       </IconButton>
 
-      <style jsx global>{`
-        .swiper-button-next,
-        .swiper-button-prev {
-          color: #fff;
-          outline: none;
-          box-shadow: none !important;
-          user-select: none;
-          -webkit-user-select: none;
-          -webkit-tap-highlight-color: transparent;
-        }
-        .swiper-button-prev:focus,
-        .swiper-button-next:focus {
-          outline: none;
-          box-shadow: none;
-        }
-        .swiper-button-prev:focus-visible,
-        .swiper-button-next:focus-visible {
-          outline: 2px solid #fff;
-          border-radius: 4px;
-        }`}
+      <style jsx global>
+        {`
+          .swiper-button-next,
+          .swiper-button-prev {
+            color: #fff;
+            outline: none;
+            box-shadow: none !important;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+          }
+          .swiper-button-prev:focus,
+          .swiper-button-next:focus {
+            outline: none;
+            box-shadow: none;
+          }
+          .swiper-button-prev:focus-visible,
+          .swiper-button-next:focus-visible {
+            outline: 2px solid #fff;
+            border-radius: 4px;
+          }
+        `}
       </style>
     </Box>
   );

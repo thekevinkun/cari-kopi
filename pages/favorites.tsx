@@ -101,7 +101,6 @@ const FavoritesPage = () => {
   >([]);
   const [visibleDirections, setVisibleDirections] = useState(false);
 
-
   const handleShowShopDetail = (shop: SerpShopDetail) => {
     if (shop) {
       setSelectedShop(shop);
@@ -127,7 +126,7 @@ const FavoritesPage = () => {
 
       setShowShopDetail(true);
     }, 500);
-  }
+  };
 
   const refreshFavorites = async () => {
     try {
@@ -173,7 +172,7 @@ const FavoritesPage = () => {
 
   const getDirections = async (shop: SerpShopDetail) => {
     if (!location) return;
-    
+
     const lat = shop.gps_coordinates.latitude;
     const lng = shop.gps_coordinates.longitude;
 
@@ -243,7 +242,7 @@ const FavoritesPage = () => {
     setVisibleDirections(true);
 
     handleViewOnMap(shop);
-  }
+  };
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -492,11 +491,11 @@ const FavoritesPage = () => {
       )}
 
       {minimapShop && (
-        <Minimap 
+        <Minimap
           userLocation={location}
-          shop={minimapShop} 
+          shop={minimapShop}
           directionLine={directionLine}
-          onClose={handleCloseMinimap} 
+          onClose={handleCloseMinimap}
         />
       )}
     </>

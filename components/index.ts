@@ -13,17 +13,17 @@ import UserReviews from "./ShopDetail/UserReviews";
 import TopAlert from "./TopAlert/TopAlert";
 
 export {
-    AuthContainer,
-    AuthCard,
-    Navbar,
-    FullscreenImage,
-    CenteredLoader,
-    ImageWithSkeleton,
-    PhotoSlide,
-    TitleRating,
-    OpeningHours,
-    Information,
-    ExtensionList,
-    UserReviews,
-    TopAlert
-}
+  AuthContainer,
+  AuthCard,
+  Navbar,
+  FullscreenImage,
+  CenteredLoader,
+  ImageWithSkeleton,
+  PhotoSlide,
+  TitleRating,
+  OpeningHours,
+  Information,
+  ExtensionList,
+  UserReviews,
+  TopAlert,
+};

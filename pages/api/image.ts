@@ -1,14 +1,27 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getFromCache, saveToCache } from "@/lib/redis/cache";
 
-const GOOGLE_PLACE_PHOTO_BASE = "https://maps.googleapis.com/maps/api/place/photo";
+const GOOGLE_PLACE_PHOTO_BASE =
+  "https://maps.googleapis.com/maps/api/place/photo";
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY!;
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const { ref, type, area } = req.query;
 
-  if (!ref || typeof ref !== "string" || !type || typeof type !== "string" || !area || typeof area !== "string") {
-    return res.status(400).json({ error: "Missing ref, type, or placeId param" });
+  if (
+    !ref ||
+    typeof ref !== "string" ||
+    !type ||
+    typeof type !== "string" ||
+    !area ||
+    typeof area !== "string"
+  ) {
+    return res
+      .status(400)
+      .json({ error: "Missing ref, type, or placeId param" });
   }
 
   const subPath = "carikopi";
@@ -21,7 +34,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const photoRes = await fetch(`${GOOGLE_PLACE_PHOTO_BASE}?maxwidth=400&photoreference=${ref}&key=${GOOGLE_API_KEY}`);
+    const photoRes = await fetch(
+      `${GOOGLE_PLACE_PHOTO_BASE}?maxwidth=400&photoreference=${ref}&key=${GOOGLE_API_KEY}`
+    );
     const buffer = await photoRes.arrayBuffer();
 
     const base64 = Buffer.from(buffer).toString("base64");

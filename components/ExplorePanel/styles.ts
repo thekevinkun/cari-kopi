@@ -11,13 +11,13 @@ export const StyledAddress = styled(Typography)(({ theme }) => ({
   transition: "text-shadow .075s ease-in",
   "&:hover": {
     cursor: "pointer",
-    textShadow: "1px 1px 2px rgba(128, 74, 38, 0.35)"
+    textShadow: "1px 1px 2px rgba(128, 74, 38, 0.35)",
   },
-  [theme.breakpoints.down('md')]: {
+  [theme.breakpoints.down("md")]: {
     maxWidth: 640,
     fontSize: "0.75rem",
   },
-  [theme.breakpoints.down('sm')]: {
-    fontSize: "0.7rem"
-  }
+  [theme.breakpoints.down("sm")]: {
+    fontSize: "0.7rem",
+  },
 }));

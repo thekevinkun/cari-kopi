@@ -35,7 +35,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, setUser, loading, refreshUser: fetchUser }}>
+    <UserContext.Provider
+      value={{ user, setUser, loading, refreshUser: fetchUser }}
+    >
       {children}
     </UserContext.Provider>
   );

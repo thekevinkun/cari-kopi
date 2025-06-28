@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { parse } from "cookie";
 import { verifyToken } from "@/lib/db/auth";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {

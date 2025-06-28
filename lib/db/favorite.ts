@@ -28,8 +28,7 @@ export async function addFavorite(favorite: Favorite) {
   return result.insertedId;
 }
 
-export async function deleteUserFavorites(userId: string) { 
+export async function deleteUserFavorites(userId: string) {
   const favorites = await getFavoritesCollection();
   return await favorites.deleteMany({ userId: new ObjectId(userId) });
 }
-

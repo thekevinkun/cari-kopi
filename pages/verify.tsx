@@ -6,8 +6,14 @@ import Cookies from "js-cookie";
 import { useUser } from "@/contexts/UserContext";
 import { useAlert } from "@/contexts/AlertContext";
 
-import { Alert, Box, Button, Paper, 
-  Stack, TextField, Typography
+import {
+  Alert,
+  Box,
+  Button,
+  Paper,
+  Stack,
+  TextField,
+  Typography,
 } from "@mui/material";
 
 import { findUserByEmail } from "@/lib/db/user";
@@ -28,18 +34,20 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   const user = await findUserByEmail(email);
 
-  if (!user 
-      || user.verified 
-      || !user.verificationCode 
-      || !user.verificationExpires
-      || new Date(user.verificationExpires) < new Date()) {
+  if (
+    !user ||
+    user.verified ||
+    !user.verificationCode ||
+    !user.verificationExpires ||
+    new Date(user.verificationExpires) < new Date()
+  ) {
     return {
       redirect: {
         destination: "/login",
         permanent: false,
       },
     };
-  } 
+  }
 
   return {
     props: { email },
@@ -97,7 +105,11 @@ const VerifyPage = ({ email }: { email: string }) => {
 
       if (!res.ok) {
         console.error(data.error);
-        showAlert(data.error || "Something went wrong. Failed to resent verification code.", "error");
+        showAlert(
+          data.error ||
+            "Something went wrong. Failed to resent verification code.",
+          "error"
+        );
       } else {
         showAlert("Verification code resent to your email.", "success");
         setCode(["", "", "", "", "", ""]);
@@ -105,7 +117,10 @@ const VerifyPage = ({ email }: { email: string }) => {
       }
     } catch (error) {
       console.error(error);
-      showAlert("Something went wrong. Failed to resent verification code.", "error");
+      showAlert(
+        "Something went wrong. Failed to resent verification code.",
+        "error"
+      );
     } finally {
       setResending(false);
     }
@@ -133,7 +148,11 @@ const VerifyPage = ({ email }: { email: string }) => {
       const data = await res.json();
       if (!res.ok) {
         console.error(data.error);
-        showAlert(data.error || "Something went wrong. Failed to verified your account.", "error");
+        showAlert(
+          data.error ||
+            "Something went wrong. Failed to verified your account.",
+          "error"
+        );
       } else {
         showAlert(data.message, "success");
 
@@ -148,13 +167,15 @@ const VerifyPage = ({ email }: { email: string }) => {
       }
     } catch (error) {
       console.error(error);
-      showAlert("Something went wrong. Failed to verified your account.", "error");
+      showAlert(
+        "Something went wrong. Failed to verified your account.",
+        "error"
+      );
     }
   };
 
   const checkButtonAction = () => {
-    if (code[0] === "") 
-      return false;
+    if (code[0] === "") return false;
 
     return true;
   };
@@ -167,7 +188,7 @@ const VerifyPage = ({ email }: { email: string }) => {
         <title>Verify Email | Carikopi</title>
         <meta name="description" content="Verify your Carikopi account" />
       </Head>
-      
+
       <Box
         display="flex"
         justifyContent="center"
@@ -176,20 +197,26 @@ const VerifyPage = ({ email }: { email: string }) => {
           px: 2,
           bgcolor: "#f5f5f5",
           height: "100%",
-          minHeight: "100svh"
+          minHeight: "100svh",
         }}
       >
-        <Paper elevation={3} sx={{ background: "#804A26", color: "#fff", maxWidth: 420, width: "100%", p: 4 }}>
+        <Paper
+          elevation={3}
+          sx={{
+            background: "#804A26",
+            color: "#fff",
+            maxWidth: 420,
+            width: "100%",
+            p: 4,
+          }}
+        >
           <Typography variant="h5" fontWeight="bold" textAlign="center" mb={2}>
             Verify Your Email
           </Typography>
 
-          <Typography
-            variant="body2"
-            textAlign="center"
-            mb={3}
-          >
-            We sent a 6-digit code to your email<br />
+          <Typography variant="body2" textAlign="center" mb={3}>
+            We sent a 6-digit code to your email
+            <br />
             <span style={{ fontWeight: "bold" }}>{email}</span>
           </Typography>
 
@@ -265,9 +292,9 @@ const VerifyPage = ({ email }: { email: string }) => {
             ))}
           </Stack>
 
-          <Button 
-            variant="contained" 
-            fullWidth 
+          <Button
+            variant="contained"
+            fullWidth
             sx={{
               backgroundColor: "#fff",
               "&:hover": {
@@ -293,11 +320,11 @@ const VerifyPage = ({ email }: { email: string }) => {
                 variant="text"
                 onClick={handleResend}
                 disabled={resending}
-                sx={{ 
+                sx={{
                   color: "#fff",
                   "&:hover": {
-                    textDecoration: "underline"
-                  } 
+                    textDecoration: "underline",
+                  },
                 }}
               >
                 {resending ? "Resending..." : "Resend Code?"}
@@ -308,6 +335,6 @@ const VerifyPage = ({ email }: { email: string }) => {
       </Box>
     </>
   );
-}
+};
 
 export default VerifyPage;

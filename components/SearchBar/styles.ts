@@ -10,14 +10,14 @@ export const Search = styled("div")(({ theme }) => ({
   boxShadow: `0 1px 3px ${alpha(theme.palette.common.black, 0.1)}`,
   padding: theme.spacing(0.25, 1.5),
   width: "100%",
-  [theme.breakpoints.down('md')]: {
+  [theme.breakpoints.down("md")]: {
     maxWidth: 640,
-    margin: "auto"
+    margin: "auto",
   },
-  [theme.breakpoints.down('sm')]: {
+  [theme.breakpoints.down("sm")]: {
     padding: theme.spacing(0.25, 1.25),
-    maxWidth: "100%"
-  }
+    maxWidth: "100%",
+  },
 }));
 
 export const SearchIconWrapper = styled("div")(({ theme }) => ({
@@ -26,9 +26,9 @@ export const SearchIconWrapper = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "center",
   color: theme.palette.text.secondary,
-  [theme.breakpoints.down('sm')]: {
+  [theme.breakpoints.down("sm")]: {
     marginRight: theme.spacing(0.65),
-  }
+  },
 }));
 
 export const StyledInputBase = styled(InputBase)(({ theme }) => ({
@@ -38,12 +38,12 @@ export const StyledInputBase = styled(InputBase)(({ theme }) => ({
   "& .MuiInputBase-input": {
     padding: theme.spacing(0.75, 0),
   },
-  [theme.breakpoints.down('sm')]: {
+  [theme.breakpoints.down("sm")]: {
     fontSize: "16px",
     "& .MuiInputBase-input": {
       padding: theme.spacing(0.5, 0),
     },
-  }
+  },
 }));
 
 export const scrollStyle = {
@@ -60,4 +60,4 @@ export const scrollStyle = {
   "&::-webkit-scrollbar-track": {
     backgroundColor: "transparent",
   },
-}
+};

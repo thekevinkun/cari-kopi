@@ -57,7 +57,11 @@ export async function updateEmail(id: string, email: string) {
   );
 }
 
-export async function updateNewCode(email: string, newCode: string, expiresAt: Date) {
+export async function updateNewCode(
+  email: string,
+  newCode: string,
+  expiresAt: Date
+) {
   const users = await getUsersCollection();
   return await users.updateOne(
     { email },
@@ -65,7 +69,11 @@ export async function updateNewCode(email: string, newCode: string, expiresAt: D
   );
 }
 
-export async function updateToken(email: string, generatedToken: string, expiresAt: Date) {
+export async function updateToken(
+  email: string,
+  generatedToken: string,
+  expiresAt: Date
+) {
   const users = await getUsersCollection();
   return await users.updateOne(
     { email },
@@ -73,21 +81,30 @@ export async function updateToken(email: string, generatedToken: string, expires
   );
 }
 
-export async function updatePassword(resetToken: string, hashedPassword: string) {
+export async function updatePassword(
+  resetToken: string,
+  hashedPassword: string
+) {
   const users = await getUsersCollection();
   return await users.updateOne(
     { resetToken },
-    { $set: { 
+    {
+      $set: {
         passwordHash: hashedPassword,
-        resetToken: null, 
-        resetTokenExpires: null
-      } 
+        resetToken: null,
+        resetTokenExpires: null,
+      },
     }
   );
 }
 
-export async function simulateSendEmailVerificationCode(email: string, verificationCode: string) {
-  console.log(`📧 Simulated: Sent verification code ${verificationCode} to ${email}`);
+export async function simulateSendEmailVerificationCode(
+  email: string,
+  verificationCode: string
+) {
+  console.log(
+    `📧 Simulated: Sent verification code ${verificationCode} to ${email}`
+  );
 }
 
 export async function createUser(user: User) {

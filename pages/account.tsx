@@ -4,14 +4,23 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useUser } from "@/contexts/UserContext";
 import { useAlert } from "@/contexts/AlertContext";
-import { Box, Typography, Button, TextField, Link, CircularProgress } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  TextField,
+  Link,
+  CircularProgress,
+} from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 
 import { verifyToken } from "@/lib/db/auth";
 import { validateEmailFormat, validateName } from "@/lib/db/validation";
 
 const checkEmailAvailable = async (email: string) => {
-  const res = await fetch(`/api/auth/check-email?email=${encodeURIComponent(email)}`);
+  const res = await fetch(
+    `/api/auth/check-email?email=${encodeURIComponent(email)}`
+  );
   const data = await res.json();
   return data.available;
 };
@@ -31,7 +40,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   }
 
   return { props: {} };
-}
+};
 
 type Field = "fullName" | "email";
 
@@ -55,7 +64,7 @@ export default function Account() {
   });
   const [tempValue, setTempValue] = useState("");
 
-  const [deleteConfirmValue, setDeleteConfirmValue] = useState(""); 
+  const [deleteConfirmValue, setDeleteConfirmValue] = useState("");
   const [tempValueDelete, setTempValueDelete] = useState("");
 
   const handleEdit = (field: Field) => {
@@ -171,7 +180,10 @@ export default function Account() {
           setUser(data.user);
         }
       } catch (err) {
-        showAlert("Something went wrong. Failed to update your email.", "error");
+        showAlert(
+          "Something went wrong. Failed to update your email.",
+          "error"
+        );
       } finally {
         setLoading(false);
       }
@@ -183,9 +195,9 @@ export default function Account() {
 
     try {
       const res = await fetch("/api/auth/forgot-password", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: accountEmail }),
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: accountEmail }),
       });
 
       const data = await res.json();
@@ -196,9 +208,12 @@ export default function Account() {
         showAlert(data.message, "success");
       }
     } catch (err) {
-      showAlert("Something went wrong. Failed to send a link to your email.", "error");
+      showAlert(
+        "Something went wrong. Failed to send a link to your email.",
+        "error"
+      );
     }
-  }
+  };
 
   const handleDeleteAccount = async () => {
     if (tempValueDelete !== deleteConfirmValue) {
@@ -224,20 +239,26 @@ export default function Account() {
       const data = await res.json();
 
       if (!res.ok) {
-        showAlert(data.error || "Something went wrong. Failed to delete your account.", "error");
+        showAlert(
+          data.error || "Something went wrong. Failed to delete your account.",
+          "error"
+        );
       } else {
         showAlert(data.message, "success");
         setUser(null);
 
-        router.replace("/"); 
+        router.replace("/");
       }
-    } catch(error) {
+    } catch (error) {
       console.error("Delete error", error);
-      showAlert("Something went wrong. Failed to delete your account.", "error");
+      showAlert(
+        "Something went wrong. Failed to delete your account.",
+        "error"
+      );
     } finally {
       setLoadingDelete(false);
     }
-  }
+  };
 
   useEffect(() => {
     if (user) {
@@ -249,7 +270,7 @@ export default function Account() {
       setDeleteConfirmValue(user.email);
     }
   }, [user]);
-  
+
   if (!user) return null;
 
   return (
@@ -260,7 +281,9 @@ export default function Account() {
       </Head>
 
       <Box maxWidth={600} mx="auto" px={2} py={4}>
-        <Typography variant="h6" gutterBottom>Account Information</Typography>
+        <Typography variant="h6" gutterBottom>
+          Account Information
+        </Typography>
 
         <Typography variant="body2" mb={3}>
           These settings include basic information about your account.
@@ -285,7 +308,7 @@ export default function Account() {
                 fullName: "",
               }));
             }
-            setTempValue(e.target.value)
+            setTempValue(e.target.value);
           }}
           description="The name that is appears on your screen."
         />
@@ -309,7 +332,7 @@ export default function Account() {
                 email: "",
               }));
             }
-            setTempValue(e.target.value)
+            setTempValue(e.target.value);
           }}
           description="You receive messages from carikopi at this address."
         />
@@ -318,13 +341,13 @@ export default function Account() {
         <Section
           label="Password"
           value={
-            <Button 
-              variant="text" 
+            <Button
+              variant="text"
               sx={{
                 padding: 0,
                 "&:hover": {
-                  textDecoration: "underline"
-                }
+                  textDecoration: "underline",
+                },
               }}
               onClick={handleResetPassword}
             >
@@ -354,28 +377,50 @@ export default function Account() {
         />
       </Box>
     </>
-  )
-}
-
-const Section = ({ label, value, description }: 
-  { label: string, value: any, description?: string }) => {
-
-  return (
-    <Box mb={3}>
-      <Typography variant="subtitle2" color="text.secondary" fontWeight="700">{label}</Typography>
-
-      <Typography variant="body1" fontWeight="medium" mt={1}>{value}</Typography>
-      
-      {description && (
-        <Typography variant="body2" color="text.secondary" mt={1}>{description}</Typography>
-      )}
-    </Box>
   );
 }
 
+const Section = ({
+  label,
+  value,
+  description,
+}: {
+  label: string;
+  value: any;
+  description?: string;
+}) => {
+  return (
+    <Box mb={3}>
+      <Typography variant="subtitle2" color="text.secondary" fontWeight="700">
+        {label}
+      </Typography>
+
+      <Typography variant="body1" fontWeight="medium" mt={1}>
+        {value}
+      </Typography>
+
+      {description && (
+        <Typography variant="body2" color="text.secondary" mt={1}>
+          {description}
+        </Typography>
+      )}
+    </Box>
+  );
+};
+
 const EditableSection = ({
-  label, field, value, loading, error, tempValue,
-  editField, onEdit, onCancel, onSave, onChange, description
+  label,
+  field,
+  value,
+  loading,
+  error,
+  tempValue,
+  editField,
+  onEdit,
+  onCancel,
+  onSave,
+  onChange,
+  description,
 }: {
   label: string;
   field: Field;
@@ -395,20 +440,16 @@ const EditableSection = ({
   return (
     <Box mb={3}>
       <Box display="flex" alignItems="center" gap={1}>
-        <Typography 
-          variant="subtitle2" 
-          color="text.secondary"
-          fontWeight="700"
-        >
+        <Typography variant="subtitle2" color="text.secondary" fontWeight="700">
           {label}
         </Typography>
 
-        <Button 
-          size="small" 
-          onClick={() => onEdit(field)} 
+        <Button
+          size="small"
+          onClick={() => onEdit(field)}
           sx={{ gap: 0.5, textTransform: "none" }}
         >
-          <EditIcon fontSize="small"/> Edit
+          <EditIcon fontSize="small" /> Edit
         </Button>
       </Box>
 
@@ -427,58 +468,61 @@ const EditableSection = ({
           />
 
           <Box display="flex" gap={1} mb={2}>
-            <Button 
+            <Button
               variant="contained"
-              disabled={loading} 
+              disabled={loading}
               onClick={onSave}
               sx={{
-                pointerEvents: !tempValue || error || tempValue === value ? "none" : "auto",
-                opacity: !tempValue || error || tempValue === value ? 0.65 : 1
+                pointerEvents:
+                  !tempValue || error || tempValue === value ? "none" : "auto",
+                opacity: !tempValue || error || tempValue === value ? 0.65 : 1,
               }}
             >
               {loading ? "Saving..." : "Save"}
             </Button>
 
-            <Button 
-              variant="outlined" 
-              disabled={loading}
-              onClick={onCancel}
-            >
+            <Button variant="outlined" disabled={loading} onClick={onCancel}>
               Cancel
             </Button>
           </Box>
         </>
       ) : (
         <>
-          <Typography variant="body1" fontWeight="medium" mt={1}>{value}</Typography>
+          <Typography variant="body1" fontWeight="medium" mt={1}>
+            {value}
+          </Typography>
         </>
       )}
 
       {description && (
-        <Typography variant="body2" color="text.secondary" mt={1}>{description}</Typography>
+        <Typography variant="body2" color="text.secondary" mt={1}>
+          {description}
+        </Typography>
       )}
     </Box>
   );
-}
+};
 
 const DeleteSection = ({
-  label, deleteConfirmValue, tempValueDelete, loading, error, onChange, onDelete,
-}: { 
-  label: string; 
-  deleteConfirmValue: string; 
+  label,
+  deleteConfirmValue,
+  tempValueDelete,
+  loading,
+  error,
+  onChange,
+  onDelete,
+}: {
+  label: string;
+  deleteConfirmValue: string;
   tempValueDelete: string;
   loading: boolean;
   error: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onDelete: () => void; 
+  onDelete: () => void;
 }) => {
   return (
     <Box mb={3}>
-      <Typography 
-        variant="h6"
-        color="text.secondary" 
-        fontWeight="700"
-      >
+      <Typography variant="h6" color="text.secondary" fontWeight="700">
         {label}
       </Typography>
 
@@ -487,13 +531,15 @@ const DeleteSection = ({
       </Typography>
 
       <Typography variant="body1" color="text.secondary" mt={1}>
-        Please note: Deletion of your account and personal data is permanent and cannot be undone. 
-        Carikopi will not be able to recover your account or the data that is deleted.
+        Please note: Deletion of your account and personal data is permanent and
+        cannot be undone. Carikopi will not be able to recover your account or
+        the data that is deleted.
       </Typography>
 
       <Typography variant="body2" color="error" mt={2}>
-        Warning: Account deletion is permanent. Please read the above carefully before proceeding. 
-        This is an irreversible action, and you will no longer be able to use the same email on Carikopi.
+        Warning: Account deletion is permanent. Please read the above carefully
+        before proceeding. This is an irreversible action, and you will no
+        longer be able to use the same email on Carikopi.
       </Typography>
 
       <TextField
@@ -505,10 +551,10 @@ const DeleteSection = ({
         value={tempValueDelete}
         error={!!error}
         helperText={error}
-        sx={{ 
+        sx={{
           width: "100%",
           maxWidth: 420,
-          mt: 3, 
+          mt: 3,
           "& .MuiInputBase-root": {
             fontSize: "0.875rem",
             fontWeight: "700",
@@ -521,29 +567,27 @@ const DeleteSection = ({
           },
           "& .MuiOutlinedInput-root": {
             "&:hover fieldset": {
-              borderColor:  "#d32f2f", // on hover
+              borderColor: "#d32f2f", // on hover
             },
           },
         }}
         onChange={onChange}
       />
 
-      <Button 
-        variant="outlined" 
-        color="error" 
+      <Button
+        variant="outlined"
+        color="error"
         disabled={loading}
-        sx={{ 
+        sx={{
           mt: 2,
           minWidth: 192,
           pointerEvents: !tempValueDelete || error ? "none" : "auto",
-          opacity: !tempValueDelete || error ? 0.65 : 1
+          opacity: !tempValueDelete || error ? 0.65 : 1,
         }}
         onClick={onDelete}
       >
-        {loading ? <CircularProgress size={24} color="inherit" />
-          : label
-        }
+        {loading ? <CircularProgress size={24} color="inherit" /> : label}
       </Button>
     </Box>
-  )
-}
+  );
+};

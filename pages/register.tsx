@@ -1,22 +1,36 @@
 import { useState, useEffect } from "react";
-import { GetServerSideProps} from "next";
+import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 import { useUser } from "@/contexts/UserContext";
 
-import { Box, Button, CircularProgress, 
-  Divider, FormLabel, FormControl, 
-  Link as MUILink, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Divider,
+  FormLabel,
+  FormControl,
+  Link as MUILink,
+  TextField,
+  Typography,
+} from "@mui/material";
 
 import { AuthContainer, AuthCard } from "@/components";
 
 import { verifyToken } from "@/lib/db/auth";
 import { toTitleCase } from "@/utils/helpers";
-import { validateName, validateEmailFormat, validatePassword } from "@/lib/db/validation";
+import {
+  validateName,
+  validateEmailFormat,
+  validatePassword,
+} from "@/lib/db/validation";
 
 const checkEmailAvailable = async (email: string) => {
-  const res = await fetch(`/api/auth/check-email?email=${encodeURIComponent(email)}`);
+  const res = await fetch(
+    `/api/auth/check-email?email=${encodeURIComponent(email)}`
+  );
   const data = await res.json();
   return data.available;
 };
@@ -36,7 +50,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   }
 
   return { props: {} };
-}
+};
 
 const Register = () => {
   const router = useRouter();
@@ -48,17 +62,16 @@ const Register = () => {
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(false);
-  
+
   const checkButtonAction = () => {
-    if (!name || !email || !password || !confirmPassword) 
-      return false;
-    
-    if (errors.name || errors.email || errors.password || errors.confirm) 
+    if (!name || !email || !password || !confirmPassword) return false;
+
+    if (errors.name || errors.email || errors.password || errors.confirm)
       return false;
 
     return true;
   };
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -70,7 +83,7 @@ const Register = () => {
     const invalidName = validateName(name);
     if (invalidName) newErrors.name = invalidName;
 
-    // Check email 
+    // Check email
     if (!email) newErrors.email = "Email is required";
 
     const formatEmail = validateEmailFormat(email);
@@ -85,7 +98,8 @@ const Register = () => {
     const passwordError = validatePassword(password);
     if (passwordError) newErrors.password = passwordError;
 
-    if (password !== confirmPassword) newErrors.confirm = "Passwords do not match";
+    if (password !== confirmPassword)
+      newErrors.confirm = "Passwords do not match";
 
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
@@ -101,7 +115,7 @@ const Register = () => {
       });
 
       const data = await res.json();
-      
+
       if (res.ok) {
         Cookies.set("verify_email", email, { expires: 1 / 92 });
         router.push(`/verify?email=${email}`);
@@ -188,7 +202,7 @@ const Register = () => {
         ...prev,
         confirm: "",
       }));
-      
+
       return;
     }
 
@@ -202,8 +216,6 @@ const Register = () => {
     return () => clearTimeout(delayDebounce);
   }, [confirmPassword]);
 
-
-
   if (user) return null;
 
   return (
@@ -212,14 +224,14 @@ const Register = () => {
         <title>Create Account | Carikopi</title>
         <meta name="description" content="Create your Carikopi account" />
       </Head>
-    
+
       <AuthContainer direction="column" justifyContent="space-between">
         <AuthCard variant="outlined">
           <Typography
-              component="h1"
-              variant="h4"
-              sx={{ width: "100%", fontSize: "clamp(1.5rem, 10vw, 2rem)", }}
-            >
+            component="h1"
+            variant="h4"
+            sx={{ width: "100%", fontSize: "clamp(1.5rem, 10vw, 2rem)" }}
+          >
             Carikopi
           </Typography>
 
@@ -229,7 +241,9 @@ const Register = () => {
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
           >
             <FormControl>
-              <FormLabel htmlFor="name" sx={{ color: "#fff" }}>Full name</FormLabel>
+              <FormLabel htmlFor="name" sx={{ color: "#fff" }}>
+                Full name
+              </FormLabel>
 
               <TextField
                 autoComplete="off"
@@ -280,7 +294,9 @@ const Register = () => {
             </FormControl>
 
             <FormControl>
-              <FormLabel htmlFor="email" sx={{ color: "#fff" }}>Email</FormLabel>
+              <FormLabel htmlFor="email" sx={{ color: "#fff" }}>
+                Email
+              </FormLabel>
 
               <TextField
                 required
@@ -332,7 +348,9 @@ const Register = () => {
             </FormControl>
 
             <FormControl>
-              <FormLabel htmlFor="password" sx={{ color: "#fff" }}>Password</FormLabel>
+              <FormLabel htmlFor="password" sx={{ color: "#fff" }}>
+                Password
+              </FormLabel>
 
               <TextField
                 required
@@ -384,7 +402,9 @@ const Register = () => {
             </FormControl>
 
             <FormControl>
-              <FormLabel htmlFor="password" sx={{ color: "#fff" }}>Confirm Password</FormLabel>
+              <FormLabel htmlFor="password" sx={{ color: "#fff" }}>
+                Confirm Password
+              </FormLabel>
 
               <TextField
                 required
@@ -450,18 +470,23 @@ const Register = () => {
                 pointerEvents: !checkButtonAction() ? "none" : "auto",
               }}
             >
-              {loading ? <CircularProgress size={24} color="inherit" /> : "Create Account"}
+              {loading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                "Create Account"
+              )}
             </Button>
           </Box>
 
-          <Divider 
-            sx={{ 
+          <Divider
+            sx={{
               borderColor: "#fff",
               color: "#fff",
               "&::before, &::after": {
-                borderColor: "#fff"
-              }
-            }}>
+                borderColor: "#fff",
+              },
+            }}
+          >
             <Typography sx={{ color: "#fff" }}>or</Typography>
           </Divider>
 
@@ -471,12 +496,12 @@ const Register = () => {
               <MUILink
                 href="/login"
                 variant="body2"
-                sx={{ 
+                sx={{
                   alignSelf: "center",
                   textDecoration: "none",
                   "&:hover": {
-                    textDecoration: "underline"
-                  }
+                    textDecoration: "underline",
+                  },
                 }}
               >
                 Log in
@@ -487,6 +512,6 @@ const Register = () => {
       </AuthContainer>
     </>
   );
-}
+};
 
 export default Register;
