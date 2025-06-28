@@ -2,55 +2,87 @@ import { useEffect, useState, useRef } from "react";
 import dynamic from "next/dynamic";
 import polyline from "@mapbox/polyline";
 import { useAlert } from "@/contexts/AlertContext";
+import { useLocation } from "@/contexts/LocationContext";
 
 import { Box, Grid, useMediaQuery } from "@mui/material";
 
 import { CenteredLoader } from "@/components";
 
 import type { LatLngExpression } from "leaflet";
-import type { Coordinates, NearbyData, Shop, SerpShopDetail, TargetShop  } from "@/types";
+import type {
+  Coordinates,
+  NearbyData,
+  Shop,
+  SerpShopDetail,
+  TargetShop,
+} from "@/types";
 import { getLocationPermissionInstructions } from "@/utils/helpers";
 
-const Map = dynamic(() => import('@/components/Map/Map'), {
+const Map = dynamic(() => import("@/components/Map/Map"), {
   ssr: false,
-  loading: () => <CenteredLoader sx={{ height: { xs: "100%", md: "calc(100vh - 64px)" }}}/>,
+  loading: () => (
+    <CenteredLoader sx={{ height: { xs: "100%", md: "calc(100vh - 64px)" } }} />
+  ),
 });
 
-const ExplorePanel = dynamic(() => import("@/components/ExplorePanel/ExplorePanel"), {
-  ssr: false,
-  loading: () => <CenteredLoader height="120px"/>,
-});
+const ExplorePanel = dynamic(
+  () => import("@/components/ExplorePanel/ExplorePanel"),
+  {
+    ssr: false,
+    loading: () => <CenteredLoader height="120px" />,
+  }
+);
 
-const FavoritesShop = dynamic(() => import("@/components/FavoritesShop/FavoritesShop"), {
-  ssr: false,
-  loading: () => <CenteredLoader height="50%" sx={{ display: { xs: "none", md: "flex" }}}/>,
-});
+const FavoritesShop = dynamic(
+  () => import("@/components/FavoritesShop/FavoritesShop"),
+  {
+    ssr: false,
+    loading: () => (
+      <CenteredLoader
+        height="50%"
+        sx={{ display: { xs: "none", md: "flex" } }}
+      />
+    ),
+  }
+);
 
 const ShopDetail = dynamic(() => import("@/components/ShopDetail/ShopDetail"), {
   ssr: false,
-  loading: () => <CenteredLoader height="50%" sx={{ display: { xs: "none", md: "flex" }}}/>,
+  loading: () => (
+    <CenteredLoader height="50%" sx={{ display: { xs: "none", md: "flex" } }} />
+  ),
 });
 
-const DirectionInfo = dynamic(() => import("@/components/DirectionInfo/DirectionInfo"), {
-  ssr: false,
-  loading: () => <CenteredLoader height="50%" sx={{ display: { xs: "none", md: "flex" }}}/>,
-});
+const DirectionInfo = dynamic(
+  () => import("@/components/DirectionInfo/DirectionInfo"),
+  {
+    ssr: false,
+    loading: () => (
+      <CenteredLoader
+        height="50%"
+        sx={{ display: { xs: "none", md: "flex" } }}
+      />
+    ),
+  }
+);
 
 function sleep(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 const Home = () => {
   const { showAlert } = useAlert();
-  
+  const { location, setLocation } = useLocation();
+
   const triedInitialLocation = useRef(false);
-  const [location, setLocation] = useState<Coordinates | null>(null);
-  const [locationStatus, setLocationStatus] = useState<"idle" | "fetching" | "success" | "failed">("idle");
+  const [locationStatus, setLocationStatus] = useState<
+    "idle" | "fetching" | "success" | "failed"
+  >("idle");
   const [backToLocation, setBackToLocation] = useState(false);
 
   const [address, setAddress] = useState<string | null>(null);
   const [shortAddress, setShortAddress] = useState<string | null>(null);
-  
+
   const [nearbyData, setNearbyData] = useState<NearbyData | null>(null);
   const [shops, setShops] = useState<Shop[]>([]);
   const [tempShops, setTempShops] = useState<Shop[]>([]);
@@ -60,8 +92,10 @@ const Home = () => {
   const [showShopDetail, setShowShopDetail] = useState(false);
   const [selectedShop, setSelectedShop] = useState<SerpShopDetail | null>(null);
   const [favorites, setFavorites] = useState<SerpShopDetail[] | null>(null);
-  
-  const [directionLine, setDirectionLine] = useState<LatLngExpression[] | null>(null);
+
+  const [directionLine, setDirectionLine] = useState<LatLngExpression[] | null>(
+    null
+  );
   const [directionInfo, setDirectionInfo] = useState<{
     driving?: { duration: string; distance: string };
     walking?: { duration: string; distance: string };
@@ -97,11 +131,15 @@ const Home = () => {
     }
   };
 
-  const getNearbyCoffee = async (lat: number, lng: number, shortAddress: string, page: number = 1) => {
+  const getNearbyCoffee = async (
+    lat: number,
+    lng: number,
+    shortAddress: string,
+    page: number = 1
+  ) => {
     try {
       const res = await fetch(`
-        /api/nearby?lat=${lat}&lng=${lng}&shortAddress=${shortAddress}&page=${page}`
-      );
+        /api/nearby?lat=${lat}&lng=${lng}&shortAddress=${shortAddress}&page=${page}`);
       const data = await res.json();
 
       if (!res.ok) {
@@ -115,13 +153,13 @@ const Home = () => {
       showAlert("Sorry, failed to get coffee shop near you", "error");
       console.error("Failed to fetch nearby coffe: ", error);
     }
-  }
+  };
 
   const getShopDetail = async (placeId: string) => {
     try {
       const res = await fetch(`/api/detailSerp?placeId=${placeId}`);
       const { data } = await res.json();
-      
+
       if (!res.ok) {
         showAlert("Sorry, failed to get shop detail", "error");
         console.error("Failed to get shop detail: ", data.error);
@@ -131,17 +169,16 @@ const Home = () => {
       if (!data || !data.place_id) return;
 
       setShowShopDetail(true);
-      setSelectedShop(null); 
-      
+      setSelectedShop(null);
+
       setTimeout(() => {
         setSelectedShop(data);
       }, 250);
-      
     } catch (err) {
       showAlert("Sorry, failed to get shop detail", "error");
       console.error("Failed to get shop detail:", err);
     }
-  }
+  };
 
   const getUserFavorites = async () => {
     try {
@@ -157,7 +194,7 @@ const Home = () => {
     } catch (error) {
       console.error("Failed to get user favorites list", error);
     }
-  }
+  };
 
   const refreshFavorites = async () => {
     try {
@@ -173,7 +210,7 @@ const Home = () => {
     } catch (error) {
       console.error("Failed to refresh user favorites list", error);
     }
-  }
+  };
 
   const getDirections = async (shop: SerpShopDetail) => {
     if (!location) return;
@@ -183,9 +220,15 @@ const Home = () => {
 
     const originStr = `${location.lat},${location.lng}`;
     const destStr = `${lat},${lng}`;
-    
-    const res = await fetch(`/api/directions?origin=${originStr}&destination=${destStr}`);
-    const { polyline: encodedPolyline, modes, steps  }: {
+
+    const res = await fetch(
+      `/api/directions?origin=${originStr}&destination=${destStr}`
+    );
+    const {
+      polyline: encodedPolyline,
+      modes,
+      steps,
+    }: {
       polyline: string | null;
       modes: Array<{
         mode: "driving" | "walking" | "transit" | "bicycling";
@@ -213,7 +256,10 @@ const Home = () => {
 
     // Decode polyline into LatLng array
     const decoded = polyline.decode(encodedPolyline);
-    const latLngs = decoded.map(([lat, lng]) => [lat, lng]) as LatLngExpression[]
+    const latLngs = decoded.map(([lat, lng]) => [
+      lat,
+      lng,
+    ]) as LatLngExpression[];
 
     setDirectionLine(latLngs);
 
@@ -233,21 +279,23 @@ const Home = () => {
 
     setDirectionInfo(modeMap);
 
-    setDirectionSteps(steps); 
+    setDirectionSteps(steps);
 
     setDestinationShop({
       placeId: shop.place_id,
       name: shop.title,
       address: shop.address,
       rating: shop.rating,
-      thumbnail: shop.images ? shop.images[0].serpapi_thumbnail : "/no-coffee-image.jpg",
+      thumbnail: shop.images
+        ? shop.images[0].serpapi_thumbnail
+        : "/no-coffee-image.jpg",
       geometry: {
         location: { lat, lng },
-      }
+      },
     });
 
     setVisibleDirections(true);
-  }
+  };
 
   const handleStopDirections = async () => {
     setVisibleDirections(false);
@@ -260,7 +308,7 @@ const Home = () => {
     setDestinationShop(null);
 
     setShowShopDetail(true);
-  }
+  };
 
   const handleNextPage = async () => {
     if (!nearbyData || !location || !shortAddress) return;
@@ -270,7 +318,12 @@ const Home = () => {
 
     setLoadingNextPage(true);
 
-    const nextData = await getNearbyCoffee(location.lat, location.lng, shortAddress, nextPage);
+    const nextData = await getNearbyCoffee(
+      location.lat,
+      location.lng,
+      shortAddress,
+      nextPage
+    );
     if (nextData) {
       setNearbyData(nextData);
       setShops((prev) => [...prev, ...nextData.results]);
@@ -278,7 +331,7 @@ const Home = () => {
     }
 
     setLoadingNextPage(false);
-  }
+  };
 
   const handleShowLessPage = async () => {
     if (!nearbyData || !location || !shortAddress) return;
@@ -287,7 +340,12 @@ const Home = () => {
 
     setLoadingNextPage(true);
 
-    const nextData = await getNearbyCoffee(location.lat, location.lng, shortAddress, nextPage);
+    const nextData = await getNearbyCoffee(
+      location.lat,
+      location.lng,
+      shortAddress,
+      nextPage
+    );
     if (nextData) {
       setNearbyData(nextData);
       setShops(nextData.results);
@@ -295,7 +353,7 @@ const Home = () => {
     }
 
     setLoadingNextPage(false);
-  }
+  };
 
   const handleViewOnMap = async (shop: SerpShopDetail) => {
     const placeId = shop.place_id;
@@ -307,55 +365,66 @@ const Home = () => {
       placeId: placeId,
       name: shop.title,
       rating: shop.rating,
-      thumbnail: shop.images ? shop.images[0].serpapi_thumbnail : "/no-coffee-image.jpg",
+      thumbnail: shop.images
+        ? shop.images[0].serpapi_thumbnail
+        : "/no-coffee-image.jpg",
       geometry: {
         location: { lat, lng },
-      }
-    }
+      },
+    };
 
     // Fly to the shop
     setTargetShop({ placeId, lat, lng });
-    
+
     // Wait for fly animation (e.g. 9s)
     await sleep(9500);
 
-    setTempShops(prev => {
-      const exists = prev.some(s => s.placeId === shop.place_id) || shops.some(s => s.placeId === shop.place_id);
+    setTempShops((prev) => {
+      const exists =
+        prev.some((s) => s.placeId === shop.place_id) ||
+        shops.some((s) => s.placeId === shop.place_id);
       return exists ? prev : [...prev, converted];
     });
 
     await sleep(200);
 
     setTargetShop(null);
-  }
+  };
 
   const handleSelectSearchResult = async (placeId: string) => {
     const res = await fetch(`/api/detailSerp?placeId=${placeId}`);
     const { data } = await res.json();
-    
+
     if (!res.ok) {
       showAlert("Sorry, failed to get shop detail", "error");
       console.error("Failed to get shop detail: ", data.error);
       return;
     }
 
-    const lat = data.gps_coordinates.latitude;  
+    const lat = data.gps_coordinates.latitude;
     const lng = data.gps_coordinates.longitude;
 
     const converted: Shop = {
       placeId: data.place_id,
       name: data.title,
       rating: data.rating,
-      thumbnail: data.images ? data.images[0].serpapi_thumbnail : "/no-coffee-image.jpg",
+      thumbnail: data.images
+        ? data.images[0].serpapi_thumbnail
+        : "/no-coffee-image.jpg",
       geometry: {
-        location: { 
-          lat: lat, 
-          lng: lng },
-      }
+        location: {
+          lat: lat,
+          lng: lng,
+        },
+      },
     };
 
-    if (directionLine !== null || directionSteps.length > 0 ||
-      Object.keys(directionInfo).length > 0 || destinationShop !== null) {
+    if (
+      directionLine !== null ||
+      directionSteps.length > 0 ||
+      Object.keys(directionInfo).length > 0 ||
+      destinationShop !== null
+    ) {
       handleStopDirections();
       setSuppressMarkers(true);
 
@@ -364,13 +433,15 @@ const Home = () => {
 
       setTargetShop({ placeId, lat, lng });
       await sleep(9500);
-      
+
       // Re-enable all shop markers
       setSuppressMarkers(false);
       await sleep(500);
-      
-      setTempShops(prev => {
-        const exists = prev.some(s => s.placeId === data.place_id) || shops.some(s => s.placeId === data.place_id);
+
+      setTempShops((prev) => {
+        const exists =
+          prev.some((s) => s.placeId === data.place_id) ||
+          shops.some((s) => s.placeId === data.place_id);
         return exists ? prev : [...prev, converted];
       });
     } else {
@@ -379,8 +450,10 @@ const Home = () => {
       // Wait for fly animation (e.g. 9s)
       await sleep(9500);
 
-      setTempShops(prev => {
-        const exists = prev.some(s => s.placeId === data.place_id) || shops.some(s => s.placeId === data.place_id);
+      setTempShops((prev) => {
+        const exists =
+          prev.some((s) => s.placeId === data.place_id) ||
+          shops.some((s) => s.placeId === data.place_id);
         return exists ? prev : [...prev, converted];
       });
     }
@@ -397,12 +470,15 @@ const Home = () => {
     await sleep(1500);
 
     setBackToLocation(false);
-  }
+  };
 
   const tryGetLocation = async (): Promise<GeolocationPosition | null> => {
     return new Promise((resolve) => {
       if (!navigator.geolocation) {
-        showAlert("Something went wrong. Failed to get your location.", "error");
+        showAlert(
+          "Something went wrong. Failed to get your location.",
+          "error"
+        );
         console.warn("Geolocation is not supported");
         return resolve(null);
       }
@@ -410,7 +486,10 @@ const Home = () => {
       navigator.geolocation.getCurrentPosition(
         (position) => resolve(position),
         (error) => {
-          showAlert("Something went wrong. Failed to get your current position.", "error");
+          showAlert(
+            "Something went wrong. Failed to get your current position.",
+            "error"
+          );
           console.error("Geolocation error:", error);
           resolve(null);
         },
@@ -430,7 +509,11 @@ const Home = () => {
     setAddress(addressData.fullAddress);
     setShortAddress(addressData.shortAddress);
 
-    const data = await getNearbyCoffee(-0.4772294, 117.1306983, addressData.shortAddress);
+    const data = await getNearbyCoffee(
+      -0.4772294,
+      117.1306983,
+      addressData.shortAddress
+    );
     if (data) {
       setNearbyData(data);
       setShops(data.results || []);
@@ -445,8 +528,10 @@ const Home = () => {
       await handleLocationSuccess(pos);
       setLocationStatus("success");
     } else {
-      alert(getLocationPermissionInstructions() + 
-        "\n\nRefresh the page after changing permission.");
+      alert(
+        getLocationPermissionInstructions() +
+          "\n\nRefresh the page after changing permission."
+      );
       setLocationStatus("failed");
     }
   };
@@ -499,8 +584,7 @@ const Home = () => {
 
     const parentElement = mapRef.current?.parentNode as Element | null;
 
-    if (parentElement)
-      observer.observe(parentElement)
+    if (parentElement) observer.observe(parentElement);
 
     // Run once on mount
     const topOffset = mapRef.current!.getBoundingClientRect().top;
@@ -513,33 +597,33 @@ const Home = () => {
 
   // hide jump scrollbar only on /
   useEffect(() => {
-    document.body.style.overflow = "hidden"; 
-    
+    document.body.style.overflow = "hidden";
+
     return () => {
       document.body.style.overflow = "";
     };
   }, []);
-  
+
   return (
-    <Grid 
-      container 
-      spacing={isTablet? 0 : 1} 
+    <Grid
+      container
+      spacing={isTablet ? 0 : 1}
       flexDirection={isTablet ? "column-reverse" : "row"}
-      style={{ 
-        width: "100%", 
+      style={{
+        width: "100%",
         height: isTablet ? "100%" : mapHeight,
-        overflow: "hidden"
+        overflow: "hidden",
       }}
     >
-      <Grid 
+      <Grid
         ref={mapRef}
         size={{ xs: 12, md: 8 }}
-        style={{ 
-          height: isTablet ? mapHeight : "100%" 
+        style={{
+          height: isTablet ? mapHeight : "100%",
         }}
       >
-        <Map 
-          userLocation={location} 
+        <Map
+          userLocation={location}
           backToLocation={backToLocation}
           shops={shops}
           tempShops={tempShops}
@@ -550,9 +634,9 @@ const Home = () => {
           destinationShop={destinationShop}
         />
       </Grid>
-      
+
       <Grid size={{ xs: 12, md: 4 }}>
-        <Box display="flex" flexDirection="column" sx={{ height: "100%"}}>
+        <Box display="flex" flexDirection="column" sx={{ height: "100%" }}>
           <ExplorePanel
             address={address}
             currentResults={shops?.length ?? null}
@@ -568,8 +652,12 @@ const Home = () => {
             onSelectSearchResult={handleSelectSearchResult}
           />
 
-          { visibleDirections || (directionLine !== null && directionSteps.length > 0 && Object.keys(directionInfo).length > 0 && destinationShop !== null) ?
-            <DirectionInfo 
+          {visibleDirections ||
+          (directionLine !== null &&
+            directionSteps.length > 0 &&
+            Object.keys(directionInfo).length > 0 &&
+            destinationShop !== null) ? (
+            <DirectionInfo
               visible={visibleDirections}
               originAddress={address ?? "Your location"}
               destinationAddress={destinationShop?.address ?? "Shop location"}
@@ -577,17 +665,17 @@ const Home = () => {
               directionSteps={directionSteps}
               onCloseDirections={handleStopDirections}
             />
-          : selectedShop ? 
-            <ShopDetail 
+          ) : selectedShop ? (
+            <ShopDetail
               shop={selectedShop}
               showShopDetail={showShopDetail}
-              onCloseShopDetail={() => {  
+              onCloseShopDetail={() => {
                 setShowShopDetail(false);
 
                 setTimeout(() => {
-                  setSelectedShop(null); 
+                  setSelectedShop(null);
                 }, 550);
-              }}  
+              }}
               onFavoriteUpdate={refreshFavorites}
               onStartDirections={(shop: SerpShopDetail) => {
                 setShowShopDetail(false);
@@ -597,19 +685,20 @@ const Home = () => {
                 }, 200);
               }}
             />
-          : locationStatus === "success" && favorites && !showShopDetail ?
-            <FavoritesShop 
+          ) : locationStatus === "success" && favorites && !showShopDetail ? (
+            <FavoritesShop
               favorites={favorites}
-              onSelectShop={(shop: SerpShopDetail) => getShopDetail(shop.place_id)}
+              onSelectShop={(shop: SerpShopDetail) =>
+                getShopDetail(shop.place_id)
+              }
               onFavoriteUpdate={refreshFavorites}
               onViewOnMap={handleViewOnMap}
             />
-          : null
-          }
+          ) : null}
         </Box>
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
-export default Home;  
+export default Home;
