@@ -12,7 +12,7 @@ export default async function handler(
     return res.status(400).json({ error: "Missing origin or destination" });
   }
 
-  const modes = ["driving",];
+  const modes = ["driving", "walking", "bicycling", "transit"];
 
   try {
     const responses = await Promise.all(

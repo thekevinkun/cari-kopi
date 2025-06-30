@@ -500,18 +500,18 @@ const Home = () => {
 
   const handleLocationSuccess = async (position: GeolocationPosition) => {
     const { latitude, longitude } = position.coords;
-    const userLocation = { lat: -0.4772294, lng: 117.1306983 };
+    const userLocation = { lat: latitude, lng: longitude };
     setLocation(userLocation);
 
-    const addressData = await getAddress(-0.4772294, 117.1306983);
+    const addressData = await getAddress(latitude, longitude);
     if (!addressData) return;
 
     setAddress(addressData.fullAddress);
     setShortAddress(addressData.shortAddress);
 
     const data = await getNearbyCoffee(
-      -0.4772294,
-      117.1306983,
+      latitude,
+      longitude,
       addressData.shortAddress
     );
     if (data) {
