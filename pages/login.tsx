@@ -70,7 +70,8 @@ const Login = () => {
         Cookies.set("greeting_access", "true", { expires: 1 / 92 });
         router.push("/greeting");
       }
-    } catch (err) {
+    } catch (error) {
+      console.error("Login failed: ", error)
       setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);

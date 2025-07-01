@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
+import type { GoogleStep } from "@/types";
+
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 
 export default async function handler(
@@ -35,7 +37,7 @@ export default async function handler(
       defaultResponse.route?.overview_polyline?.points || null;
 
     const steps =
-      defaultResponse.route?.legs?.[0]?.steps?.map((step: any) => ({
+      defaultResponse.route?.legs?.[0]?.steps?.map((step: GoogleStep) => ({
         instruction: step.html_instructions,
         distance: step.distance?.text || null,
         duration: step.duration?.text || null,

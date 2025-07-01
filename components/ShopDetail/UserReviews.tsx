@@ -2,9 +2,7 @@ import { useState } from "react";
 import {
   Avatar,
   Box,
-  Button,
   Grid,
-  IconButton,
   Paper,
   Rating,
   Typography,

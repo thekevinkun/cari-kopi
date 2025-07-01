@@ -30,7 +30,7 @@ const MapReady = () => {
     setTimeout(() => {
       map.invalidateSize();
     }, 300);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   return null;
 };
 
@@ -73,7 +73,7 @@ const CaptureMapInstance = ({
     if (!mapRef.current) {
       mapRef.current = map;
     }
-  }, [map]);
+  }, [map]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return null;
 };
@@ -122,7 +122,7 @@ const Map = ({
           />
         ))
       : null;
-  }, [shops, suppressMarkers, showMarker, isMobile]);
+  }, [shops, suppressMarkers, showMarker, isMobile]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Render temp shops (just one or few, appear instantly)
   const tempShopMarkers = useMemo(() => {
@@ -136,7 +136,7 @@ const Map = ({
           />
         ))
       : null;
-  }, [tempShops, suppressMarkers, showMarker, isMobile]);
+  }, [tempShops, suppressMarkers, showMarker, isMobile]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const destinationShopMarker = useMemo(() => {
     return destinationShop ? (
@@ -149,7 +149,7 @@ const Map = ({
         icon={createShopMarkerIcon(destinationShop, isMobile, 0)}
       />
     ) : null;
-  }, [destinationShop, isMobile]);
+  }, [destinationShop, isMobile]); 
 
   const mapRef = useRef<L.Map | null>(null);
   const hasFlownToTarget = useRef<string | null>(null);
@@ -170,7 +170,7 @@ const Map = ({
         duration: 1,
       });
     }
-  }, [directionLine]);
+  }, [directionLine]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Handle flyTo user back to location
   useEffect(() => {
@@ -181,7 +181,7 @@ const Map = ({
         duration: 1,
       });
     }
-  }, [backToLocation]);
+  }, [backToLocation]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Handle flyTo when targetShop is set
   useEffect(() => {

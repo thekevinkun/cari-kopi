@@ -8,16 +8,18 @@ import "swiper/css";
 import "swiper/css/navigation";
 
 import { FullscreenImage, ImageWithSkeleton } from "@/components";
+
+import type { Swiper as SwiperType } from "swiper";
 import { SerpPhotosProps } from "@/types";
 
 import { StyledBoxImage } from "./styles";
 
 const PhotoSlide = ({ photos }: { photos: SerpPhotosProps[] }) => {
   const [fullscreenIndex, setFullscreenIndex] = useState<number | null>(null);
-  const swiperPhotoRef = useRef<any>(null);
+  const swiperPhotoRef = useRef<SwiperType | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const handlePhotoSlideChange = (swiper: any) => {
+  const handlePhotoSlideChange = (swiper: SwiperType) => {
     setActiveIndex(swiper.activeIndex);
   };
 

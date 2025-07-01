@@ -8,7 +8,7 @@ const ExtensionList = ({ extensions }: { extensions: ExtensionGroup[] }) => {
 
   return (
     <Box mt={5}>
-      {extensions.map((group, idx) => {
+      {extensions.map((group) => {
         const { key, values, _unsupported } = group;
 
         if (!values || values.length === 0) return null;
@@ -25,7 +25,7 @@ const ExtensionList = ({ extensions }: { extensions: ExtensionGroup[] }) => {
             </Typography>
 
             <Stack direction="row" flexWrap="wrap" gap={1}>
-              {values.map((value, i) => (
+              {values.map((value) => (
                 <Chip
                   key={`${value} - ${key}`}
                   label={`${getEmoji(value, _unsupported)} ${value}`}

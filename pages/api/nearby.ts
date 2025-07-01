@@ -2,11 +2,11 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { getFromCache, saveToCache } from "@/lib/redis/cache";
 
 import { slugify } from "@/utils/helpers";
-import { PlaceResponse } from "@/types";
+import { PlaceResponse, GoogleNearbyResponse } from "@/types";
 
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 
-async function fetchNearbyPlaces(url: string): Promise<any> {
+async function fetchNearbyPlaces(url: string): Promise<GoogleNearbyResponse> {
   const res = await fetch(url);
   return res.json();
 }

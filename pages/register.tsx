@@ -4,6 +4,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 import { useUser } from "@/contexts/UserContext";
+import { useAlert } from "@/contexts/AlertContext";
 
 import {
   Box,
@@ -55,6 +56,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 const Register = () => {
   const router = useRouter();
   const { user } = useUser();
+  const { showAlert } = useAlert();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -120,10 +122,11 @@ const Register = () => {
         Cookies.set("verify_email", email, { expires: 1 / 92 });
         router.push(`/verify?email=${email}`);
       } else {
-        alert(data.error || "Login failed");
+        showAlert(data.error || "Login failed", "error");
       }
-    } catch (err) {
-      alert("Something went wrong. Please try again.");
+    } catch (error) {
+      console.error("Register failed: ", error)
+      showAlert("Something went wrong. Please try again.", "error");
     } finally {
       setLoading(false);
     }
@@ -214,7 +217,7 @@ const Register = () => {
     }, 500);
 
     return () => clearTimeout(delayDebounce);
-  }, [confirmPassword]);
+  }, [confirmPassword]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (user) return null;
 

@@ -1,8 +1,8 @@
 import { Alert, Slide, Snackbar } from "@mui/material";
-
+import type { SlideProps } from "@mui/material";
 import type { TopAlertProps } from "@/types";
 
-const SlideDown = (props: any) => <Slide {...props} direction="down" />;
+const SlideDown = (props: SlideProps) => <Slide {...props} direction="down" />;
 
 const TopAlert = ({
   open,

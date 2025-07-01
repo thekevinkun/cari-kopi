@@ -80,7 +80,7 @@ const DirectionInfo = ({
     return () => {
       document.body.style.overflow = "";
     };
-  }, [directionInfo]);
+  }, [directionInfo, isTablet]);
 
   return (
     <AnimatePresence>

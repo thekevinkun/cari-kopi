@@ -9,13 +9,7 @@ import { Box, Grid, useMediaQuery } from "@mui/material";
 import { CenteredLoader } from "@/components";
 
 import type { LatLngExpression } from "leaflet";
-import type {
-  Coordinates,
-  NearbyData,
-  Shop,
-  SerpShopDetail,
-  TargetShop,
-} from "@/types";
+import type { NearbyData, Shop, SerpShopDetail, TargetShop } from "@/types";
 import { getLocationPermissionInstructions } from "@/utils/helpers";
 
 const Map = dynamic(() => import("@/components/Map/Map"), {
@@ -559,7 +553,7 @@ const Home = () => {
         localStorage.removeItem("fromGreeting");
       }
     }, delay);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Get user favorites
   useEffect(() => {

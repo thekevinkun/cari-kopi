@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { getFromCache, saveToCache } from "@/lib/redis/cache";
-import type { ShopDetail } from "@/types";
+import type { Shop } from "@/types";
 
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY!;
 
@@ -19,7 +19,7 @@ export default async function handler(
   const cacheKey = `detail:place_${placeId}`;
 
   // Check cache first
-  const cached = await getFromCache<ShopDetail>(subPath, cacheKey);
+  const cached = await getFromCache<Shop>(subPath, cacheKey);
   if (cached) {
     console.log("Get detail from cache redis...");
     return res.status(200).json({ fromCache: true, data: cached });

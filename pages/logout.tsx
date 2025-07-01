@@ -52,7 +52,7 @@ const Logout = () => {
 
   useEffect(() => {
     handleLogout();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!user) return null;
 

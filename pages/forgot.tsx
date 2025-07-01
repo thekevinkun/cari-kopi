@@ -75,6 +75,7 @@ const ForgotPassword = () => {
           "error"
         );
       } else {
+        setMessage(data.message);
         showAlert(data.message, "success");
       }
     } catch (error) {
@@ -123,19 +124,13 @@ const ForgotPassword = () => {
           </Typography>
 
           <Typography variant="body2" textAlign="center" mb={3}>
-            Enter your email and we'll send you a link to get back into your
+            Enter your email and we&apos;ll send you a link to get back into your
             account.
           </Typography>
 
           {errorMessage && (
             <Alert severity="error" sx={{ mb: 2 }}>
               {errorMessage}
-            </Alert>
-          )}
-
-          {message && (
-            <Alert severity="success" sx={{ mb: 2 }}>
-              {message}
             </Alert>
           )}
 

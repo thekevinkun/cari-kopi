@@ -24,7 +24,6 @@ import {
   Information,
   ExtensionList,
   UserReviews,
-  TopAlert,
 } from "@/components";
 
 import { StyledStack, scrollStyle } from "./styles";

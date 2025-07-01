@@ -20,7 +20,8 @@ export default async function handler(
     const response = await fetch(endpoint);
     const data = await response.json();
     res.status(200).json(data);
-  } catch (err) {
+  } catch (error) {
+    console.error("Autcomplete failed: ", error)
     res.status(500).json({ error: "Autocomplete failed" });
   }
 }

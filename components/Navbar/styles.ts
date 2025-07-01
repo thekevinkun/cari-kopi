@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   Card,
-  Link,
   Toolbar,
   Typography,
 } from "@mui/material";
@@ -60,7 +59,7 @@ export const MenuBox = styled(Box)(({ theme }) => ({
   },
 }));
 
-export const MenuCard = styled(Card)(({ theme }) => ({
+export const MenuCard = styled(Card)(() => ({
   background: "#fff",
   boxShadow:
     "0px 4px 16px rgba(0, 0, 0, 0.08), 0px 8px 32px rgba(0, 0, 0, 0.08)",

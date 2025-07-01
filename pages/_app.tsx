@@ -32,7 +32,7 @@ const App = ({ Component, pageProps }: AppProps) => {
     if (user && typeof window !== "undefined") {
       router.replace("/");
     }
-  }, [user]);
+  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>

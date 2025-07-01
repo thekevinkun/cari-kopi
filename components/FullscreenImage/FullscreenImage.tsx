@@ -6,6 +6,7 @@ import "swiper/css/navigation";
 import { Box, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
+import type { Swiper as SwiperType } from "swiper";
 import type { SerpPhotosProps } from "@/types";
 
 const FullscreenImage = ({
@@ -19,7 +20,7 @@ const FullscreenImage = ({
   type?: string;
   onClose: () => void;
 }) => {
-  const swiperRef = useRef<any>(null);
+  const swiperRef = useRef<SwiperType | null>(null);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -63,6 +64,7 @@ const FullscreenImage = ({
                 justifyContent: "center",
               }}
             >
+              {/* eslint-disable @next/next/no-img-element */}
               <img
                 src={
                   type === "review"

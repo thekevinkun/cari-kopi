@@ -38,6 +38,7 @@ const ImageWithSkeleton = ({
         </Box>
       )}
 
+      {/* eslint-disable @next/next/no-img-element */}
       <img
         src={error ? "/no-coffee-image.jpg" : src}
         alt={alt}

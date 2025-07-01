@@ -49,6 +49,31 @@ export type NearbyData = {
   results: Shop[];
 };
 
+export type PlaceResponse = {
+  place_id: string;
+  name: string;
+  rating?: number;
+  geometry: {
+    location: {
+      lat: number;
+      lng: number;
+    };
+  };
+  photos?: {
+    photo_reference: string;
+    height: number;
+    width: number;
+    html_attributions: string[];
+  }[];
+};
+
+export type GoogleNearbyResponse = {
+  results: PlaceResponse[];
+  next_page_token?: string;
+  error_message?: string;
+  status: string;
+}
+
 export type Shop = {
   placeId: string;
   name: string;
@@ -250,6 +275,13 @@ export type FavoritesShopProps = {
   onViewOnMap: (shop: SerpShopDetail) => void;
 };
 
+export type GoogleStep = {
+  html_instructions: string;
+  distance?: { text: string; value: number };
+  duration?: { text: string; value: number };
+  maneuver?: string;
+};
+
 type TravelInfo = {
   duration: string;
   distance: string;
@@ -335,22 +367,4 @@ export type OSMAddress = {
   county?: string;
   state?: string;
   country?: string;
-};
-
-export type PlaceResponse = {
-  place_id: string;
-  name: string;
-  rating?: number;
-  geometry: {
-    location: {
-      lat: number;
-      lng: number;
-    };
-  };
-  photos?: {
-    photo_reference: string;
-    height: number;
-    width: number;
-    html_attributions: string[];
-  }[];
 };

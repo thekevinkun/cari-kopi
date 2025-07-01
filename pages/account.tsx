@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, ReactNode } from "react";
 import Head from "next/head";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -9,7 +9,6 @@ import {
   Typography,
   Button,
   TextField,
-  Link,
   CircularProgress,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
@@ -127,7 +126,8 @@ export default function Account() {
 
           setUser(data.user);
         }
-      } catch (err) {
+      } catch (error) {
+        console.error("Update name error", error);
         showAlert("Something went wrong. Failed to update your name.", "error");
       } finally {
         setLoading(false);
@@ -179,7 +179,8 @@ export default function Account() {
 
           setUser(data.user);
         }
-      } catch (err) {
+      } catch (error) {
+        console.error("Update email error", error);
         showAlert(
           "Something went wrong. Failed to update your email.",
           "error"
@@ -207,7 +208,8 @@ export default function Account() {
       } else {
         showAlert(data.message, "success");
       }
-    } catch (err) {
+    } catch (error) {
+      console.error("Reset password error", error);
       showAlert(
         "Something went wrong. Failed to send a link to your email.",
         "error"
@@ -276,7 +278,7 @@ export default function Account() {
   return (
     <>
       <Head>
-        <title>{accountName}'s Account | Carikopi</title>
+        <title>{accountName}&apos;s Account | Carikopi</title>
         <meta name="description" content="User account information" />
       </Head>
 
@@ -386,7 +388,7 @@ const Section = ({
   description,
 }: {
   label: string;
-  value: any;
+  value: string | ReactNode;
   description?: string;
 }) => {
   return (
@@ -527,7 +529,7 @@ const DeleteSection = ({
       </Typography>
 
       <Typography variant="body1" color="text.secondary" mt={1}>
-        We're sorry to see you go!
+        We&apos;re sorry to see you go!
       </Typography>
 
       <Typography variant="body1" color="text.secondary" mt={1}>

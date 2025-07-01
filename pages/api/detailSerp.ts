@@ -28,10 +28,10 @@ export default async function handler(
   try {
     console.log("Calling detail api...");
 
-    let response = await fetch(
+    const response = await fetch(
       `https://serpapi.com/search.json?engine=google_maps&place_id=${placeId}&api_key=${SERP_API_KEY}`
     );
-    let data = await response.json();
+    const data = await response.json();
 
     if (!data.place_results) {
       return res.status(500).json({ error: "No details found" });
@@ -43,7 +43,7 @@ export default async function handler(
 
     return res.status(200).json({ fromCache: false, data: data.place_results });
   } catch (error) {
-    console.error("Failed to fetch SerpApi details:", error);
+    console.error("Failed to fetch SerpApi details: ", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 }

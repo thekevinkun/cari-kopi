@@ -72,7 +72,6 @@ const FavoritesPage = () => {
   const [favorites, setFavorites] = useState<SerpShopDetail[]>([]);
   const [loading, setLoading] = useState(true);
   const [unsavingId, setUnsavingId] = useState<string | null>(null);
-  const [viewedId, setViewedId] = useState<string | null>(null);
   const [showShopDetail, setShowShopDetail] = useState(false);
   const [selectedShop, setSelectedShop] = useState<SerpShopDetail | null>(null);
 
@@ -85,22 +84,7 @@ const FavoritesPage = () => {
   const [directionLine, setDirectionLine] = useState<LatLngExpression[] | null>(
     null
   );
-  const [directionInfo, setDirectionInfo] = useState<{
-    driving?: { duration: string; distance: string };
-    walking?: { duration: string; distance: string };
-    transit?: { duration: string; distance: string };
-    bicycling?: { duration: string; distance: string };
-  }>({});
-  const [directionSteps, setDirectionSteps] = useState<
-    Array<{
-      instruction: string;
-      duration: string | null;
-      distance: string | null;
-      maneuver: string | null;
-    }>
-  >([]);
-  const [visibleDirections, setVisibleDirections] = useState(false);
-
+  
   const handleShowShopDetail = (shop: SerpShopDetail) => {
     if (shop) {
       setSelectedShop(shop);
@@ -121,8 +105,6 @@ const FavoritesPage = () => {
 
     setTimeout(() => {
       setDirectionLine(null);
-      setDirectionInfo({});
-      setDirectionSteps([]);
 
       setShowShopDetail(true);
     }, 500);
@@ -185,7 +167,6 @@ const FavoritesPage = () => {
     const {
       polyline: encodedPolyline,
       modes,
-      steps,
     }: {
       polyline: string | null;
       modes: Array<{
@@ -234,12 +215,6 @@ const FavoritesPage = () => {
         modeMap[mode] = { duration, distance };
       }
     });
-
-    setDirectionInfo(modeMap);
-
-    setDirectionSteps(steps);
-
-    setVisibleDirections(true);
 
     handleViewOnMap(shop);
   };
@@ -439,26 +414,10 @@ const FavoritesPage = () => {
                       fullWidth
                       variant="outlined"
                       size="small"
-                      startIcon={
-                        viewedId === shop.place_id ? null : (
-                          <MapIcon sx={{ color: "rgba(0,0,0,0.75)" }} />
-                        )
-                      }
+                      startIcon={<MapIcon sx={{ color: "rgba(0,0,0,0.75)" }} />}
                       onClick={() => handleViewOnMap(shop)}
-                      disabled={viewedId === shop.place_id}
                     >
-                      {viewedId === shop.place_id ? (
-                        <Box
-                          display="flex"
-                          alignItems="center"
-                          justifyContent="center"
-                          width="100%"
-                        >
-                          <CircularProgress size={17} />
-                        </Box>
-                      ) : (
-                        "View Map"
-                      )}
+                      View Map
                     </Button>
                   </CardActions>
                 </Card>

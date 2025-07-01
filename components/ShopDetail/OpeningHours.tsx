@@ -26,8 +26,7 @@ const OpeningHours = ({
     ...weekdayText.slice(0, todayIndex),
   ];
 
-  const [currentDayLabel, currentDayHours] =
-    weekdayText[todayIndex].split(": ");
+  const [, currentDayHours] = weekdayText[todayIndex].split(": ");
 
   return (
     <Paper
@@ -74,7 +73,7 @@ const OpeningHours = ({
           spacing={1}
           sx={{ mt: 1, pl: 2, pb: 2 }}
         >
-          {reordered.map((text, index) => {
+          {reordered.map((text) => {
             const [day, hours] = text.split(": ");
             const isToday = day
               .toLowerCase()

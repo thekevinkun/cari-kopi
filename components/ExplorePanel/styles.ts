@@ -1,4 +1,4 @@
-import { styled, alpha, Typography } from "@mui/material";
+import { styled, Typography } from "@mui/material";
 
 export const StyledAddress = styled(Typography)(({ theme }) => ({
   overflow: "hidden",

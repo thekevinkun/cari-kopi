@@ -150,7 +150,7 @@ const ResetPassword = ({ token }: { token: string }) => {
     }, 500);
 
     return () => clearTimeout(delayDebounce);
-  }, [password]);
+  }, [password]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Live confirm password check
   useEffect(() => {
@@ -175,7 +175,7 @@ const ResetPassword = ({ token }: { token: string }) => {
     }, 500);
 
     return () => clearTimeout(delayDebounce);
-  }, [confirmPassword]);
+  }, [confirmPassword]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!token) return null;
 
