@@ -14,13 +14,13 @@ const TopAlert = ({
     <Snackbar
       open={open}
       onClose={handleClose}
-      autoHideDuration={3000}
+      autoHideDuration={5000}
       anchorOrigin={{ vertical: "top", horizontal: "center" }}
       TransitionComponent={SlideDown}
       sx={{
         zIndex: 1400,
         mt: 2,
-        maxWidth: "90vw",
+        maxWidth: "100vw",
       }}
     >
       <Alert
