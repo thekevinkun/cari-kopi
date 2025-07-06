@@ -362,7 +362,7 @@ const ShopDetail = ({
                   position: "absolute",
                   top: 4,
                   right: 4,
-                  zIndex: 1300,
+                  zIndex: 999,
                   bgcolor: "rgba(0,0,0,0.35)",
                   color: "#fff",
                   boxShadow: "0 2px 6px rgba(0,0,0,0.35)",
