@@ -16,8 +16,6 @@ import CachedIcon from "@mui/icons-material/Cached";
 
 import type { ExplorePanelProps } from "@/types";
 
-import { StyledAddress } from "./styles";
-
 const SearchBar = dynamic(() => import("@/components/SearchBar/SearchBar"), {
   ssr: false,
 });
@@ -56,70 +54,124 @@ const ExplorePanel = ({
       }}
     >
       {locationStatus === "fetching" ? (
-        <Box display="flex">
+        <Box
+          display="flex"
+          alignItems="center"
+          sx={{
+            px: 1.25,
+            py: 0.6,
+            backgroundColor: "#f5f5f5",
+            borderRadius: "24px",
+            maxWidth: "100%",
+            boxShadow: "0 1px 4px rgba(0,0,0,0.12)",
+          }}
+        >
           <LocationOnIcon
             sx={{
-              fontSize: {
-                xs: "1.15rem",
-                sm: "1.25rem",
-              },
+              fontSize: "1.2rem",
               color: "rgba(0,0,0,0.54)",
-              marginRight: "3px",
+              mr: 1,
             }}
           />
-          <Typography variant="body1" color="textSecondary" fontSize="0.825rem">
+          <Typography
+            variant="body2"
+            color="textSecondary"
+            sx={{
+              fontSize: "0.83rem",
+              fontWeight: 500,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
             Finding location...
           </Typography>
         </Box>
       ) : locationStatus === "failed" ? (
-        <Box display="flex" alignItems="center">
+        <Box>
           <Button
             variant="outlined"
             size="small"
+            onClick={onRequestLocation}
             sx={{
-              padding: "4px 9px",
-              fontSize: "0.715rem",
-              fontWeight: "bold",
+              px: 1.5,
+              fontSize: "0.72rem",
+              fontWeight: 600,
+              textTransform: "none",
               border: "2px solid rgba(0, 0, 0, 0.55)",
-              borderRadius: "unset",
               color: "#121212",
+              borderRadius: "16px",
               "&:hover": {
                 background: "rgba(128, 74, 38, 0.85)",
                 borderColor: "rgba(0, 0, 0, 0.55)",
+                color: "#fff",
               },
             }}
-            onClick={onRequestLocation}
           >
             Find your location
           </Button>
         </Box>
       ) : address ? (
-        <Box display="flex">
+        <Box
+          display="flex"
+          alignItems="center"
+          gap={1}
+          sx={{
+            px: 1.25,
+            py: 0.6,
+            backgroundColor: "#f5f5f5",
+            borderRadius: "24px",
+            maxWidth: "100%",
+            boxShadow: "0 1px 4px rgba(0,0,0,0.12)",
+          }}
+        >
           <LocationOnIcon
-            titleAccess="Back to location?"
             sx={{
-              fontSize: {
-                xs: "1.15rem",
-                sm: "1.25rem",
-              },
-              color: "#1976d2",
-              marginRight: "3px",
+              fontSize: "1.2rem",
+              color: "#804A26",
+            }}
+          />
+
+          <Button
+            variant="contained"
+            size="small"
+            onClick={onBackToLocation}
+            sx={{
+              minWidth: 46,
+              fontSize: "0.675rem",
+              textTransform: "uppercase",
+              fontWeight: 600,
+              px: 1.25,
+              py: 0.3,
+              borderRadius: "12px",
+              backgroundColor: "#804A26",
               "&:hover": {
-                cursor: "pointer",
+                backgroundColor: "#6a3b20",
               },
             }}
-            onClick={onBackToLocation}
-          />
-          <StyledAddress
-            title="Back to location?"
-            variant="body1"
-            color="textSecondary"
-            onClick={onBackToLocation}
+          >
+            Go
+          </Button>
+
+          <Typography
+            title={address}
+            variant="body2"
+            sx={{
+              flexGrow: 1,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              fontSize: "0.83rem",
+              fontWeight: 500,
+              mr: 1,
+              cursor: "default",
+            }}
           >
             {address}
-          </StyledAddress>
+          </Typography>
         </Box>
       ) : null}
+
 
       {locationStatus === "fetching" ? (
         <Box
@@ -142,7 +194,7 @@ const ExplorePanel = ({
               fontSize: "0.75rem",
               fontStyle: "italic",
               [theme.breakpoints.down("sm")]: {
-                fontSize: "0.715rem",
+                fontSize: "0.725rem",
               },
             })}
           >
@@ -174,7 +226,7 @@ const ExplorePanel = ({
                 fontSize: "0.75rem",
                 fontStyle: "italic",
                 [theme.breakpoints.down("sm")]: {
-                  fontSize: "0.715rem",
+                  fontSize: "0.725rem",
                 },
               })}
             >
@@ -230,7 +282,7 @@ const ExplorePanel = ({
                       sx={{
                         fontSize: { xs: 18, sm: 20 },
                         position: "relative",
-                        bottom: { xs: "0px", sm: "1px" },
+                        bottom: { xs: "0px", sm: "0.775px" },
                       }}
                     />
                   )
