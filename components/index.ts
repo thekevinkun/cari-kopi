@@ -10,7 +10,8 @@ import OpeningHours from "./ShopDetail/OpeningHours";
 import Information from "./ShopDetail/Information";
 import ExtensionList from "./ShopDetail/ExtensionList";
 import UserReviews from "./ShopDetail/UserReviews";
-import LocationPermissionModal from "./LocationPermissionModal/LocationPermissionModal";
+import LocationPermissionModal from "./LocationModal/LocationPermissionModal";
+import LocationBlockedModal from "./LocationModal/LocationBlockedModal";
 import TopAlert from "./TopAlert/TopAlert";
 
 export {
@@ -27,5 +28,6 @@ export {
   ExtensionList,
   UserReviews,
   LocationPermissionModal,
+  LocationBlockedModal,
   TopAlert,
 };

@@ -1,3 +1,5 @@
+import { m } from "framer-motion";
+
 export const greetingVariants = {
   hidden: { opacity: 0 },
   show: {
@@ -121,3 +123,25 @@ export const cardDetailVariants = (
     },
   },
 });
+
+export const modalVariants = {
+  hidden: { opacity: 0, scale: 0.85 },
+  show: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 0.3,
+      type: "spring",
+      stiffness: 180,
+    },
+  },
+  exit: {
+    opacity: 0, 
+    scale: 0.85,
+    transition: {
+      duration: 0.3,
+      type: "spring",
+      stiffness: 180,
+    }
+  },
+};

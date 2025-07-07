@@ -6,7 +6,7 @@ import { useLocation } from "@/contexts/LocationContext";
 
 import { Box, Grid, useMediaQuery } from "@mui/material";
 
-import { CenteredLoader, LocationPermissionModal } from "@/components";
+import { CenteredLoader, LocationPermissionModal, LocationBlockedModal } from "@/components";
 
 import type { LatLngExpression } from "leaflet";
 import type { NearbyData, Shop, SerpShopDetail, TargetShop } from "@/types";
@@ -71,6 +71,7 @@ const Home = () => {
   const triedInitialLocation = useRef(false);
 
   const [showLocationPrompt, setShowLocationPrompt] = useState(false);
+  const [showBlockedModal, setShowBlockedModal] = useState(false);
   const [locationStatus, setLocationStatus] = useState<
     "idle" | "fetching" | "success" | "failed"
   >("idle");
@@ -471,10 +472,6 @@ const Home = () => {
   const tryGetLocation = async (): Promise<GeolocationPosition | null> => {
     return new Promise((resolve) => {
       if (!navigator.geolocation) {
-        showAlert(
-          "Something went wrong. Failed to get your location.",
-          "error"
-        );
         console.warn("Geolocation is not supported");
         return resolve(null);
       }
@@ -482,10 +479,6 @@ const Home = () => {
       navigator.geolocation.getCurrentPosition(
         (position) => resolve(position),
         (error) => {
-          showAlert(
-            "Something went wrong. Failed to get your current position.",
-            "error"
-          );
           console.error("Geolocation error:", error);
           resolve(null);
         },
@@ -524,10 +517,7 @@ const Home = () => {
       await handleLocationSuccess(pos);
       setLocationStatus("success");
     } else {
-      alert(
-        getLocationPermissionInstructions() +
-          "\n\nRefresh the page after changing permission."
-      );
+      setShowBlockedModal(true);
       setLocationStatus("failed");
     }
   };
@@ -713,6 +703,11 @@ const Home = () => {
         open={showLocationPrompt}
         onConfirm={handleLocationConfirm}
         onDismiss={handleLocationDismiss}
+      />
+
+      <LocationBlockedModal
+        open={showBlockedModal}
+        onClose={() => setShowBlockedModal(false)}
       />
     </Grid>
   );
