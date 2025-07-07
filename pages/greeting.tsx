@@ -59,7 +59,6 @@ const GreetingPage = () => {
   useEffect(() => {
     const timeout = setTimeout(() => {
       Cookies.remove("greeting_access");
-      localStorage.setItem("fromGreeting", "true");
       setVisible(false); // trigger exit animation
     }, 8000);
 

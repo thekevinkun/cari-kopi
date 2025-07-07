@@ -6,7 +6,7 @@ import { useLocation } from "@/contexts/LocationContext";
 
 import { Box, Grid, useMediaQuery } from "@mui/material";
 
-import { CenteredLoader } from "@/components";
+import { CenteredLoader, LocationPermissionModal } from "@/components";
 
 import type { LatLngExpression } from "leaflet";
 import type { NearbyData, Shop, SerpShopDetail, TargetShop } from "@/types";
@@ -69,6 +69,8 @@ const Home = () => {
   const { location, setLocation } = useLocation();
 
   const triedInitialLocation = useRef(false);
+
+  const [showLocationPrompt, setShowLocationPrompt] = useState(false);
   const [locationStatus, setLocationStatus] = useState<
     "idle" | "fetching" | "success" | "failed"
   >("idle");
@@ -494,18 +496,18 @@ const Home = () => {
 
   const handleLocationSuccess = async (position: GeolocationPosition) => {
     const { latitude, longitude } = position.coords;
-    const userLocation = { lat: latitude, lng: longitude };
+    const userLocation = { lat: -0.4772294, lng: 117.1306983 };
     setLocation(userLocation);
 
-    const addressData = await getAddress(latitude, longitude);
+    const addressData = await getAddress(-0.4772294, 117.1306983);
     if (!addressData) return;
 
     setAddress(addressData.fullAddress);
     setShortAddress(addressData.shortAddress);
 
     const data = await getNearbyCoffee(
-      latitude,
-      longitude,
+      -0.4772294,
+      117.1306983,
       addressData.shortAddress
     );
     if (data) {
@@ -530,30 +532,45 @@ const Home = () => {
     }
   };
 
+  const handleLocationConfirm = async () => {
+    localStorage.setItem("locationPromptDismissed", "true");
+    setShowLocationPrompt(false);
+    onFindLocationClick();
+  };
+
+  const handleLocationDismiss = () => {
+    localStorage.setItem("locationPromptDismissed", "true");
+    setShowLocationPrompt(false);
+    setLocationStatus("failed");
+  };
+
   useEffect(() => {
-    // Avoid re-trigerring after came from /greeting
     if (triedInitialLocation.current) return;
     triedInitialLocation.current = true;
 
-    // Delay slightly if just came from /greeting
-    const fromGreeting = localStorage.getItem("fromGreeting") === "true";
-    const delay = fromGreeting ? 800 : 0;
+    const dismissed = localStorage.getItem("locationPromptDismissed") === "true";
 
-    setTimeout(async () => {
-      setLocationStatus("fetching");
-      const pos = await tryGetLocation();
+    // Always show modal on first visit
+    if (!dismissed) {
+      setShowLocationPrompt(true); // show custom modal
+      return; // stop here; don't auto-fetch
+    }
+
+    // If user previously clicked "Use my location", auto-fetch
+    if (location) return; // prevent double-fetch
+
+    setLocationStatus("fetching");
+
+    tryGetLocation().then(async (pos) => {
       if (pos) {
         await handleLocationSuccess(pos);
         setLocationStatus("success");
       } else {
         setLocationStatus("failed");
       }
-
-      if (fromGreeting) {
-        localStorage.removeItem("fromGreeting");
-      }
-    }, delay);
+    });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
 
   // Get user favorites
   useEffect(() => {
@@ -691,6 +708,12 @@ const Home = () => {
           ) : null}
         </Box>
       </Grid>
+
+      <LocationPermissionModal
+        open={showLocationPrompt}
+        onConfirm={handleLocationConfirm}
+        onDismiss={handleLocationDismiss}
+      />
     </Grid>
   );
 };
