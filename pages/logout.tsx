@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -29,32 +29,38 @@ const Logout = () => {
   const router = useRouter();
   const { user, refreshUser } = useUser();
 
-  const name = user?.name?.split(" ")[0] || "friend";
-
-  const handleLogout = async () => {
-    if (!user) {
-      router.push("/login");
-    }
-
-    try {
-      await fetch("/api/auth/logout", {
-        method: "POST",
-      });
-
-      setTimeout(async () => {
-        await refreshUser();
-        router.push("/login");
-      }, 5000);
-    } catch (err) {
-      console.error("Logout failed", err);
-    }
-  };
+  const [displayName, setDisplayName] = useState<string | null>(null);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    handleLogout();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    if (user?.name) {
+      const name = user.name.split(" ")[0];
+      setDisplayName(name);
+      setVisible(true);
+    }
+  }, [user]);
 
-  if (!user) return null;
+  useEffect(() => {
+    const logout = async () => {
+      try {
+        await fetch("/api/auth/logout", {
+          method: "POST",
+        });
+
+        setTimeout(() => {
+          setVisible(false); // triggers fade-out
+          setTimeout(async () => {
+            await refreshUser();
+            router.push("/login");
+          }, 500); // fade duration
+        }, 5000);
+      } catch (err) {
+        console.error("Logout failed", err);
+      }
+    };
+
+    if (user) logout();
+  }, [user, router]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
@@ -78,11 +84,15 @@ const Logout = () => {
           color: "white",
           textAlign: "center",
           px: 3,
+          opacity: visible ? 1 : 0,
+          transition: "opacity 0.5s ease",
         }}
       >
-        <Typography variant="h4" fontWeight="bold" gutterBottom>
-          See you later, {name}...
-        </Typography>
+        {displayName && (
+          <Typography variant="h4" fontWeight="bold" gutterBottom>
+            See you later, {displayName}...
+          </Typography>
+        )}
 
         <style jsx global>{`
           @keyframes pulseGlow {
