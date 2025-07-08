@@ -48,7 +48,7 @@ const MapFlyTo = ({
   useEffect(() => {
     if (userLocation && !hasFlownRef.current) {
       hasFlownRef.current = true; // Prevent future runs
-      map.flyTo([userLocation.lat, userLocation.lng], 16);
+      map.flyTo([userLocation.lat, userLocation.lng], 15);
 
       const handleMoveEnd = () => {
         onFlyEnd();
@@ -98,7 +98,7 @@ const Map = ({
 
   const isMobile = useMediaQuery("(max-width: 600px)");
 
-  const mapZoom = userLocation ? 16 : 2;
+  const mapZoom = userLocation ? 15 : 2;
 
   const [showMarker, setShowMarker] = useState(false);
 
@@ -177,7 +177,7 @@ const Map = ({
     if (!userLocation) return;
 
     if (backToLocation && mapRef.current) {
-      mapRef.current.flyTo([userLocation.lat, userLocation.lng], 16, {
+      mapRef.current.flyTo([userLocation.lat, userLocation.lng], 15, {
         duration: 1,
       });
     }
