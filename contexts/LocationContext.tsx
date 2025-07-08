@@ -15,6 +15,17 @@ export const LocationProvider = ({ children }: { children: ReactNode }) => {
 
   // Load from localStorage on first load
   useEffect(() => {
+    const promptDismissed = localStorage.getItem("locationPromptDismissed") === "true";
+    const locationAllowed = localStorage.getItem("locationAllowed") === "true";
+
+    const shouldRestore = promptDismissed && locationAllowed;
+
+    if (!shouldRestore) {
+      // Important: clear any old location so it's not used again wrongly
+      localStorage.removeItem("user_location");
+      return;
+    }
+
     const stored = localStorage.getItem("user_location");
     if (stored) {
       try {

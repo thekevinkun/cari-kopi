@@ -6,11 +6,14 @@ import { useLocation } from "@/contexts/LocationContext";
 
 import { Box, Grid, useMediaQuery } from "@mui/material";
 
-import { CenteredLoader, LocationPermissionModal, LocationBlockedModal } from "@/components";
+import {
+  CenteredLoader,
+  LocationPermissionModal,
+  LocationBlockedModal,
+} from "@/components";
 
 import type { LatLngExpression } from "leaflet";
 import type { NearbyData, Shop, SerpShopDetail, TargetShop } from "@/types";
-import { getLocationPermissionInstructions } from "@/utils/helpers";
 
 const Map = dynamic(() => import("@/components/Map/Map"), {
   ssr: false,
@@ -85,6 +88,12 @@ const Home = () => {
   const [tempShops, setTempShops] = useState<Shop[]>([]);
   const [targetShop, setTargetShop] = useState<TargetShop | null>(null);
   const [suppressMarkers, setSuppressMarkers] = useState(false);
+
+  const locationReady =
+    location !== null &&
+    address !== null &&
+    shortAddress !== null &&
+    shops.length > 0;
 
   const [showShopDetail, setShowShopDetail] = useState(false);
   const [selectedShop, setSelectedShop] = useState<SerpShopDetail | null>(null);
@@ -470,6 +479,13 @@ const Home = () => {
   };
 
   const tryGetLocation = async (): Promise<GeolocationPosition | null> => {
+    navigator.permissions?.query({ name: "geolocation" }).then((result) => {
+      if (result.state === "denied") {
+        localStorage.removeItem("user_location");
+        localStorage.removeItem("locationAllowed");
+      }
+    });
+
     return new Promise((resolve) => {
       if (!navigator.geolocation) {
         console.warn("Geolocation is not supported");
@@ -489,18 +505,18 @@ const Home = () => {
 
   const handleLocationSuccess = async (position: GeolocationPosition) => {
     const { latitude, longitude } = position.coords;
-    const userLocation = { lat: -0.4772294, lng: 117.1306983 };
+    const userLocation = { lat: latitude, lng: longitude };
     setLocation(userLocation);
 
-    const addressData = await getAddress(-0.4772294, 117.1306983);
+    const addressData = await getAddress(latitude, longitude);
     if (!addressData) return;
 
     setAddress(addressData.fullAddress);
     setShortAddress(addressData.shortAddress);
 
     const data = await getNearbyCoffee(
-      -0.4772294,
-      117.1306983,
+      latitude,
+      longitude,
       addressData.shortAddress
     );
     if (data) {
@@ -524,6 +540,7 @@ const Home = () => {
 
   const handleLocationConfirm = async () => {
     localStorage.setItem("locationPromptDismissed", "true");
+    localStorage.setItem("locationAllowed", "true");
     setShowLocationPrompt(false);
     onFindLocationClick();
   };
@@ -538,7 +555,8 @@ const Home = () => {
     if (triedInitialLocation.current) return;
     triedInitialLocation.current = true;
 
-    const dismissed = localStorage.getItem("locationPromptDismissed") === "true";
+    const dismissed =
+      localStorage.getItem("locationPromptDismissed") === "true";
 
     // Always show modal on first visit
     if (!dismissed) {
@@ -546,21 +564,20 @@ const Home = () => {
       return; // stop here; don't auto-fetch
     }
 
-    // If user previously clicked "Use my location", auto-fetch
-    if (location) return; // prevent double-fetch
-
-    setLocationStatus("fetching");
-
-    tryGetLocation().then(async (pos) => {
+    // User has already allowed previously → proceed directly
+    const autoFetch = async () => {
+      setLocationStatus("fetching");
+      const pos = await tryGetLocation();
       if (pos) {
         await handleLocationSuccess(pos);
         setLocationStatus("success");
       } else {
         setLocationStatus("failed");
       }
-    });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    };
 
+    autoFetch();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Get user favorites
   useEffect(() => {
@@ -624,7 +641,7 @@ const Home = () => {
         }}
       >
         <Map
-          userLocation={location}
+          userLocation={locationReady ? location : null}
           backToLocation={backToLocation}
           shops={shops}
           tempShops={tempShops}
