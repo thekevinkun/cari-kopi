@@ -16,6 +16,28 @@ export interface User {
   createdAt: Date;
 }
 
+export type AddressComponent = {
+  long_name: string;
+  short_name: string;
+  types: string[];
+};
+
+type GeocodeResult = {
+  formatted_address: string;
+  address_components: AddressComponent[];
+  geometry: {
+    location: {
+      lat: number;
+      lng: number;
+    };
+  };
+};
+
+export type GeocodeResponse = {
+  results: GeocodeResult[];
+  status: string;
+};
+
 export type Favorite = {
   _id?: ObjectId;
   userId: ObjectId;
