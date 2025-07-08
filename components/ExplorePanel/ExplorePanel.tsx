@@ -33,6 +33,7 @@ const ExplorePanel = ({
   onNextPage,
   onShowLessPage,
   onSelectSearchResult,
+  searchInProgress,
 }: ExplorePanelProps) => {
   const isTablet = useMediaQuery("(max-width: 900px)");
   const isMobile = useMediaQuery("(max-width: 600px)");
@@ -172,7 +173,6 @@ const ExplorePanel = ({
         </Box>
       ) : null}
 
-
       {locationStatus === "fetching" ? (
         <Box
           display="flex"
@@ -311,7 +311,10 @@ const ExplorePanel = ({
         )
       )}
 
-      <SearchBar onSelectSearchResult={onSelectSearchResult} />
+      <SearchBar
+        onSelectSearchResult={onSelectSearchResult}
+        searchInProgress={searchInProgress}
+      />
     </Stack>
   );
 };

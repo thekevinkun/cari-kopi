@@ -23,7 +23,7 @@ import {
   scrollStyle,
 } from "./styles";
 
-const SearchBar = ({ onSelectSearchResult }: SearchBarProps) => {
+const SearchBar = ({ onSelectSearchResult, searchInProgress }: SearchBarProps) => {
   const [input, setInput] = useState("");
   const [results, setResults] = useState<AutocompletePrediction[]>([]);
   const [loading, setLoading] = useState(false);
@@ -110,11 +110,12 @@ const SearchBar = ({ onSelectSearchResult }: SearchBarProps) => {
 
         <StyledInputBase
           placeholder="Search for coffee shop..."
-          value={input}
+          value={searchInProgress ? "Please wait..." : input}
           onChange={handleChange}
           sx={{
             opacity: inputAfterSelected ? 0.45 : 1,
           }}
+          disabled={searchInProgress}
         />
       </Search>
 

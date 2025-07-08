@@ -349,10 +349,12 @@ export type ExplorePanelProps = {
   onNextPage: () => void;
   onShowLessPage: () => void;
   onSelectSearchResult: (placeId: string) => void;
+  searchInProgress?: boolean;
 };
 
 export type SearchBarProps = {
   onSelectSearchResult: (placeId: string) => void;
+  searchInProgress?: boolean;
 };
 
 export type OSMAddress = {

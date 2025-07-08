@@ -119,6 +119,7 @@ const Home = () => {
   const [destinationShop, setDestinationShop] = useState<Shop | null>(null);
   const [visibleDirections, setVisibleDirections] = useState(false);
 
+  const [searchLoading, setSearchLoading] = useState(false);
   const [loadingNextPage, setLoadingNextPage] = useState(false);
 
   const getAddress = async (lat: number, lng: number) => {
@@ -398,6 +399,8 @@ const Home = () => {
   };
 
   const handleSelectSearchResult = async (placeId: string) => {
+    setSearchLoading(true);
+
     const res = await fetch(`/api/detailSerp?placeId=${placeId}`);
     const { data } = await res.json();
 
@@ -467,6 +470,7 @@ const Home = () => {
     await sleep(200);
 
     setTargetShop(null);
+    setSearchLoading(false);
   };
 
   const handleBackToLocation = async () => {
@@ -668,6 +672,7 @@ const Home = () => {
             onNextPage={handleNextPage}
             onShowLessPage={handleShowLessPage}
             onSelectSearchResult={handleSelectSearchResult}
+            searchInProgress={searchLoading}
           />
 
           {visibleDirections ||
