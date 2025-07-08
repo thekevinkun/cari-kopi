@@ -2,6 +2,11 @@
 
 **Carikopi** is a modern coffee shop discovery web app that helps users find nearby cafes, explore their details, and save personal favorites. Built with **Next.js**, **Leaflet**, **MongoDB**, **Redis**, and **SerpAPI**, this app focuses on user experience, performance, and real-time data handling.
 
+
+🔗 Live Site: [https://carikopiapp.vercel.app](https://carikopiapp.vercel.app)
+
+![Screenshot of Carikopi](https://github.com/user-attachments/assets/7ecdb21b-bccc-413c-92d8-8d4f9d03b861)
+
 ---
 
 ## 🌟 Features
@@ -159,9 +164,27 @@ Then open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 📸 Screenshots (Optional)
+## 📸 Screenshots
 
-> Add screenshots or GIFs of the homepage, shop detail view, directions, etc.
+> Desktop Version
+
+![Screenshot of Carikopi Desktop Version](https://github.com/user-attachments/assets/054b2f25-2b78-4211-a5e2-050d8e219a13)
+
+> Desktop Version (Shop Detail)
+
+![Screenshot of Carikopi Desktop Version (Shop Detail)](https://github.com/user-attachments/assets/cbb083f8-75a7-4edd-8dec-e4f976937077)
+
+> Mobile Version
+
+![Screenshot of Carikopi Mobile Version](https://github.com/user-attachments/assets/b9afac4b-18b1-42b7-8c48-4d7d08904e00)
+
+> Mobile Version (Shop Detail)
+
+![Screenshot of Carikopi Mobile Version (Shop Detail)](https://github.com/user-attachments/assets/da266c2c-95ae-41f9-9db4-e08ed8f553f5)
+
+> Mobile Version (Favorites Page)
+
+![Screenshot of Carikopi Mobile Version (Favorites Page)](https://github.com/user-attachments/assets/91b82889-1da3-4734-b7ee-51933aac60b6)
 
 ---
 
