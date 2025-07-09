@@ -100,13 +100,17 @@ const Map = ({
 
   const mapZoom = userLocation ? 15 : 2;
 
+  const [mountedPlaceIds, setMountedPlaceIds] = useState<Set<string>>(new Set());
   const [showMarker, setShowMarker] = useState(false);
 
-  const markerIcon = useMemo(() => {
-    return shops.map((shop: Shop, index) =>
-      createShopMarkerIcon(shop, isMobile, index * 0.15)
-    );
-  }, [shops, isMobile]);
+  // when shops first load, mark them as mounted
+  useEffect(() => {
+    setMountedPlaceIds((prev) => {
+      const newSet = new Set(prev);
+      shops.forEach((shop) => newSet.add(shop.placeId));
+      return newSet;
+    });
+  }, [shops]);
 
   // Render regular shops (no re-render on tempShop change)
   const shopMarkers = useMemo(() => {
@@ -115,14 +119,35 @@ const Map = ({
           <Marker
             key={shop.placeId}
             position={[shop.geometry.location.lat, shop.geometry.location.lng]}
-            icon={markerIcon[index]}
+            icon={createShopMarkerIcon(
+              shop, 
+              isMobile, 
+              index * 0.15, 
+              mountedPlaceIds.has(shop.placeId),
+              false
+            )}
             eventHandlers={{
-              click: () => onSelectShop(shop),
+              click: (e) => {
+                const target = e.originalEvent.target as HTMLElement;
+                if (!target) return;
+                
+                const div = e.target.getElement();
+
+                // click outside → bring to front by adding .top
+                if (div instanceof HTMLElement) {
+                  div.style.zIndex = "9999";
+                }
+                
+                // click image or title → select shop
+                if (target.tagName === "IMG" || target.closest("strong")) {
+                  onSelectShop(shop);
+                }
+              }
             }}
           />
         ))
       : null;
-  }, [shops, suppressMarkers, showMarker, isMobile]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [shops, suppressMarkers, showMarker, mountedPlaceIds, isMobile]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Render temp shops (just one or few, appear instantly)
   const tempShopMarkers = useMemo(() => {
@@ -131,8 +156,31 @@ const Map = ({
           <Marker
             key={"temp-" + shop.placeId}
             position={[shop.geometry.location.lat, shop.geometry.location.lng]}
-            icon={createShopMarkerIcon(shop, isMobile, 0)}
-            eventHandlers={{ click: () => onSelectShop(shop) }}
+            icon={createShopMarkerIcon(
+              shop, 
+              isMobile, 
+              0, 
+              true,
+              false
+            )}
+            eventHandlers={{
+              click: (e) => {
+                const target = e.originalEvent.target as HTMLElement;
+                if (!target) return;
+                
+                const div = e.target.getElement();
+
+                // click outside → bring to front by adding .top
+                if (div instanceof HTMLElement) {
+                  div.style.zIndex = "9999";
+                }
+                
+                // click image or title → select shop
+                if (target.tagName === "IMG" || target.closest("strong")) {
+                  onSelectShop(shop);
+                }
+              }
+            }}
           />
         ))
       : null;
@@ -146,7 +194,7 @@ const Map = ({
           destinationShop.geometry.location.lat,
           destinationShop.geometry.location.lng,
         ]}
-        icon={createShopMarkerIcon(destinationShop, isMobile, 0)}
+        icon={createShopMarkerIcon(destinationShop, isMobile, 0, true, true)}
       />
     ) : null;
   }, [destinationShop, isMobile]); 
