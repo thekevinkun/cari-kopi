@@ -26,7 +26,7 @@ const ExplorePanel = dynamic(
   () => import("@/components/ExplorePanel/ExplorePanel"),
   {
     ssr: false,
-    loading: () => <CenteredLoader height="120px" />,
+    loading: () => <CenteredLoader height="120px" sx={{ display: { xs: "none", md: "flex" } }} />,
   }
 );
 
