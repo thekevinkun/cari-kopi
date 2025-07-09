@@ -42,10 +42,10 @@ const MinimapOverlay = ({ userLocation, shop, directionLine, onClose }: MinimapP
     <Box
       sx={{
         position: "fixed",
-        top: 0,
+        bottom: 0,
         left: 0,
         width: "100vw",
-        height: "100svh",
+        height: "100vh",
         bgcolor: "rgba(0, 0, 0, 0.85)",
         backdropFilter: "blur(4px)",
         zIndex: 1300,

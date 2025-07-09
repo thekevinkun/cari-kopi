@@ -5,7 +5,7 @@ export const StyledStack = styled(Stack)(({ theme }) => ({
   display: "flex",
   flexDirection: "column-reverse",
   [theme.breakpoints.down("md")]: {
-    position: "absolute",
+    position: "fixed",
     left: 0,
     bottom: 0,
     zIndex: 9999,
@@ -13,8 +13,8 @@ export const StyledStack = styled(Stack)(({ theme }) => ({
     padding: 0,
   },
   [theme.breakpoints.down("sm")]: {
-    width: "100%",
-    maxWidth: "100%",
+    width: "100vw",
+    maxWidth: "100vw",
   },
 }));
 

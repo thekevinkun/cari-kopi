@@ -185,6 +185,16 @@ const ShopDetail = ({
     return () => clearTimeout(timeout);
   }, [isTablet, isMobile]);
 
+  useEffect(() => {
+    if (!isTablet && !showShopDetail) return;
+
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isTablet, showShopDetail]);
+
   if (!shop || !shop.place_id) return null;
 
   return (
@@ -395,8 +405,8 @@ const ShopDetail = ({
             left: 0,
             width: "100vw",
             height: "100svh",
-            background: "rgba(0,0,0,.25)",
-            backdropFilter: "blur(2px)",
+            background: "rgba(0,0,0,.55)",
+            backdropFilter: "blur(4px)",
             zIndex: 1000,
           }}
         />
