@@ -224,154 +224,23 @@ const ShopDetail = ({
             exit="exit"
             elevation={6}
             sx={{
-              ...scrollStyle,
-              position: "relative",
+              position: "relative", // Keeps the card as the positioning context for the button
               marginTop: {
                 xs: "auto",
                 md: "unset",
               },
+              height: "100%", // Ensure the card takes full height
             }}
           >
-            {/* SHOP PHOTOS */}
-            <PhotoSlide photos={shop.images ?? []} />
-
-            {/* SHOP CONTENTS */}
-            <CardContent>
-              {/* SHOP TITLE AND RATING */}
-              <TitleRating
-                title={shop.title}
-                rating={shop.rating}
-                reviews={shop.reviews}
-              />
-
-              {/* SHOP OPENING HOURS */}
-              {shop.hours && shop.hours?.length > 0 && (
-                <OpeningHours
-                  openState={shop.open_state || ""}
-                  weekdayText={weekdayText}
-                />
-              )}
-
-              {/* SHOP INFORMATION */}
-              <Information
-                address={shop.address ?? ""}
-                price={shop.price ?? ""}
-                phone={shop.phone ?? ""}
-                website={shop.website ?? ""}
-                webLink={shop.web_results_link}
-              />
-
-              {/* DIRECTION AND FAVORITES */}
-              <Box
-                sx={{
-                  mt: 5,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexWrap: "wrap",
-                  gap: 2,
-                }}
-              >
-                <Box
-                  sx={{
-                    flex: "1 1 250px",
-                    maxWidth: isTablet && !isMobile ? "180px" : "183px",
-                  }}
-                >
-                  <Button
-                    variant="contained"
-                    sx={{ fontSize: 12, width: "100%" }}
-                    disabled={loadingDirections}
-                    onClick={handleStartDirections}
-                  >
-                    {loadingDirections ? (
-                      <Box
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                        width="100%"
-                      >
-                        <CircularProgress size={18} sx={{ color: "#1976d2" }} />
-                      </Box>
-                    ) : (
-                      <>
-                        <NearMeIcon fontSize="small" sx={{ mr: 0.75 }} />
-                        Start Directions
-                      </>
-                    )}
-                  </Button>
-                </Box>
-
-                <Box
-                  sx={{
-                    flex: "1 1 250px",
-                    maxWidth: isTablet && !isMobile ? "180px" : "183px",
-                  }}
-                >
-                  <Button
-                    title={
-                      isFavorite
-                        ? "Remove from favorites?"
-                        : "Add to favorites?"
-                    }
-                    variant="outlined"
-                    sx={{ fontSize: 12, width: "100%" }}
-                    disabled={loadingFavorite}
-                    onClick={
-                      isFavorite ? handleRemoveFavorite : handleAddFavorite
-                    }
-                  >
-                    {loadingFavorite || checkingFavorite ? (
-                      <Box
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                        width="100%"
-                      >
-                        <CircularProgress size={18} sx={{ color: "#1976d2" }} />
-                      </Box>
-                    ) : (
-                      <>
-                        {isFavorite ? (
-                          <FavoriteIcon
-                            fontSize="small"
-                            sx={{ mr: 0.75, color: "#ba0001" }}
-                          />
-                        ) : (
-                          <FavoriteBorderIcon
-                            fontSize="small"
-                            sx={{ mr: 0.75, color: "#ba0001" }}
-                          />
-                        )}
-
-                        {isFavorite ? "In Favorites" : "Add to Favorites"}
-                      </>
-                    )}
-                  </Button>
-                </Box>
-              </Box>
-
-              {/* SHOP EXTENSIONS */}
-              {mergedExtensions && (
-                <ExtensionList extensions={mergedExtensions} />
-              )}
-
-              {/* SHOP REVIEWS */}
-              {shop.user_reviews &&
-                shop.user_reviews?.most_relevant.length > 0 && (
-                  <UserReviews reviews={shop.user_reviews.most_relevant} />
-                )}
-            </CardContent>
-
-            {/* Close shop detail */}
+            {/* Close shop detail button */}
             {shop && (
               <IconButton
                 title="Close Shop Detail?"
                 onClick={onCloseShopDetail}
                 sx={{
                   position: "absolute",
-                  top: 4,
-                  right: 4,
+                  top: 7,
+                  right: 15,
                   zIndex: 999,
                   bgcolor: "rgba(0,0,0,0.35)",
                   color: "#fff",
@@ -388,6 +257,146 @@ const ShopDetail = ({
                 <CloseIcon sx={{ fontSize: "1.75rem" }} />
               </IconButton>
             )}
+
+            {/* Scrollable content wrapper */}
+            <Box
+              sx={{
+                ...scrollStyle, // Apply scroll styles here (e.g., overflow-y: auto)
+                height: "100%", // Take full height of the card
+                pt: 0, // No top padding since the button is above
+              }}
+            >
+              {/* SHOP PHOTOS */}
+              <PhotoSlide photos={shop.images ?? []} />
+
+              {/* SHOP CONTENTS */}
+              <CardContent>
+                {/* SHOP TITLE AND RATING */}
+                <TitleRating
+                  title={shop.title}
+                  rating={shop.rating}
+                  reviews={shop.reviews}
+                />
+
+                {/* SHOP OPENING HOURS */}
+                {shop.hours && shop.hours?.length > 0 && (
+                  <OpeningHours
+                    openState={shop.open_state || ""}
+                    weekdayText={weekdayText}
+                  />
+                )}
+
+                {/* SHOP INFORMATION */}
+                <Information
+                  address={shop.address ?? ""}
+                  price={shop.price ?? ""}
+                  phone={shop.phone ?? ""}
+                  website={shop.website ?? ""}
+                  webLink={shop.web_results_link}
+                />
+
+                {/* DIRECTION AND FAVORITES */}
+                <Box
+                  sx={{
+                    mt: 5,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexWrap: "wrap",
+                    gap: 2,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      flex: "1 1 250px",
+                      maxWidth: isTablet && !isMobile ? "180px" : "183px",
+                    }}
+                  >
+                    <Button
+                      variant="contained"
+                      sx={{ fontSize: 12, width: "100%" }}
+                      disabled={loadingDirections}
+                      onClick={handleStartDirections}
+                    >
+                      {loadingDirections ? (
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                          width="100%"
+                        >
+                          <CircularProgress size={18} sx={{ color: "#1976d2" }} />
+                        </Box>
+                      ) : (
+                        <>
+                          <NearMeIcon fontSize="small" sx={{ mr: 0.75 }} />
+                          Start Directions
+                        </>
+                      )}
+                    </Button>
+                  </Box>
+
+                  <Box
+                    sx={{
+                      flex: "1 1 250px",
+                      maxWidth: isTablet && !isMobile ? "180px" : "183px",
+                    }}
+                  >
+                    <Button
+                      title={
+                        isFavorite
+                          ? "Remove from favorites?"
+                          : "Add to favorites?"
+                      }
+                      variant="outlined"
+                      sx={{ fontSize: 12, width: "100%" }}
+                      disabled={loadingFavorite}
+                      onClick={
+                        isFavorite ? handleRemoveFavorite : handleAddFavorite
+                      }
+                    >
+                      {loadingFavorite || checkingFavorite ? (
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                          width="100%"
+                        >
+                          <CircularProgress size={18} sx={{ color: "#1976d2" }} />
+                        </Box>
+                      ) : (
+                        <>
+                          {isFavorite ? (
+                            <FavoriteIcon
+                              fontSize="small"
+                              sx={{ mr: 0.75, color: "#ba0001" }}
+                            />
+                          ) : (
+                            <FavoriteBorderIcon
+                              fontSize="small"
+                              sx={{ mr: 0.75, color: "#ba0001" }}
+                            />
+                          )}
+
+                          {isFavorite ? "In Favorites" : "Add to Favorites"}
+                        </>
+                      )}
+                    </Button>
+                  </Box>
+                </Box>
+
+                {/* SHOP EXTENSIONS */}
+                {mergedExtensions && (
+                  <ExtensionList extensions={mergedExtensions} />
+                )}
+
+                {/* SHOP REVIEWS */}
+                {shop.user_reviews &&
+                  shop.user_reviews?.most_relevant.length > 0 && (
+                    <UserReviews reviews={shop.user_reviews.most_relevant} />
+                  )}
+              </CardContent>
+            </Box>
           </MotionCard>
         </MotionStyledStack>
       )}

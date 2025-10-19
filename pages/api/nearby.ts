@@ -79,9 +79,11 @@ export default async function handler(
 
     // Call Google Places Nearby Search
     const radius = 2000; // in meters
-    const keyword = "kopi";
+    const keyword = "coffee";
+    const type = "cafe";
     const baseUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json`;
-    const firstUrl = `${baseUrl}?location=${lat},${lng}&radius=${radius}&keyword=${keyword}&key=${GOOGLE_API_KEY}`;
+
+    const firstUrl = `${baseUrl}?location=${lat},${lng}&radius=${radius}&type=${type}&keyword=${keyword}&key=${GOOGLE_API_KEY}`;
 
     // Fetch the first page from google api
     const firstPage = await fetchNearbyPlaces(firstUrl);

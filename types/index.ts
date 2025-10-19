@@ -269,6 +269,8 @@ export type MapProps = {
   suppressMarkers?: boolean;
   directionLine?: LatLngExpression[] | null;
   destinationShop?: Shop | null;
+  locationStatus?: "idle" | "fetching" | "success" | "failed";
+  loadingShopDetail?: boolean;
 };
 
 export type MinimapProps = {

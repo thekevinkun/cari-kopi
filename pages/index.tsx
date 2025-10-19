@@ -4,7 +4,7 @@ import polyline from "@mapbox/polyline";
 import { useAlert } from "@/contexts/AlertContext";
 import { useLocation } from "@/contexts/LocationContext";
 
-import { Box, Grid, useMediaQuery } from "@mui/material";
+import { Box, Grid, Typography, useMediaQuery } from "@mui/material";
 
 import {
   CenteredLoader,
@@ -26,7 +26,12 @@ const ExplorePanel = dynamic(
   () => import("@/components/ExplorePanel/ExplorePanel"),
   {
     ssr: false,
-    loading: () => <CenteredLoader height="120px" sx={{ display: { xs: "none", md: "flex" } }} />,
+    loading: () => (
+      <CenteredLoader
+        height="120px"
+        sx={{ display: { xs: "none", md: "flex" } }}
+      />
+    ),
   }
 );
 
@@ -95,6 +100,7 @@ const Home = () => {
     shortAddress !== null &&
     shops.length > 0;
 
+  const [loadingShopDetail, setLoadingShopDetail] = useState(false);
   const [showShopDetail, setShowShopDetail] = useState(false);
   const [selectedShop, setSelectedShop] = useState<SerpShopDetail | null>(null);
   const [favorites, setFavorites] = useState<SerpShopDetail[] | null>(null);
@@ -164,6 +170,7 @@ const Home = () => {
 
   const getShopDetail = async (placeId: string) => {
     try {
+      setLoadingShopDetail(true);
       const res = await fetch(`/api/detailSerp?placeId=${placeId}`);
       const { data } = await res.json();
 
@@ -184,6 +191,8 @@ const Home = () => {
     } catch (err) {
       showAlert("Sorry, failed to get shop detail", "error");
       console.error("Failed to get shop detail:", err);
+    } finally {
+      setLoadingShopDetail(false);
     }
   };
 
@@ -654,6 +663,8 @@ const Home = () => {
           suppressMarkers={suppressMarkers}
           directionLine={directionLine}
           destinationShop={destinationShop}
+          locationStatus={locationStatus}
+          loadingShopDetail={loadingShopDetail}
         />
       </Grid>
 
@@ -717,7 +728,29 @@ const Home = () => {
               onFavoriteUpdate={refreshFavorites}
               onViewOnMap={handleViewOnMap}
             />
-          ) : null}
+          ) : (
+            <div
+              style={{
+                display: isTablet ? "none" : "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                minHeight: "75%",
+              }}
+            >
+              <Typography
+                variant="body1"
+                fontWeight="bold"
+                sx={{
+                  display: "flex",
+                  gap: "2px",
+                }}
+              >
+                <span style={{ fontSize: 18 }}>☕</span>
+                Explore nearby cafés —<br />
+                Select a place on the map to see details.
+              </Typography>
+            </div>
+          )}
         </Box>
       </Grid>
 
