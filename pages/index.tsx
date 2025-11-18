@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import dynamic from "next/dynamic";
 import polyline from "@mapbox/polyline";
 import { useAlert } from "@/contexts/AlertContext";
@@ -729,27 +730,35 @@ const Home = () => {
               onViewOnMap={handleViewOnMap}
             />
           ) : (
-            <div
-              style={{
-                display: isTablet ? "none" : "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                minHeight: "75%",
-              }}
-            >
-              <Typography
-                variant="body1"
-                fontWeight="bold"
-                sx={{
-                  display: "flex",
-                  gap: "2px",
-                }}
-              >
-                <span style={{ fontSize: 18 }}>☕</span>
-                Explore nearby cafés —<br />
-                Select a place on the map to see details.
-              </Typography>
-            </div>
+            (locationStatus === "success" && !selectedShop && !showShopDetail) && (
+              <AnimatePresence>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.85 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3, type: "spring", stiffness: 180 }}
+                  style={{
+                    display: isTablet ? "none" : "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    minHeight: "75%",
+                  }}
+                >
+                  <Typography
+                    variant="body1"
+                    fontWeight="bold"
+                    sx={{
+                      display: "flex",
+                      gap: "2px",
+                    }}
+                  >
+                    <span style={{ fontSize: 18 }}>☕</span>
+                    Explore nearby cafés —<br />
+                    Select a place on the map to see details.
+                  </Typography>
+                </motion.div>
+              </AnimatePresence>
+            )
           )}
         </Box>
       </Grid>
