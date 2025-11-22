@@ -121,7 +121,38 @@ const FavoritesShop = ({
           </Typography>
         </Box>
 
-        {favorites && favorites.length > 0 && (
+        {!favorites || favorites.length === 0 ? (
+          <AnimatePresence>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.85 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, type: "spring", stiffness: 180 }}
+              style={{
+                display: isTablet ? "none" : "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                minHeight: "75%",
+              }}
+            >
+              <Typography
+                variant="body1"
+                fontWeight="bold"
+                sx={{
+                  display: "flex",
+                  gap: "2px",
+                }}
+              >
+                <span style={{ fontSize: 18 }}>☕</span>
+                Start exploring!
+                <br />
+                Pick a coffee shop on the map to
+                <br />
+                save your favorites.
+              </Typography>
+            </motion.div>
+          </AnimatePresence>
+        ) : (
           <Box
             sx={{
               ...scrollStyle,
