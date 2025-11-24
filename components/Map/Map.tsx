@@ -308,7 +308,9 @@ const Map = ({
             style={{
               position: "absolute",
               inset: 0,
-              background: "rgba(128, 74, 38, 0.25)",
+              background: loadingShopDetail
+                ? "rgba(128, 74, 38, 0.45)"
+                : "rgba(128, 74, 38, 0.25)",
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
@@ -336,6 +338,7 @@ const Map = ({
             >
               <div
                 style={{
+                  marginTop: `${loadingShopDetail && "1rem"}`,
                   width: "1rem",
                   height: "1rem",
                   border: "3px solid #804A26",
@@ -355,7 +358,9 @@ const Map = ({
                 textShadow: "0 1px 3px rgba(0,0,0,0.3)",
               }}
             >
-              {isFetching ? "Finding location..." : loadingShopDetail && "Collecting shop information..."}
+              {isFetching
+                ? "Finding location..."
+                : loadingShopDetail && "Collecting shop information..."}
             </p>
             <style jsx>{`
               @keyframes spin {
